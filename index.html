@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Meta Tags -->
+  <title>Plataforma LuMED - Organização para ENEM, Vestibulares e Rotina de Estudos</title>
+  <meta name="description" content="A Plataforma LuMED é a melhor ferramenta para organizar seus estudos para ENEM, vestibulares e concursos. Possui todos os editais organizados por prova e conteúdo, cronômetro para contabilizar tempo de estudo, calendário de provas, acompanhamento de tarefas e muito mais. Organize sua rotina e seja aprovado!">
+  <meta name="keywords" content="plataforma lumed, plataforma LuMED, lumed, LuMED, plataforma de estudos, organização de estudos, estudar para enem, estudar para vestibular, cronograma de estudos, rotina de estudos, plataforma enem, plataforma vestibular, organizar estudos, app de estudos, site de estudos, controle de estudos, tempo de estudo, editais enem, editais vestibular, PSI, UEA, medicina">
+  <meta name="author" content="Plataforma LuMED">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://plataformalumed.site/">
+
+  <!-- Dados Estruturados para Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Plataforma LuMED",
+    "alternateName": ["plataforma lumed", "LuMED", "lumed"],
+    "description": "A Plataforma LuMED é uma ferramenta gratuita para organizar seus estudos para ENEM, vestibulares e concursos. Possui editais organizados por prova e conteúdo, cronômetro de estudos, calendário de provas e acompanhamento de tarefas.",
+    "url": "https://plataformalumed.site",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    },
+    "featureList": [
+      "Organização de estudos para ENEM e vestibulares",
+      "Editais organizados por prova e conteúdo",
+      "Cronômetro para contabilizar tempo de estudo",
+      "Calendário de provas e simulados",
+      "Lista de tarefas e atividades",
+      "Acompanhamento de desempenho"
+    ]
+  }
+  </script>
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://plataformalumed.site/">
+  <meta property="og:title" content="Plataforma LuMED - Organização para ENEM, Vestibulares e Rotina">
+  <meta property="og:description" content="A Plataforma LuMED é a melhor ferramenta para organizar seus estudos. Editais organizados, cronômetro de estudos, calendário de provas e muito mais. Gratuita!">
+  <meta property="og:site_name" content="Plataforma LuMED">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Plataforma LuMED - Organização para ENEM e Vestibulares">
+  <meta name="twitter:description" content="Organize seus estudos para ENEM e vestibulares com a Plataforma LuMED. Editais, cronômetro, calendário e tarefas. Gratuita!">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="app-layout">
+
+    <!-- ========================= -->
+    <!-- SIDEBAR ESQUERDA (MENU)   -->
+    <!-- ========================= -->
+    <aside class="sidebar-left" id="sidebar-left">
+      <!-- Botão Toggle Sidebar -->
+      <button class="sidebar-toggle" id="sidebar-toggle" title="Recolher menu">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <div class="logo">
+        <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
+        <span class="logo-text">LuMED</span>
+      </div>
+
+      <nav class="menu">
+        <div class="menu-item active" id="nav-painel" data-tooltip="Painel">
+          <i class="bi bi-grid-fill"></i>
+          <span>Painel</span>
+        </div>
+        <div class="menu-item" id="nav-aulas" data-tooltip="Aulas">
+          <i class="bi bi-play-circle"></i>
+          <span>Aulas</span>
+        </div>
+        <div class="menu-item" id="nav-simulados" data-tooltip="Simulados">
+          <i class="bi bi-file-earmark-text"></i>
+          <span>Simulados</span>
+        </div>
+        <a href="desempenho.html" class="menu-item" id="nav-desempenho" data-tooltip="Desempenho">
+          <i class="bi bi-graph-up"></i>
+          <span>Desempenho</span>
+        </a>
+        <div class="menu-item" id="nav-cronograma" data-tooltip="Cronograma">
+          <i class="bi bi-calendar3"></i>
+          <span>Cronograma</span>
+        </div>
+        <div class="menu-item" id="nav-materiais" data-tooltip="Materiais">
+          <i class="bi bi-folder"></i>
+          <span>Materiais</span>
+        </div>
+        <a href="conteudo.html" class="menu-item" id="nav-conteudo" data-tooltip="Conteúdo">
+          <i class="bi bi-journal-bookmark"></i>
+          <span>Conteúdo</span>
+        </a>
+        <div class="menu-item" id="nav-config" data-tooltip="Configurações">
+          <i class="bi bi-gear"></i>
+          <span>Configurações</span>
+        </div>
+      </nav>
+
+      <div class="menu-footer">
+        <div class="menu-item sair" id="btn-sair" data-tooltip="Sair">
+          <i class="bi bi-box-arrow-left"></i>
+          <span>Sair</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========================= -->
+    <!-- CONTEÚDO PRINCIPAL        -->
+    <!-- ========================= -->
+    <main class="main-content">
+      <div class="content-wrapper">
+
+        <!-- HEADER -->
+        <header class="header">
+          <!-- Botão Menu Mobile -->
+          <button class="btn-menu-mobile" id="btn-menu-mobile" title="Abrir menu">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <div class="search-box">
+            <i class="bi bi-search search-icon"></i>
+            <input
+              type="text"
+              class="search-input"
+              id="input-pesquisa"
+              placeholder="Pesquisar aulas, simulados..."
+            >
+          </div>
+
+          <div class="header-actions">
+            <span class="icon" id="btn-mensagens"><i class="bi bi-envelope"></i></span>
+            <span class="icon" id="btn-notificacoes">
+              <i class="bi bi-bell"></i>
+              <span class="notification-badge">3</span>
+            </span>
+
+            <div class="profile" id="btn-perfil">
+              <span class="avatar"></span>
+              <span class="name">Maria Luisa</span>
+              <i class="bi bi-chevron-down"></i>
+            </div>
+          </div>
+        </header>
+
+        <!-- BANNER DE BOAS-VINDAS -->
+        <section class="welcome-banner">
+          <div class="welcome-text">
+            <span class="welcome-badge"><i class="bi bi-lightning-charge-fill"></i> Foco total!</span>
+            <h1>Olá, Maria Luisa</h1>
+            <p>
+              Faltam <strong id="dias-enem">285</strong> dias para o ENEM. Você completou <strong>68%</strong> das atividades desta semana.
+            </p>
+            <div class="welcome-actions">
+              <button class="welcome-link" id="btn-estudar">
+                <i class="bi bi-play-fill" id="icone-estudar"></i>
+                <span id="texto-estudar">Continuar estudando</span>
+              </button>
+              <button class="btn-lixeira" id="btn-zerar-dia" title="Zerar tempo de hoje">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="welcome-stats">
+            <div class="stat-item">
+              <span class="stat-value">847</span>
+              <span class="stat-label">Questões resolvidas</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="tempo-hoje">0h</span>
+              <span class="stat-label">Tempo de estudo</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">12</span>
+              <span class="stat-label">Simulados feitos</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ATIVIDADES DA SEMANA (ÁREA PRINCIPAL) -->
+        <section class="card atividades-main">
+          <div class="card-header">
+            <div class="card-title-group">
+              <i class="bi bi-list-check card-icon"></i>
+              <h2>Atividades da Semana</h2>
+            </div>
+            <span class="atividades-counter" id="contador-tarefas">0/0</span>
+          </div>
+
+          <!-- Barra de progresso -->
+          <div class="progress-bar-container">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span class="progress-text">0%</span>
+          </div>
+
+          <!-- Lista de tarefas -->
+          <div class="todo-list" id="lista-tarefas">
+            <div class="todo-vazio" id="todo-vazio">
+              <i class="bi bi-clipboard-check"></i>
+              <p>Nenhuma tarefa ainda</p>
+              <span>Clique em "Adicionar tarefa" para começar</span>
+            </div>
+          </div>
+
+          <button class="btn-adicionar-main" id="btn-adicionar-tarefa">
+            <i class="bi bi-plus"></i> Adicionar tarefa
+          </button>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- ========================= -->
+    <!-- SIDEBAR DIREITA           -->
+    <!-- ========================= -->
+    <aside class="sidebar-right">
+
+      <!-- ======================= -->
+      <!-- RADAR DOS VESTIBULARES  -->
+      <!-- ======================= -->
+      <div class="radar-sidebar">
+        <div class="section-header">
+          <h2><i class="bi bi-broadcast"></i> Radar dos Vestibulares</h2>
+        </div>
+
+        <div class="vestibulares-list-mini" id="lista-vestibulares">
+          <!-- ENEM -->
+          <div class="vestibular-mini">
+            <div class="vestibular-logo-mini enem">ENEM</div>
+            <div class="vestibular-info-mini">
+              <span class="vestibular-nome-mini">ENEM 2026</span>
+              <span class="vestibular-dias"><strong>285</strong> dias</span>
+            </div>
+          </div>
+
+          <!-- MACRO UEA -->
+          <div class="vestibular-mini">
+            <div class="vestibular-logo-mini uea">UEA</div>
+            <div class="vestibular-info-mini">
+              <span class="vestibular-nome-mini">Macro UEA 2026</span>
+              <span class="vestibular-dias"><strong>279</strong> dias</span>
+            </div>
+          </div>
+
+          <!-- PSI -->
+          <div class="vestibular-mini">
+            <div class="vestibular-logo-mini psi">PSI</div>
+            <div class="vestibular-info-mini">
+              <span class="vestibular-nome-mini">PSI 2026</span>
+              <span class="vestibular-dias"><strong>266</strong> dias</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================= -->
+      <!-- CALENDÁRIO              -->
+      <!-- ======================= -->
+      <div class="calendario-sidebar">
+        <div class="section-header">
+          <h2><i class="bi bi-calendar3"></i> Calendário</h2>
+          <span class="mes-atual-mini">Jan 2026</span>
+        </div>
+
+        <!-- Mini calendário -->
+        <div class="mini-calendar">
+          <div class="calendar-weekdays">
+            <span>D</span>
+            <span>S</span>
+            <span>T</span>
+            <span>Q</span>
+            <span>Q</span>
+            <span>S</span>
+            <span>S</span>
+          </div>
+          <div class="calendar-days">
+            <!-- Preenchido via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Legenda -->
+        <div class="calendar-legend">
+          <div class="legend-item">
+            <span class="legend-dot simulado"></span>
+            <span>Simulado</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot prova"></span>
+            <span>Prova</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot evento"></span>
+            <span>Evento</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- OVERLAY MENU MOBILE -->
+  <div class="menu-overlay" id="menu-overlay"></div>
+
+  <!-- MODAL ADICIONAR TAREFA -->
+  <div class="modal-overlay" id="modal-tarefa">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="bi bi-plus-circle"></i> Adicionar Tarefa</h2>
+        <button class="modal-close" id="fechar-modal"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Nome da Atividade -->
+        <div class="form-group">
+          <label for="nome-tarefa">Nome da Atividade</label>
+          <input type="text" id="nome-tarefa" placeholder="Ex: Resolver 20 questões de...">
+        </div>
+
+        <!-- Selecionar Matéria -->
+        <div class="form-group">
+          <label>Selecione a Matéria</label>
+          <div class="materias-grid" id="materias-grid">
+            <button class="materia-btn" data-materia="portugues" data-icon="bi-book">
+              <i class="bi bi-book"></i>
+              <span>Português</span>
+            </button>
+            <button class="materia-btn" data-materia="matematica" data-icon="bi-calculator">
+              <i class="bi bi-calculator"></i>
+              <span>Matemática</span>
+            </button>
+            <button class="materia-btn" data-materia="historia" data-icon="bi-hourglass-split">
+              <i class="bi bi-hourglass-split"></i>
+              <span>História</span>
+            </button>
+            <button class="materia-btn" data-materia="geografia" data-icon="bi-globe">
+              <i class="bi bi-globe"></i>
+              <span>Geografia</span>
+            </button>
+            <button class="materia-btn" data-materia="biologia" data-icon="bi-tree">
+              <i class="bi bi-tree"></i>
+              <span>Biologia</span>
+            </button>
+            <button class="materia-btn" data-materia="fisica" data-icon="bi-lightning">
+              <i class="bi bi-lightning"></i>
+              <span>Física</span>
+            </button>
+            <button class="materia-btn" data-materia="quimica" data-icon="bi-droplet-fill">
+              <i class="bi bi-droplet-fill"></i>
+              <span>Química</span>
+            </button>
+            <button class="materia-btn" data-materia="filosofia" data-icon="bi-lightbulb">
+              <i class="bi bi-lightbulb"></i>
+              <span>Filosofia</span>
+            </button>
+            <button class="materia-btn" data-materia="sociologia" data-icon="bi-people">
+              <i class="bi bi-people"></i>
+              <span>Sociologia</span>
+            </button>
+            <button class="materia-btn" data-materia="ingles" data-icon="bi-translate">
+              <i class="bi bi-translate"></i>
+              <span>Inglês</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Selecionar Conteúdo -->
+        <div class="form-group" id="conteudo-group" style="display: none;">
+          <label>Selecione o Conteúdo <span class="materia-selecionada"></span></label>
+          <div class="conteudos-lista" id="conteudos-lista">
+            <!-- Preenchido via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancelar" id="btn-cancelar">Cancelar</button>
+        <button class="btn-adicionar" id="btn-confirmar-tarefa" disabled>
+          <i class="bi bi-plus"></i> Adicionar Tarefa
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WIDGET MOTIVACIONAL -->
+  <div class="widget-motivacional" id="widget-motivacional">
+    <button class="widget-toggle" id="widget-toggle" title="Minimizar">
+      <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="widget-conteudo">
+      <img src="imagem/widget.jpg" alt="Motivação" class="widget-img">
+      <p class="widget-frase">Acredite em você! Cada hora de estudo te aproxima do seu sonho.</p>
+    </div>
+    <div class="widget-mini" id="widget-mini">
+      <img src="imagem/widget.jpg" alt="Motivação">
+    </div>
+  </div>
+
+  <!-- MODAL ADICIONAR/EDITAR EVENTO -->
+  <div class="modal-overlay" id="modal-evento">
+    <div class="modal-content modal-evento-content">
+      <div class="modal-header modal-header-evento">
+        <h2><i class="bi bi-calendar-event"></i> Adicionar Evento</h2>
+        <button class="modal-close" id="fechar-modal-evento"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Título do Evento -->
+        <div class="form-group">
+          <label for="evento-titulo">Título do Evento</label>
+          <input type="text" id="evento-titulo" placeholder="Ex: Simulado ENEM, Prova de Matemática...">
+        </div>
+
+        <!-- Tipo do Evento -->
+        <div class="form-group">
+          <label for="evento-tipo">Tipo do Evento</label>
+          <select id="evento-tipo" class="select-evento">
+            <option value="evento">Evento</option>
+            <option value="simulado">Simulado</option>
+            <option value="prova">Prova</option>
+          </select>
+        </div>
+
+        <!-- Descrição (opcional) -->
+        <div class="form-group">
+          <label for="evento-descricao">Descrição (opcional)</label>
+          <textarea id="evento-descricao" placeholder="Adicione detalhes sobre o evento..." rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-excluir-evento" id="btn-excluir-evento" style="display: none;">
+          <i class="bi bi-trash"></i> Excluir
+        </button>
+        <button class="btn-cancelar" id="btn-cancelar-evento">Cancelar</button>
+        <button class="btn-adicionar" id="btn-salvar-evento">
+          <i class="bi bi-check-lg"></i> Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script src="js/script.js"></script>
+
+</body>
+</html>

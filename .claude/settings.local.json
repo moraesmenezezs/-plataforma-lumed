@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(playwright install)",
+      "Bash(npm search playwright mcp)",
+      "Bash(npx playwright install chromium)",
+      "Bash(claude mcp add:*)",
+      "mcp__playwright__browser_navigate"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

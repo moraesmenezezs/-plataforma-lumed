@@ -1,0 +1,831 @@
+/* ============================================
+   LuMED - Página de Conteúdo
+   Design Dinâmico e Elegante
+   ============================================ */
+
+.app-layout-conteudo {
+  grid-template-columns: 260px 1fr;
+}
+
+.main-conteudo {
+  max-height: 100vh;
+  overflow-y: auto;
+  background: linear-gradient(135deg, #f8fafc 0%, #f0f4ff 50%, #faf5ff 100%);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.header-title i {
+  font-size: 24px;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-title h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* ============================================
+   ABAS DOS VESTIBULARES - DINÂMICO
+   ============================================ */
+
+.vestibular-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background: white;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(236, 72, 153, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tab-btn:hover {
+  border-color: #c4b5fd;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
+}
+
+.tab-btn:hover::before {
+  opacity: 1;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+.tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.tab-icon.psi {
+  background: linear-gradient(135deg, #f472b6, #ec4899);
+}
+
+.tab-icon.uea {
+  background: linear-gradient(135deg, #34d399, #10b981);
+}
+
+.tab-icon.enem {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+}
+
+.tab-btn.active .tab-icon {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   PROGRESSO GERAL
+   ============================================ */
+
+.progresso-geral {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 16px;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.progresso-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.progresso-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.progresso-valor {
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.progresso-barra {
+  height: 10px;
+  background: linear-gradient(90deg, #f3e8ff, #fce7f3);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.progresso-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #a855f7, #ec4899);
+  border-radius: 100px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+}
+
+/* ============================================
+   CONTEÚDO DAS ABAS
+   ============================================ */
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ============================================
+   SEÇÃO DE MATÉRIA
+   ============================================ */
+
+.materia-section {
+  background: white;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.materia-section:hover {
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+.materia-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.materia-header:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.04), rgba(236, 72, 153, 0.02));
+}
+
+.materia-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.materia-info .materia-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.materia-info h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.materia-progress-mini {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.materia-contador {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  padding: 8px 16px;
+  border-radius: 100px;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.materia-progress-mini i {
+  color: #a855f7;
+  transition: transform 0.3s;
+  font-size: 18px;
+}
+
+.materia-section.aberta .materia-progress-mini i {
+  transform: rotate(180deg);
+}
+
+/* ============================================
+   NAVEGAÇÃO DE NÍVEIS
+   ============================================ */
+
+.materia-content {
+  display: none;
+  padding: 0;
+  background: linear-gradient(180deg, #fafbff 0%, #f8f9ff 100%);
+}
+
+.materia-section.aberta .materia-content {
+  display: block;
+}
+
+.niveis-nav {
+  display: flex;
+  gap: 8px;
+  padding: 16px 24px;
+  background: white;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  overflow-x: auto;
+}
+
+.nivel-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #f8fafc;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.nivel-tab:hover {
+  background: white;
+  border-color: var(--nivel-color, #c4b5fd);
+  color: var(--nivel-color, #8b5cf6);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+}
+
+.nivel-tab.active {
+  color: white;
+  background: linear-gradient(135deg, var(--nivel-color, #8b5cf6), var(--nivel-color-end, #a855f7));
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Cores por Nível */
+.nivel-tab.nivelamento { --nivel-color: #06b6d4; --nivel-color-end: #22d3ee; }
+.nivel-tab.basico1 { --nivel-color: #10b981; --nivel-color-end: #34d399; }
+.nivel-tab.basico2 { --nivel-color: #f59e0b; --nivel-color-end: #fbbf24; }
+.nivel-tab.construcao { --nivel-color: #8b5cf6; --nivel-color-end: #a78bfa; }
+.nivel-tab.ataque { --nivel-color: #ef4444; --nivel-color-end: #f87171; }
+
+.nivel-tab .nivel-icon {
+  font-size: 14px;
+}
+
+.nivel-tab .nivel-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.25);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.nivel-tab:not(.active) .nivel-badge {
+  background: white;
+  color: var(--nivel-color, #8b5cf6);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   CONTEÚDO DO NÍVEL
+   ============================================ */
+
+.nivel-content {
+  display: none;
+  padding: 24px;
+}
+
+.nivel-content.active {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   PROGRESSO COM BOLINHAS
+   ============================================ */
+
+.nivel-progress {
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.06);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+}
+
+.nivel-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.nivel-progress-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nivel-progress-title i {
+  color: #a855f7;
+  font-size: 16px;
+}
+
+.nivel-progress-stats {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.nivel-progress-stats strong {
+  color: #8b5cf6;
+  font-weight: 700;
+}
+
+/* Bolinhas de Progresso */
+.progress-dots {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+  border: 3px solid #e9d5ff;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-dot:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+.progress-dot.completed {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7, #c084fc);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+}
+
+.progress-dot.completed::after {
+  content: '\2713';
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.progress-line {
+  width: 24px;
+  height: 4px;
+  background: #e9d5ff;
+  border-radius: 100px;
+  transition: all 0.3s ease;
+}
+
+.progress-line.completed {
+  background: linear-gradient(90deg, #8b5cf6, #c084fc);
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+}
+
+/* ============================================
+   CARD DE TÓPICO
+   ============================================ */
+
+.topicos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topico-card {
+  background: white;
+  border-radius: 16px;
+  padding: 18px 22px;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.topico-card:hover {
+  border-color: rgba(139, 92, 246, 0.2);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.1);
+  transform: translateX(4px);
+}
+
+.topico-card.completed {
+  background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 100%);
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.topico-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+/* Checkbox */
+.topico-checkbox {
+  position: relative;
+  width: 26px;
+  height: 26px;
+}
+
+.topico-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.topico-checkbox .checkmark {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 2px solid #d1d5db;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.topico-checkbox:hover .checkmark {
+  border-color: #a855f7;
+}
+
+.topico-checkbox input:checked + .checkmark {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+}
+
+.topico-checkbox .checkmark::after {
+  content: '\2713';
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.2s ease;
+}
+
+.topico-checkbox input:checked + .checkmark::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Info do Tópico */
+.topico-info {
+  flex: 1;
+}
+
+.topico-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.topico-card.completed .topico-nome {
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.topico-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.topico-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topico-meta i {
+  font-size: 12px;
+  color: #a855f7;
+}
+
+/* Ações do Tópico */
+.topico-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Botões */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid;
+}
+
+.btn-teoria {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #3b82f6;
+  border-color: #bfdbfe;
+}
+
+.btn-teoria:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-teoria.active {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Contador de Questões */
+.questoes-counter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 2px solid #a7f3d0;
+}
+
+.questoes-counter span {
+  font-size: 15px;
+  font-weight: 700;
+  color: #059669;
+  min-width: 28px;
+  text-align: center;
+}
+
+.counter-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+.counter-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.counter-btn.minus {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #059669;
+  box-shadow: none;
+}
+
+.counter-btn.minus:hover {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: white;
+}
+
+/* ============================================
+   ESTATÍSTICAS
+   ============================================ */
+
+.nivel-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.stat-card {
+  background: white;
+  padding: 24px 20px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.12);
+}
+
+.stat-card i {
+  font-size: 28px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.stat-card.teoria i {
+  color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stat-card.questoes i {
+  color: #10b981;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stat-card.concluidos i {
+  color: #8b5cf6;
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card .stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1e293b, #475569);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card .stat-label {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ============================================
+   AVISO
+   ============================================ */
+
+.aviso-similar {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: linear-gradient(135deg, #faf5ff, #f5f3ff);
+  padding: 24px;
+  border-radius: 16px;
+  border-left: 4px solid #a855f7;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.08);
+}
+
+.aviso-similar i {
+  font-size: 24px;
+  color: #a855f7;
+}
+
+.aviso-similar p {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+/* Menu Link */
+.menu-item {
+  text-decoration: none;
+}
+
+a.menu-item {
+  text-decoration: none;
+}
+
+/* ============================================
+   RESPONSIVO
+   ============================================ */
+
+@media (max-width: 768px) {
+  .vestibular-tabs {
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    flex: 1;
+    min-width: 100px;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .niveis-nav {
+    padding: 12px 16px;
+  }
+
+  .nivel-tab {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+
+  .topico-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .topico-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .nivel-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-dots {
+    justify-content: center;
+  }
+}
