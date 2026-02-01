@@ -22,89 +22,79 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3">
 </head>
 
 <body>
 
-  <div class="app-layout app-layout-desempenho">
-
-    <!-- SIDEBAR ESQUERDA (MENU) -->
-    <aside class="sidebar-left" id="sidebar-left">
-      <!-- Botão Toggle Sidebar -->
-      <button class="sidebar-toggle" id="sidebar-toggle" title="Recolher menu">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-
-      <div class="logo">
+  <!-- NAVBAR TOPO -->
+  <nav class="navbar-top" id="navbar-top">
+    <div class="navbar-container">
+      <!-- Logo -->
+      <div class="navbar-logo">
         <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
         <span class="logo-text">LuMED</span>
       </div>
 
-      <nav class="menu">
-        <a href="index.html" class="menu-item" id="nav-painel" data-tooltip="Painel">
+      <!-- Menu Principal -->
+      <div class="navbar-menu" id="navbar-menu">
+        <a href="index.html" class="nav-item" id="nav-painel">
           <i class="bi bi-grid-fill"></i>
           <span>Painel</span>
         </a>
-        <div class="menu-item" id="nav-aulas" data-tooltip="Aulas">
+        <a href="index.html#planner" class="nav-item" id="nav-planner">
+          <i class="bi bi-calendar-week"></i>
+          <span>Planner</span>
+        </a>
+        <a href="index.html#timer" class="nav-item" id="nav-timer">
+          <i class="bi bi-stopwatch"></i>
+          <span>Timer</span>
+        </a>
+        <a href="index.html#aulas" class="nav-item" id="nav-aulas">
           <i class="bi bi-play-circle"></i>
           <span>Aulas</span>
-        </div>
-        <div class="menu-item" id="nav-simulados" data-tooltip="Simulados">
-          <i class="bi bi-file-earmark-text"></i>
-          <span>Simulados</span>
-        </div>
-        <div class="menu-item active" id="nav-desempenho" data-tooltip="Desempenho">
+        </a>
+        <a href="conteudo.html" class="nav-item" id="nav-edital">
+          <i class="bi bi-journal-bookmark"></i>
+          <span>Edital</span>
+        </a>
+        <a href="desempenho.html" class="nav-item active" id="nav-desempenho">
           <i class="bi bi-graph-up"></i>
           <span>Desempenho</span>
-        </div>
-        <div class="menu-item" id="nav-cronograma" data-tooltip="Cronograma">
-          <i class="bi bi-calendar3"></i>
-          <span>Cronograma</span>
-        </div>
-        <div class="menu-item" id="nav-materiais" data-tooltip="Materiais">
-          <i class="bi bi-folder"></i>
-          <span>Materiais</span>
-        </div>
-        <a href="conteudo.html" class="menu-item" id="nav-conteudo" data-tooltip="Conteúdo">
-          <i class="bi bi-journal-bookmark"></i>
-          <span>Conteúdo</span>
         </a>
-        <div class="menu-item" id="nav-config" data-tooltip="Configurações">
+        <a href="index.html#redacao" class="nav-item" id="nav-redacao">
+          <i class="bi bi-pencil-square"></i>
+          <span>Redação</span>
+        </a>
+        <a href="index.html#config" class="nav-item" id="nav-config">
           <i class="bi bi-gear"></i>
           <span>Configurações</span>
-        </div>
-      </nav>
+        </a>
+      </div>
 
-      <div class="menu-footer">
-        <div class="menu-item sair" id="btn-sair" data-tooltip="Sair">
-          <i class="bi bi-box-arrow-left"></i>
-          <span>Sair</span>
+      <!-- Ações direita -->
+      <div class="navbar-actions">
+        <div class="profile" id="btn-perfil">
+          <span class="avatar"></span>
+          <span class="name">Maria Luisa</span>
+          <i class="bi bi-chevron-down"></i>
         </div>
       </div>
-    </aside>
+    </div>
+
+  </nav>
+
+  <div class="app-layout app-layout-desempenho layout-top-nav">
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="main-content main-desempenho">
       <div class="content-wrapper">
 
-        <!-- HEADER -->
-        <header class="header">
-          <!-- Botão Menu Mobile -->
-          <button class="btn-menu-mobile" id="btn-menu-mobile" title="Abrir menu">
-            <i class="bi bi-list"></i>
-          </button>
-
+        <!-- HEADER DA PÁGINA -->
+        <header class="page-header">
           <div class="header-title">
             <i class="bi bi-graph-up"></i>
             <h1>Meu Desempenho</h1>
-          </div>
-          <div class="header-actions">
-            <div class="profile" id="btn-perfil">
-              <span class="avatar"></span>
-              <span class="name">Maria Luisa</span>
-              <i class="bi bi-chevron-down"></i>
-            </div>
           </div>
         </header>
 
@@ -233,6 +223,75 @@
 
           <!-- COLUNA DIREITA -->
           <div class="desempenho-col-right">
+
+            <!-- QUESTÕES RESOLVIDAS -->
+            <section class="card questoes-section">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i class="bi bi-check2-square card-icon"></i>
+                  <h2>Questões Resolvidas</h2>
+                </div>
+                <div class="questoes-total">
+                  <i class="bi bi-pencil-fill"></i>
+                  <span id="total-questoes">0</span>
+                </div>
+              </div>
+
+              <div class="questoes-stats">
+                <div class="questoes-stat-item">
+                  <span class="stat-label">Hoje</span>
+                  <span class="stat-value" id="questoes-hoje">0</span>
+                </div>
+                <div class="questoes-stat-item">
+                  <span class="stat-label">Esta semana</span>
+                  <span class="stat-value" id="questoes-semana">0</span>
+                </div>
+                <div class="questoes-stat-item">
+                  <span class="stat-label">Este mês</span>
+                  <span class="stat-value" id="questoes-mes">0</span>
+                </div>
+              </div>
+
+              <!-- Adicionar questões manualmente -->
+              <div class="adicionar-questoes">
+                <h3><i class="bi bi-plus-circle"></i> Adicionar Questões</h3>
+                <div class="adicionar-questoes-form">
+                  <input type="number" id="input-questoes" min="1" placeholder="Quantidade" class="input-questoes">
+                  <select id="select-materia-questoes" class="select-materia-questoes">
+                    <option value="geral">Geral</option>
+                    <option value="portugues">Português</option>
+                    <option value="matematica">Matemática</option>
+                    <option value="historia">História</option>
+                    <option value="geografia">Geografia</option>
+                    <option value="biologia">Biologia</option>
+                    <option value="fisica">Física</option>
+                    <option value="quimica">Química</option>
+                    <option value="filosofia">Filosofia</option>
+                    <option value="sociologia">Sociologia</option>
+                    <option value="ingles">Inglês</option>
+                  </select>
+                  <button class="btn-adicionar-questoes" id="btn-adicionar-questoes">
+                    <i class="bi bi-plus"></i> Adicionar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Histórico recente -->
+              <div class="questoes-historico">
+                <div class="historico-header">
+                  <h3><i class="bi bi-clock-history"></i> Histórico Recente</h3>
+                  <button class="btn-lixeira-mini" id="btn-limpar-historico" title="Limpar histórico">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+                <div class="historico-lista" id="historico-questoes">
+                  <div class="historico-vazio">
+                    <i class="bi bi-journal-x"></i>
+                    <p>Nenhum registro ainda</p>
+                  </div>
+                </div>
+              </div>
+            </section>
 
             <!-- EVOLUÇÃO NOS SIMULADOS -->
             <section class="card evolucao-section">
@@ -454,9 +513,6 @@
 
   </div>
 
-  <!-- OVERLAY MENU MOBILE -->
-  <div class="menu-overlay" id="menu-overlay"></div>
-
   <!-- WIDGET MOTIVACIONAL -->
   <div class="widget-motivacional" id="widget-motivacional">
     <button class="widget-toggle" id="widget-toggle" title="Minimizar">
@@ -470,6 +526,29 @@
       <img src="imagem/widget.jpg" alt="Motivação">
     </div>
   </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO PERSONALIZADO -->
+  <div class="modal-confirmacao" id="modal-confirmacao">
+    <div class="modal-confirmacao-content">
+      <div class="modal-confirmacao-icon">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <h3 id="confirmacao-titulo">Confirmar ação</h3>
+      <p id="confirmacao-mensagem">Tem certeza que deseja continuar?</p>
+      <div class="modal-confirmacao-btns">
+        <button class="btn-confirmacao-cancelar" id="btn-confirmacao-cancelar">
+          <i class="bi bi-x"></i> Cancelar
+        </button>
+        <button class="btn-confirmacao-confirmar" id="btn-confirmacao-confirmar">
+          <i class="bi bi-check"></i> Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/auth.js"></script>
 
   <script src="js/desempenho.js"></script>
 

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Aulas Gravadas | Plataforma LuMED</title>
+  <meta name="description" content="Assista todas as aulas gravadas da Plataforma LuMED. Biologia, Química, Física, Matemática e muito mais para ENEM e vestibulares.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/aulas.css">
+</head>
+
+<body>
+  <!-- NAVBAR TOPO -->
+  <nav class="navbar-top" id="navbar-top">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
+        <span class="logo-text">LuMED</span>
+      </div>
+      <div class="navbar-menu" id="navbar-menu">
+        <a href="index.html" class="nav-item" id="nav-painel">
+          <i class="bi bi-grid-fill"></i>
+          <span>Painel</span>
+        </a>
+        <a href="index.html#planner" class="nav-item" id="nav-planner">
+          <i class="bi bi-calendar-week"></i>
+          <span>Planner</span>
+        </a>
+        <a href="index.html#timer" class="nav-item" id="nav-timer">
+          <i class="bi bi-stopwatch"></i>
+          <span>Timer</span>
+        </a>
+        <a href="aulas.html" class="nav-item active" id="nav-aulas">
+          <i class="bi bi-play-circle"></i>
+          <span>Aulas</span>
+        </a>
+        <a href="conteudo.html" class="nav-item" id="nav-edital">
+          <i class="bi bi-journal-bookmark"></i>
+          <span>Edital</span>
+        </a>
+        <a href="desempenho.html" class="nav-item" id="nav-desempenho">
+          <i class="bi bi-graph-up"></i>
+          <span>Desempenho</span>
+        </a>
+        <a href="index.html#redacao" class="nav-item" id="nav-redacao">
+          <i class="bi bi-pencil-square"></i>
+          <span>Redação</span>
+        </a>
+        <a href="index.html#config" class="nav-item" id="nav-config">
+          <i class="bi bi-gear"></i>
+          <span>Configurações</span>
+        </a>
+      </div>
+      <div class="navbar-actions">
+        <div class="profile" id="btn-perfil">
+          <span class="avatar"></span>
+          <span class="name">Maria Luisa</span>
+          <i class="bi bi-chevron-down"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTAINER PRINCIPAL -->
+  <div class="aulas-container">
+    <div class="aulas-content">
+      <!-- Header -->
+      <div class="aulas-header">
+        <h1><i class="bi bi-collection-play"></i> Aulas Gravadas</h1>
+        <p>Revise todas as aulas e não perca nenhum conteúdo</p>
+      </div>
+
+      <!-- Banner Aula ao Vivo (aparece quando tem aula) -->
+      <div class="aula-ao-vivo-banner" id="banner-ao-vivo" style="display: none;">
+        <div class="ao-vivo-info">
+          <div class="ao-vivo-dot"></div>
+          <div class="ao-vivo-texto">
+            <h3>AO VIVO AGORA</h3>
+            <span id="ao-vivo-materia">Biologia - Sistema Nervoso</span>
+          </div>
+        </div>
+        <button class="btn-assistir-ao-vivo" id="btn-ao-vivo">
+          <i class="bi bi-broadcast"></i>
+          Assistir Agora
+        </button>
+      </div>
+
+      <!-- Filtros -->
+      <div class="aulas-filtros">
+        <select class="filtro-select" id="filtro-materia">
+          <option value="">Todas as matérias</option>
+          <option value="biologia">Biologia</option>
+          <option value="quimica">Química</option>
+          <option value="fisica">Física</option>
+          <option value="matematica">Matemática</option>
+          <option value="portugues">Português</option>
+          <option value="historia">História</option>
+          <option value="geografia">Geografia</option>
+          <option value="filosofia">Filosofia</option>
+          <option value="sociologia">Sociologia</option>
+          <option value="ingles">Inglês</option>
+          <option value="redacao">Redação</option>
+        </select>
+
+        <select class="filtro-select" id="filtro-mes">
+          <option value="">Todos os meses</option>
+          <option value="01">Janeiro</option>
+          <option value="02">Fevereiro</option>
+          <option value="03">Março</option>
+          <option value="04">Abril</option>
+          <option value="05">Maio</option>
+          <option value="06">Junho</option>
+          <option value="07">Julho</option>
+          <option value="08">Agosto</option>
+          <option value="09">Setembro</option>
+          <option value="10">Outubro</option>
+          <option value="11">Novembro</option>
+          <option value="12">Dezembro</option>
+        </select>
+
+        <div class="busca-aulas">
+          <i class="bi bi-search"></i>
+          <input type="text" id="busca-aulas" placeholder="Buscar por tema...">
+        </div>
+      </div>
+
+      <!-- Grid de Aulas -->
+      <div class="aulas-grid" id="aulas-grid">
+        <!-- Loading -->
+        <div class="loading-spinner" id="loading">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Vídeo -->
+  <div class="modal-video" id="modal-video">
+    <div class="modal-video-content">
+      <button class="modal-video-close" id="fechar-video">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      <iframe class="video-player" id="video-player" src="" frameborder="0" allowfullscreen></iframe>
+      <div class="modal-video-info">
+        <h3 id="video-titulo">Título da Aula</h3>
+        <p id="video-info">Matéria • Data</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/auth.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/aulas.js"></script>
+</body>
+</html>

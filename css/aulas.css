@@ -1,0 +1,535 @@
+/* ============================================
+   LuMED - Página de Aulas Gravadas
+   ============================================ */
+
+/* Container principal (página separada) */
+.aulas-container {
+  min-height: 100vh;
+  padding-top: 80px;
+  background: var(--bg-page);
+}
+
+/* Seção de aulas (dentro do index.html) */
+.aulas-section {
+  padding-top: 80px;
+  min-height: 100vh;
+  background: var(--bg-page);
+}
+
+.aulas-container-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.aulas-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+/* Header da página */
+.aulas-header {
+  margin-bottom: 30px;
+}
+
+.aulas-header h1 {
+  font-size: 28px;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.aulas-header h1 i {
+  color: var(--primary);
+}
+
+.aulas-header p {
+  color: #64748b;
+  font-size: 15px;
+}
+
+/* Aula ao vivo banner */
+.aula-ao-vivo-banner {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  border-radius: var(--radius);
+  padding: 20px 25px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+  animation: pulse-banner 2s infinite;
+}
+
+@keyframes pulse-banner {
+  0%, 100% { box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3); }
+  50% { box-shadow: 0 4px 30px rgba(220, 38, 38, 0.5); }
+}
+
+.ao-vivo-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ao-vivo-dot {
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.ao-vivo-texto h3 {
+  color: white;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.ao-vivo-texto span {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.btn-assistir-ao-vivo {
+  padding: 12px 24px;
+  background: white;
+  color: #dc2626;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-assistir-ao-vivo:hover {
+  transform: scale(1.05);
+}
+
+/* Filtros */
+.aulas-filtros {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.filtro-select {
+  padding: 12px 40px 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+  background: white;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%237e22ce' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: all 0.2s;
+}
+
+.filtro-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.busca-aulas {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.busca-aulas input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.busca-aulas input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.busca-aulas i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+/* Grid de aulas */
+.aulas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Card de aula */
+.aula-card {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s;
+}
+
+.aula-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+}
+
+.aula-thumbnail {
+  position: relative;
+  height: 180px;
+  background: linear-gradient(135deg, #581c87, #7e22ce);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aula-thumbnail-icon {
+  font-size: 50px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.aula-duracao {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.aula-materia-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.aula-card-body {
+  padding: 20px;
+}
+
+.aula-card-materia {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.aula-card-tema {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.aula-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 15px;
+}
+
+.aula-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-assistir {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-assistir:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+/* Estado vazio */
+.aulas-vazio {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #94a3b8;
+}
+
+.aulas-vazio i {
+  font-size: 60px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.aulas-vazio h3 {
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+/* Estado AO VIVO */
+.aula-thumbnail.ao-vivo {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  animation: pulse-ao-vivo 2s infinite;
+}
+
+@keyframes pulse-ao-vivo {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+}
+
+.aula-ao-vivo-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  color: #dc2626;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: pulse 1.5s infinite;
+}
+
+.dot-ao-vivo {
+  width: 8px;
+  height: 8px;
+  background: #dc2626;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+.meta-ao-vivo {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+.btn-ao-vivo {
+  background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+  animation: pulse-btn 2s infinite;
+}
+
+@keyframes pulse-btn {
+  0%, 100% { box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3); }
+  50% { box-shadow: 0 4px 25px rgba(220, 38, 38, 0.5); }
+}
+
+.btn-ao-vivo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4) !important;
+}
+
+/* Estado processando */
+.aula-thumbnail.processando {
+  background: linear-gradient(135deg, #64748b, #94a3b8);
+}
+
+.aula-thumbnail.processando .aula-thumbnail-icon {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.aula-processando {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fbbf24;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.btn-aguardando {
+  background: linear-gradient(135deg, #94a3b8, #64748b) !important;
+  cursor: not-allowed;
+}
+
+.btn-aguardando:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Cores das matérias */
+.materia-biologia { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.materia-quimica { background: linear-gradient(135deg, #ec4899, #db2777); }
+.materia-fisica { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.materia-matematica { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.materia-portugues { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.materia-historia { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.materia-geografia { background: linear-gradient(135deg, #10b981, #059669); }
+.materia-filosofia { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+.materia-sociologia { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+.materia-ingles { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.materia-redacao { background: linear-gradient(135deg, #f97316, #ea580c); }
+
+/* Modal de vídeo */
+.modal-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.modal-video.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-video-content {
+  width: 90%;
+  max-width: 900px;
+  background: black;
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+}
+
+.modal-video-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-video-close:hover {
+  transform: scale(1.1);
+}
+
+.video-player {
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+.modal-video-info {
+  padding: 20px;
+  background: #1a1a1a;
+  color: white;
+}
+
+.modal-video-info h3 {
+  color: white;
+  margin-bottom: 5px;
+}
+
+.modal-video-info p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* Loading */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  grid-column: 1 / -1;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .aulas-content {
+    padding: 20px 15px;
+  }
+
+  .aulas-header h1 {
+    font-size: 22px;
+  }
+
+  .aula-ao-vivo-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .aulas-filtros {
+    flex-direction: column;
+  }
+
+  .filtro-select,
+  .busca-aulas {
+    width: 100%;
+  }
+
+  .aulas-grid {
+    grid-template-columns: 1fr;
+  }
+}

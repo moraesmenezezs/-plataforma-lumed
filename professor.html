@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Professor | Plataforma LuMED</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/professor.css">
+</head>
+
+<body>
+  <!-- NAVBAR TOPO -->
+  <nav class="navbar-top" id="navbar-top">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
+        <span class="logo-text">LuMED</span>
+      </div>
+      <div class="navbar-menu">
+        <a href="index.html" class="nav-item">
+          <i class="bi bi-house"></i>
+          <span>Início</span>
+        </a>
+        <a href="aulas.html" class="nav-item">
+          <i class="bi bi-play-circle"></i>
+          <span>Aulas</span>
+        </a>
+        <a href="professor.html" class="nav-item active">
+          <i class="bi bi-person-video3"></i>
+          <span>Professor</span>
+        </a>
+      </div>
+      <div class="navbar-actions">
+        <div class="profile" id="btn-perfil">
+          <span class="avatar"></span>
+          <span class="name">Professor</span>
+          <i class="bi bi-chevron-down"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTAINER PRINCIPAL -->
+  <div class="professor-container">
+    <div class="professor-content">
+      <div class="professor-card">
+        <!-- Header -->
+        <div class="professor-header">
+          <h1><i class="bi bi-camera-video-fill"></i> Painel do Professor</h1>
+          <p>Inicie e gerencie suas aulas ao vivo</p>
+        </div>
+
+        <!-- Body -->
+        <div class="professor-body">
+          <!-- Status -->
+          <div class="aula-status aguardando" id="aula-status">
+            <span class="status-dot"></span>
+            <span id="status-texto">Aguardando início da aula</span>
+          </div>
+
+          <!-- Formulário (mostrado quando não há aula) -->
+          <div id="form-aula">
+            <!-- Matéria -->
+            <div class="form-group">
+              <label for="select-materia"><i class="bi bi-book"></i> Matéria</label>
+              <select id="select-materia">
+                <option value="">Selecione a matéria...</option>
+                <option value="biologia">Biologia</option>
+                <option value="quimica">Química</option>
+                <option value="fisica">Física</option>
+                <option value="matematica">Matemática</option>
+                <option value="portugues">Português</option>
+                <option value="historia">História</option>
+                <option value="geografia">Geografia</option>
+                <option value="filosofia">Filosofia</option>
+                <option value="sociologia">Sociologia</option>
+                <option value="ingles">Inglês</option>
+                <option value="redacao">Redação</option>
+              </select>
+            </div>
+
+            <!-- Tema -->
+            <div class="form-group">
+              <label for="input-tema"><i class="bi bi-tag"></i> Tema da Aula</label>
+              <input type="text" id="input-tema" placeholder="Ex: Sistema Nervoso, Leis de Newton...">
+            </div>
+
+            <!-- Link do Meet (fixo) -->
+            <div class="meet-link-group">
+              <label><i class="bi bi-camera-video"></i> Link do Google Meet (fixo)</label>
+              <div class="meet-link-input">
+                <input type="text" id="input-meet" value="https://meet.google.com/tpq-zxvy-cpe" readonly style="background: #f1f5f9;">
+                <button class="btn-salvar-link" id="btn-salvar-link" title="Link fixo" style="display:none;">
+                  <i class="bi bi-check-lg"></i>
+                </button>
+              </div>
+              <small style="color: #64748b; font-size: 12px; margin-top: 5px; display: block;">
+                <i class="bi bi-info-circle"></i> Todas as aulas usam o mesmo link
+              </small>
+            </div>
+
+            <!-- Lembrete de gravação -->
+            <div class="lembrete-gravacao" style="background: #fef3c7; border-radius: 12px; padding: 12px 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+              <i class="bi bi-info-circle" style="color: #d97706; font-size: 20px;"></i>
+              <div style="font-size: 13px; color: #92400e;">
+                <strong>Lembrete:</strong> Ao entrar no Meet, clique em <strong>⋮</strong> → <strong>"Gravar reunião"</strong>
+              </div>
+            </div>
+
+            <!-- Botão Iniciar -->
+            <button class="btn-aula btn-iniciar" id="btn-iniciar" disabled>
+              <i class="bi bi-broadcast"></i>
+              <span>INICIAR AULA</span>
+            </button>
+          </div>
+
+          <!-- Info da aula em andamento (oculto inicialmente) -->
+          <div id="aula-em-andamento" style="display: none;">
+            <!-- Timer -->
+            <div class="aula-timer">
+              <div class="timer-label">TEMPO DE AULA</div>
+              <div class="timer-value" id="timer-aula">00:00:00</div>
+            </div>
+
+            <!-- Info -->
+            <div class="aula-info">
+              <div class="aula-info-item">
+                <i class="bi bi-book"></i>
+                <span>Matéria: <strong id="info-materia">-</strong></span>
+              </div>
+              <div class="aula-info-item">
+                <i class="bi bi-tag"></i>
+                <span>Tema: <strong id="info-tema">-</strong></span>
+              </div>
+              <div class="aula-info-item">
+                <i class="bi bi-clock"></i>
+                <span>Início: <strong id="info-inicio">-</strong></span>
+              </div>
+            </div>
+
+            <!-- Botão Encerrar -->
+            <button class="btn-aula btn-encerrar" id="btn-encerrar">
+              <i class="bi bi-stop-circle"></i>
+              <span>ENCERRAR AULA</span>
+            </button>
+          </div>
+
+          <!-- Botão Sincronizar Vídeo -->
+          <div class="sync-section" id="sync-section">
+            <div class="sync-info">
+              <i class="bi bi-cloud-arrow-down"></i>
+              <span>Após parar a gravação no Meet, clique para sincronizar:</span>
+            </div>
+            <button class="btn-sync" id="btn-sync">
+              <i class="bi bi-arrow-repeat"></i>
+              <span>SINCRONIZAR VÍDEO</span>
+            </button>
+            <div class="sync-status" id="sync-status"></div>
+          </div>
+
+          <!-- Histórico -->
+          <div class="historico-section">
+            <h3><i class="bi bi-clock-history"></i> Últimas Aulas</h3>
+            <div class="historico-lista" id="historico-lista">
+              <div class="historico-vazio">
+                <i class="bi bi-inbox"></i>
+                <p>Nenhuma aula registrada ainda</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="bi bi-check-circle"></i>
+    <span id="toast-texto">Mensagem</span>
+  </div>
+
+  <!-- Supabase Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/auth.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/professor.js"></script>
+</body>
+</html>

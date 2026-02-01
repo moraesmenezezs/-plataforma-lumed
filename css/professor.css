@@ -1,0 +1,496 @@
+/* ============================================
+   LuMED - Painel do Professor
+   ============================================ */
+
+/* Container principal */
+.professor-container {
+  min-height: 100vh;
+  padding-top: 80px;
+  background: var(--bg-page);
+}
+
+.professor-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Card principal */
+.professor-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-medium);
+  overflow: hidden;
+}
+
+.professor-header {
+  background: linear-gradient(135deg, #581c87 0%, #7e22ce 50%, #a855f7 100%);
+  padding: 30px;
+  text-align: center;
+  color: white;
+}
+
+.professor-header h1 {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.professor-header p {
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.professor-body {
+  padding: 30px;
+}
+
+/* Status da aula */
+.aula-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+.aula-status.aguardando {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.aula-status.ao-vivo {
+  background: #fee2e2;
+  color: #dc2626;
+  animation: pulse-status 2s infinite;
+}
+
+.aula-status.finalizada {
+  background: #d1fae5;
+  color: #059669;
+}
+
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.aula-status.ao-vivo .status-dot {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Formulário */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.2s;
+  background: white;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%237e22ce' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 45px;
+}
+
+/* Link do Meet */
+.meet-link-group {
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.meet-link-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.meet-link-input {
+  display: flex;
+  gap: 10px;
+}
+
+.meet-link-input input {
+  flex: 1;
+}
+
+.btn-salvar-link {
+  padding: 14px 20px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-salvar-link:hover {
+  background: var(--primary-dark);
+}
+
+/* Botão principal */
+.btn-aula {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.btn-iniciar {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  color: white;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.btn-iniciar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+}
+
+.btn-iniciar:disabled {
+  background: #cbd5e1;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-encerrar {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: white;
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+.btn-encerrar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+}
+
+/* Seção Sincronizar Vídeo */
+.sync-section {
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  border: 2px solid #3b82f6;
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.sync-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  color: #1e40af;
+  font-size: 14px;
+}
+
+.sync-info i {
+  font-size: 24px;
+}
+
+.btn-sync {
+  width: 100%;
+  padding: 15px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+.btn-sync:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.btn-sync:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-sync.loading i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sync-status {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #1e40af;
+}
+
+.sync-status.success {
+  color: #059669;
+}
+
+.sync-status.error {
+  color: #dc2626;
+}
+
+/* Timer da aula */
+.aula-timer {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #fdf4ff, #fae8ff);
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+}
+
+.timer-label {
+  font-size: 12px;
+  color: #7e22ce;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.timer-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #581c87;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Info da aula em andamento */
+.aula-info {
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.aula-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.aula-info-item:last-child {
+  border-bottom: none;
+}
+
+.aula-info-item i {
+  color: var(--primary);
+  font-size: 18px;
+  width: 24px;
+}
+
+.aula-info-item strong {
+  color: var(--text-dark);
+}
+
+/* Histórico de aulas */
+.historico-section {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.historico-section h3 {
+  font-size: 16px;
+  color: var(--text-dark);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.historico-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.historico-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: var(--radius-xs);
+  transition: all 0.2s;
+}
+
+.historico-item:hover {
+  background: #f1f5f9;
+}
+
+.historico-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+}
+
+.historico-info {
+  flex: 1;
+}
+
+.historico-materia {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+.historico-tema {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.historico-data {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Mensagem de vazio */
+.historico-vazio {
+  text-align: center;
+  padding: 30px;
+  color: #94a3b8;
+}
+
+.historico-vazio i {
+  font-size: 40px;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+/* Toast de notificação */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 15px 25px;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-medium);
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 9999;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.toast.info {
+  background: linear-gradient(135deg, #7e22ce, #a855f7);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .professor-content {
+    padding: 20px 15px;
+  }
+
+  .professor-header {
+    padding: 25px 20px;
+  }
+
+  .professor-body {
+    padding: 20px;
+  }
+
+  .btn-aula {
+    font-size: 16px;
+    padding: 16px;
+  }
+
+  .timer-value {
+    font-size: 28px;
+  }
+}

@@ -1,6 +1,6 @@
 // ============================================
 // LuMED - JavaScript da Página de Conteúdo
-// Sistema de Níveis e Progresso
+// Sistema de Níveis e Progresso - V2.0
 // ============================================
 
 // Dados do progresso
@@ -46,9 +46,21 @@ function inicializarNiveis() {
 function toggleTopico(checkbox) {
   const card = checkbox.closest('.topico-card');
   const topicoId = card.getAttribute('data-topico-id');
+  const wasCompleted = card.classList.contains('completed');
 
   if (checkbox.checked) {
     card.classList.add('completed');
+    card.classList.add('just-completed');
+
+    // Disparar confete se acabou de completar
+    if (!wasCompleted) {
+      dispararConfete();
+    }
+
+    // Remover animação após terminar
+    setTimeout(() => {
+      card.classList.remove('just-completed');
+    }, 600);
   } else {
     card.classList.remove('completed');
   }
@@ -60,6 +72,8 @@ function toggleTopico(checkbox) {
     concluido: checkbox.checked
   };
 
+  atualizarStatusBadge(card);
+  atualizarProgressoMini(card);
   atualizarProgressoNivel(card);
   atualizarProgressoGeral();
   salvarProgresso();
@@ -76,13 +90,15 @@ function toggleTeoria(btn) {
   const isActive = btn.classList.contains('active');
 
   // Atualizar meta
-  const metaTeoria = card.querySelector('.topico-meta span:first-child');
-  if (isActive) {
-    metaTeoria.innerHTML = '<i class="bi bi-check-circle"></i> Teoria estudada';
-    metaTeoria.style.color = '#10b981';
-  } else {
-    metaTeoria.innerHTML = '<i class="bi bi-book"></i> Teoria';
-    metaTeoria.style.color = '';
+  const metaTeoria = card.querySelector('.meta-teoria');
+  if (metaTeoria) {
+    if (isActive) {
+      metaTeoria.innerHTML = '<i class="bi bi-check-circle-fill"></i> Teoria estudada';
+      metaTeoria.style.color = '#10b981';
+    } else {
+      metaTeoria.innerHTML = '<i class="bi bi-book"></i> Teoria';
+      metaTeoria.style.color = '';
+    }
   }
 
   // Salvar estado
@@ -92,7 +108,35 @@ function toggleTeoria(btn) {
     teoria: isActive
   };
 
+  atualizarStatusBadge(card);
+  atualizarProgressoMini(card);
   atualizarEstatisticasNivel(card);
+  salvarProgresso();
+}
+
+// ============================================
+// TOGGLE FAVORITO
+// ============================================
+function toggleFavorito(btn) {
+  btn.classList.toggle('active');
+  const card = btn.closest('.topico-card');
+  const topicoId = card.getAttribute('data-topico-id');
+  const isActive = btn.classList.contains('active');
+
+  // Atualizar ícone
+  const icon = btn.querySelector('i');
+  icon.className = isActive ? 'bi bi-star-fill' : 'bi bi-star';
+
+  // Atualizar visual do card
+  card.classList.toggle('favorito', isActive);
+
+  // Salvar estado
+  if (!progressoData.topicos) progressoData.topicos = {};
+  progressoData.topicos[topicoId] = {
+    ...progressoData.topicos[topicoId],
+    favorito: isActive
+  };
+
   salvarProgresso();
 }
 
@@ -106,6 +150,10 @@ function incrementarQuestoes(btn) {
   valor++;
   span.textContent = valor;
 
+  // Animação
+  span.classList.add('animate-pulse');
+  setTimeout(() => span.classList.remove('animate-pulse'), 300);
+
   const card = btn.closest('.topico-card');
   atualizarQuestoesCard(card, valor);
 }
@@ -117,6 +165,10 @@ function decrementarQuestoes(btn) {
   if (valor > 0) {
     valor--;
     span.textContent = valor;
+  } else {
+    // Animação de shake se tentar diminuir abaixo de 0
+    counter.classList.add('animate-shake');
+    setTimeout(() => counter.classList.remove('animate-shake'), 300);
   }
 
   const card = btn.closest('.topico-card');
@@ -127,8 +179,15 @@ function atualizarQuestoesCard(card, valor) {
   const topicoId = card.getAttribute('data-topico-id');
 
   // Atualizar meta
-  const metaQuestoes = card.querySelector('.topico-meta span:last-child');
-  metaQuestoes.innerHTML = `<i class="bi bi-pencil"></i> ${valor} questões`;
+  const metaQuestoes = card.querySelector('.meta-questoes');
+  if (metaQuestoes) {
+    metaQuestoes.innerHTML = `<i class="bi bi-pencil"></i> ${valor} questões`;
+    if (valor > 0) {
+      metaQuestoes.style.color = '#10b981';
+    } else {
+      metaQuestoes.style.color = '';
+    }
+  }
 
   // Salvar estado
   if (!progressoData.topicos) progressoData.topicos = {};
@@ -137,8 +196,68 @@ function atualizarQuestoesCard(card, valor) {
     questoes: valor
   };
 
+  atualizarStatusBadge(card);
+  atualizarProgressoMini(card);
   atualizarEstatisticasNivel(card);
   salvarProgresso();
+}
+
+// ============================================
+// ATUALIZAR STATUS BADGE
+// ============================================
+function atualizarStatusBadge(card) {
+  const statusBadge = card.querySelector('.status-badge');
+  if (!statusBadge) return;
+
+  const checkbox = card.querySelector('.topico-checkbox input');
+  const btnTeoria = card.querySelector('.btn-teoria');
+  const questoesSpan = card.querySelector('.questoes-counter span');
+
+  const concluido = checkbox && checkbox.checked;
+  const teoriaEstudada = btnTeoria && btnTeoria.classList.contains('active');
+  const questoesFeitas = questoesSpan && parseInt(questoesSpan.textContent) > 0;
+
+  // Remover classes anteriores
+  statusBadge.classList.remove('pendente', 'em-progresso', 'concluido');
+  card.classList.remove('em-progresso');
+
+  if (concluido) {
+    statusBadge.className = 'status-badge concluido';
+    statusBadge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Concluído';
+  } else if (teoriaEstudada || questoesFeitas) {
+    statusBadge.className = 'status-badge em-progresso';
+    statusBadge.innerHTML = '<i class="bi bi-hourglass-split"></i> Em Progresso';
+    card.classList.add('em-progresso');
+  } else {
+    statusBadge.className = 'status-badge pendente';
+    statusBadge.innerHTML = '<i class="bi bi-circle"></i> Pendente';
+  }
+}
+
+// ============================================
+// ATUALIZAR MINI BARRA DE PROGRESSO
+// ============================================
+function atualizarProgressoMini(card) {
+  const progressBar = card.querySelector('.progress-mini-fill');
+  const progressText = card.querySelector('.progress-mini-text');
+  if (!progressBar || !progressText) return;
+
+  const checkbox = card.querySelector('.topico-checkbox input');
+  const btnTeoria = card.querySelector('.btn-teoria');
+  const questoesSpan = card.querySelector('.questoes-counter span');
+
+  const concluido = checkbox && checkbox.checked;
+  const teoriaEstudada = btnTeoria && btnTeoria.classList.contains('active');
+  const questoesFeitas = questoesSpan ? parseInt(questoesSpan.textContent) || 0 : 0;
+
+  // Calcular progresso: teoria = 40%, questões > 0 = 30%, concluído = 30%
+  let progresso = 0;
+  if (teoriaEstudada) progresso += 40;
+  if (questoesFeitas > 0) progresso += Math.min(30, questoesFeitas * 3); // Max 30%
+  if (concluido) progresso = 100;
+
+  progressBar.style.width = progresso + '%';
+  progressText.textContent = progresso + '%';
 }
 
 // ============================================
@@ -236,8 +355,23 @@ function atualizarProgressoGeral() {
   const feitos = checked.length;
   const porcentagem = total > 0 ? Math.round((feitos / total) * 100) : 0;
 
-  document.getElementById('progresso-valor').textContent = porcentagem + '%';
-  document.getElementById('progresso-fill').style.width = porcentagem + '%';
+  // Atualizar progresso circular (sidebar)
+  const progressoValor = document.getElementById('progresso-valor');
+  const progressoRingFill = document.getElementById('progresso-ring-fill');
+  const statConcluidos = document.getElementById('stat-concluidos');
+  const statTotal = document.getElementById('stat-total');
+
+  if (progressoValor) progressoValor.textContent = porcentagem + '%';
+
+  // Atualizar anel circular (circumference = 2 * PI * 40 = 251.2)
+  if (progressoRingFill) {
+    const circumference = 251.2;
+    const offset = circumference - (circumference * porcentagem / 100);
+    progressoRingFill.style.strokeDashoffset = offset;
+  }
+
+  if (statConcluidos) statConcluidos.textContent = feitos;
+  if (statTotal) statTotal.textContent = total;
 
   // Atualizar contadores de cada matéria
   activeTab.querySelectorAll('.materia-section').forEach(section => {
@@ -266,6 +400,272 @@ function inicializarAbas() {
       atualizarProgressoGeral();
     });
   });
+}
+
+// ============================================
+// BUSCA DE TÓPICOS
+// ============================================
+function inicializarBusca() {
+  // Busca na sidebar (nova)
+  const sidebarBuscaInput = document.getElementById('sidebar-busca-input');
+  // Busca na toolbar (mobile/fallback)
+  const buscaInput = document.getElementById('busca-topicos');
+  const buscaLimpar = document.getElementById('busca-limpar');
+
+  // Sidebar busca
+  if (sidebarBuscaInput) {
+    sidebarBuscaInput.addEventListener('input', (e) => {
+      // Sincronizar com toolbar se existir
+      if (buscaInput) buscaInput.value = e.target.value;
+      filtrarTopicos();
+    });
+  }
+
+  // Toolbar busca (mobile)
+  if (buscaInput) {
+    buscaInput.addEventListener('input', (e) => {
+      const termo = e.target.value.toLowerCase().trim();
+
+      // Mostrar/ocultar botão limpar
+      if (buscaLimpar) {
+        buscaLimpar.classList.toggle('visible', termo.length > 0);
+      }
+
+      // Sincronizar com sidebar se existir
+      if (sidebarBuscaInput) sidebarBuscaInput.value = e.target.value;
+
+      filtrarTopicos();
+    });
+
+    if (buscaLimpar) {
+      buscaLimpar.addEventListener('click', () => {
+        buscaInput.value = '';
+        if (sidebarBuscaInput) sidebarBuscaInput.value = '';
+        buscaLimpar.classList.remove('visible');
+        filtrarTopicos();
+      });
+    }
+  }
+}
+
+// ============================================
+// FILTROS
+// ============================================
+function inicializarFiltros() {
+  // Filtros na sidebar (novos)
+  const sidebarFiltroBtns = document.querySelectorAll('.sidebar-filtro-btn');
+  // Filtros na toolbar (mobile/fallback)
+  const filtroBtns = document.querySelectorAll('.filtro-btn');
+
+  // Sidebar filtros
+  sidebarFiltroBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filtro = btn.getAttribute('data-filtro');
+
+      // Remover active de todos
+      sidebarFiltroBtns.forEach(b => b.classList.remove('active'));
+      filtroBtns.forEach(b => b.classList.remove('active'));
+
+      // Adicionar active no clicado
+      btn.classList.add('active');
+
+      // Sincronizar com toolbar
+      const toolbarBtn = document.querySelector(`.filtro-btn[data-filtro="${filtro}"]`);
+      if (toolbarBtn) toolbarBtn.classList.add('active');
+
+      filtrarTopicos();
+    });
+  });
+
+  // Toolbar filtros (mobile)
+  filtroBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filtro = btn.getAttribute('data-filtro');
+
+      filtroBtns.forEach(b => b.classList.remove('active'));
+      sidebarFiltroBtns.forEach(b => b.classList.remove('active'));
+
+      btn.classList.add('active');
+
+      // Sincronizar com sidebar
+      const sidebarBtn = document.querySelector(`.sidebar-filtro-btn[data-filtro="${filtro}"]`);
+      if (sidebarBtn) sidebarBtn.classList.add('active');
+
+      filtrarTopicos();
+    });
+  });
+}
+
+function filtrarTopicos() {
+  // Buscar termo em ambos os inputs
+  const sidebarBuscaInput = document.getElementById('sidebar-busca-input');
+  const buscaInput = document.getElementById('busca-topicos');
+  const termo = (sidebarBuscaInput?.value || buscaInput?.value || '').toLowerCase().trim();
+
+  // Buscar filtro ativo em ambos
+  const sidebarFiltroAtivo = document.querySelector('.sidebar-filtro-btn.active');
+  const filtroAtivo = document.querySelector('.filtro-btn.active');
+  const filtro = (sidebarFiltroAtivo || filtroAtivo)?.getAttribute('data-filtro') || 'todos';
+
+  const cards = document.querySelectorAll('.topico-card');
+
+  cards.forEach(card => {
+    const nome = card.querySelector('.topico-nome').textContent.toLowerCase();
+    const checkbox = card.querySelector('.topico-checkbox input');
+    const btnTeoria = card.querySelector('.btn-teoria');
+    const questoesSpan = card.querySelector('.questoes-counter span');
+    const btnFavorito = card.querySelector('.btn-favorito');
+
+    const concluido = checkbox && checkbox.checked;
+    const teoriaEstudada = btnTeoria && btnTeoria.classList.contains('active');
+    const questoesFeitas = questoesSpan && parseInt(questoesSpan.textContent) > 0;
+    const emProgresso = (teoriaEstudada || questoesFeitas) && !concluido;
+    const favorito = btnFavorito && btnFavorito.classList.contains('active');
+
+    // Verificar busca
+    const matchBusca = termo === '' || nome.includes(termo);
+
+    // Verificar filtro
+    let matchFiltro = true;
+    switch (filtro) {
+      case 'pendentes':
+        matchFiltro = !concluido && !emProgresso;
+        break;
+      case 'em-progresso':
+        matchFiltro = emProgresso;
+        break;
+      case 'concluidos':
+        matchFiltro = concluido;
+        break;
+      case 'favoritos':
+        matchFiltro = favorito;
+        break;
+      default:
+        matchFiltro = true;
+    }
+
+    // Aplicar visibilidade
+    if (!matchBusca) {
+      card.classList.add('busca-oculto');
+    } else {
+      card.classList.remove('busca-oculto');
+    }
+
+    if (!matchFiltro) {
+      card.classList.add('filtro-oculto');
+    } else {
+      card.classList.remove('filtro-oculto');
+    }
+
+    // Highlight na busca
+    if (termo && matchBusca) {
+      card.classList.add('busca-destaque');
+    } else {
+      card.classList.remove('busca-destaque');
+    }
+  });
+
+  // Verificar se há resultados
+  verificarResultadosVazios();
+}
+
+function verificarResultadosVazios() {
+  document.querySelectorAll('.topicos-grid').forEach(grid => {
+    const cardsVisiveis = grid.querySelectorAll('.topico-card:not(.busca-oculto):not(.filtro-oculto)');
+    let mensagemVazia = grid.querySelector('.resultado-vazio');
+
+    if (cardsVisiveis.length === 0) {
+      if (!mensagemVazia) {
+        mensagemVazia = document.createElement('div');
+        mensagemVazia.className = 'resultado-vazio';
+        mensagemVazia.innerHTML = `
+          <i class="bi bi-search"></i>
+          <p>Nenhum tópico encontrado</p>
+          <small>Tente ajustar os filtros ou busca</small>
+        `;
+        grid.appendChild(mensagemVazia);
+      }
+    } else if (mensagemVazia) {
+      mensagemVazia.remove();
+    }
+  });
+}
+
+// ============================================
+// MODO FOCO
+// ============================================
+function inicializarModoFoco() {
+  const btnModoFoco = document.getElementById('btn-modo-foco');
+  if (!btnModoFoco) return;
+
+  // Carregar estado salvo
+  const modoFocoAtivo = localStorage.getItem('lumed_modo_foco') === 'true';
+  if (modoFocoAtivo) {
+    document.body.classList.add('modo-foco');
+    btnModoFoco.classList.add('active');
+    btnModoFoco.querySelector('i').className = 'bi bi-eye-slash';
+  }
+
+  btnModoFoco.addEventListener('click', () => {
+    document.body.classList.toggle('modo-foco');
+    btnModoFoco.classList.toggle('active');
+
+    const isAtivo = document.body.classList.contains('modo-foco');
+    btnModoFoco.querySelector('i').className = isAtivo ? 'bi bi-eye-slash' : 'bi bi-eye';
+    localStorage.setItem('lumed_modo_foco', isAtivo);
+  });
+}
+
+// ============================================
+// MODO COMPACTO
+// ============================================
+function inicializarModoCompacto() {
+  const btnModoCompacto = document.getElementById('btn-modo-compacto');
+  if (!btnModoCompacto) return;
+
+  // Carregar estado salvo
+  const modoCompactoAtivo = localStorage.getItem('lumed_modo_compacto') === 'true';
+  if (modoCompactoAtivo) {
+    document.body.classList.add('modo-compacto');
+    btnModoCompacto.classList.add('active');
+    btnModoCompacto.querySelector('i').className = 'bi bi-grid';
+  }
+
+  btnModoCompacto.addEventListener('click', () => {
+    document.body.classList.toggle('modo-compacto');
+    btnModoCompacto.classList.toggle('active');
+
+    const isAtivo = document.body.classList.contains('modo-compacto');
+    btnModoCompacto.querySelector('i').className = isAtivo ? 'bi bi-grid' : 'bi bi-view-list';
+    localStorage.setItem('lumed_modo_compacto', isAtivo);
+  });
+}
+
+// ============================================
+// ANIMAÇÃO DE CONFETE
+// ============================================
+function dispararConfete() {
+  const container = document.getElementById('confetti-container');
+  if (!container) return;
+
+  const cores = ['#8b5cf6', '#a855f7', '#ec4899', '#f472b6', '#10b981', '#34d399', '#fbbf24', '#f59e0b'];
+  const formas = ['circle', 'square', 'ribbon'];
+
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = `confetti ${formas[Math.floor(Math.random() * formas.length)]}`;
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+    confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+
+    container.appendChild(confetti);
+
+    // Remover após animação
+    setTimeout(() => {
+      confetti.remove();
+    }, 4000);
+  }
 }
 
 // ============================================
@@ -305,9 +705,11 @@ function carregarProgresso() {
           const btnTeoria = card.querySelector('.btn-teoria');
           if (btnTeoria) {
             btnTeoria.classList.add('active');
-            const metaTeoria = card.querySelector('.topico-meta span:first-child');
-            metaTeoria.innerHTML = '<i class="bi bi-check-circle"></i> Teoria estudada';
-            metaTeoria.style.color = '#10b981';
+            const metaTeoria = card.querySelector('.meta-teoria');
+            if (metaTeoria) {
+              metaTeoria.innerHTML = '<i class="bi bi-check-circle-fill"></i> Teoria estudada';
+              metaTeoria.style.color = '#10b981';
+            }
           }
         }
 
@@ -317,11 +719,28 @@ function carregarProgresso() {
           if (counterSpan) {
             counterSpan.textContent = topico.questoes;
           }
-          const metaQuestoes = card.querySelector('.topico-meta span:last-child');
+          const metaQuestoes = card.querySelector('.meta-questoes');
           if (metaQuestoes) {
             metaQuestoes.innerHTML = `<i class="bi bi-pencil"></i> ${topico.questoes} questões`;
+            if (topico.questoes > 0) {
+              metaQuestoes.style.color = '#10b981';
+            }
           }
         }
+
+        // Restaurar favorito
+        if (topico.favorito) {
+          const btnFavorito = card.querySelector('.btn-favorito');
+          if (btnFavorito) {
+            btnFavorito.classList.add('active');
+            btnFavorito.querySelector('i').className = 'bi bi-star-fill';
+            card.classList.add('favorito');
+          }
+        }
+
+        // Atualizar status e progresso mini
+        atualizarStatusBadge(card);
+        atualizarProgressoMini(card);
       });
     }
   }
@@ -372,69 +791,34 @@ function inicializarWidget() {
   }
 }
 
-// ============================================
-// MENU MOBILE
-// ============================================
-function inicializarMenuMobile() {
-  const btnMenu = document.getElementById('btn-menu-mobile');
-  const sidebar = document.getElementById('sidebar-left');
-  const overlay = document.getElementById('menu-overlay');
 
-  if (!btnMenu || !sidebar || !overlay) return;
+// ============================================
+// NAVBAR SUPERIOR
+// ============================================
+function inicializarNavbar() {
+  const navbar = document.getElementById('navbar-top');
+  const toggle = document.getElementById('navbar-toggle');
+  const mainContent = document.querySelector('.main-conteudo');
 
-  btnMenu.addEventListener('click', () => {
-    sidebar.classList.add('aberta');
-    overlay.classList.add('ativo');
-    document.body.style.overflow = 'hidden';
+  if (!navbar || !toggle) return;
+
+  // Toggle menu expandido
+  toggle.addEventListener('click', () => {
+    navbar.classList.toggle('menu-open');
   });
 
-  overlay.addEventListener('click', fecharMenuMobile);
-
-  sidebar.querySelectorAll('.menu-item').forEach(item => {
+  // Fechar menu ao clicar em um item
+  document.querySelectorAll('.nav-expanded-item').forEach(item => {
     item.addEventListener('click', () => {
-      if (window.innerWidth <= 768) {
-        fecharMenuMobile();
-      }
+      navbar.classList.remove('menu-open');
     });
   });
 
-  function fecharMenuMobile() {
-    sidebar.classList.remove('aberta');
-    overlay.classList.remove('ativo');
-    document.body.style.overflow = '';
-  }
-
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
-      fecharMenuMobile();
+  // Fechar menu ao clicar fora
+  document.addEventListener('click', (e) => {
+    if (!navbar.contains(e.target) && navbar.classList.contains('menu-open')) {
+      navbar.classList.remove('menu-open');
     }
-  });
-}
-
-// ============================================
-// SIDEBAR COLAPSÁVEL
-// ============================================
-function inicializarSidebarToggle() {
-  const sidebar = document.getElementById('sidebar-left');
-  const toggle = document.getElementById('sidebar-toggle');
-  const appLayout = document.querySelector('.app-layout');
-
-  if (!sidebar || !toggle) return;
-
-  const estadoSalvo = localStorage.getItem('sidebar_colapsada');
-  if (estadoSalvo === 'true') {
-    sidebar.classList.add('colapsada');
-    appLayout.classList.add('sidebar-colapsada');
-    toggle.title = 'Expandir menu';
-  }
-
-  toggle.addEventListener('click', () => {
-    sidebar.classList.toggle('colapsada');
-    appLayout.classList.toggle('sidebar-colapsada');
-
-    const isColapsada = sidebar.classList.contains('colapsada');
-    localStorage.setItem('sidebar_colapsada', isColapsada);
-    toggle.title = isColapsada ? 'Expandir menu' : 'Recolher menu';
   });
 }
 
@@ -442,10 +826,13 @@ function inicializarSidebarToggle() {
 // INICIALIZAÇÃO
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+  inicializarNavbar();
   inicializarAbas();
   inicializarNiveis();
+  inicializarBusca();
+  inicializarFiltros();
+  inicializarModoFoco();
+  inicializarModoCompacto();
   carregarProgresso();
   inicializarWidget();
-  inicializarSidebarToggle();
-  inicializarMenuMobile();
 });

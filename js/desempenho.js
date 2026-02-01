@@ -1,21 +1,24 @@
 // ============================================
 // LuMED - JavaScript da Página de Desempenho
-// Sistema de Troféus e Metas
+// Sistema de Troféus, Metas e Questões
 // ============================================
 
 // Variáveis globais
 let metaHoras = 4;
 let semanaAtual = {};
 let trofeus = [];
+let questoesData = { total: 0, historico: [] };
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
   carregarDados();
+  carregarQuestoes();
   inicializarEventos();
+  inicializarEventosQuestoes();
   atualizarInterface();
+  atualizarQuestoesInterface();
   inicializarWidget();
-  inicializarSidebarToggle();
-  inicializarMenuMobile();
+  inicializarNavbar();
 });
 
 // ============================================
@@ -432,5 +435,303 @@ function inicializarWidget() {
     const isMinimizado = widget.classList.contains('minimizado');
     toggle.querySelector('i').className = isMinimizado ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
     localStorage.setItem('widget_minimizado', isMinimizado);
+  }
+}
+
+// ============================================
+// NAVBAR SUPERIOR
+// ============================================
+
+function inicializarNavbar() {
+  const navbar = document.querySelector('.navbar-top');
+  const toggleBtn = document.querySelector('.navbar-toggle');
+  const expandedMenu = document.querySelector('.navbar-expanded');
+
+  if (!navbar) return;
+
+  // Toggle menu expandido
+  if (toggleBtn && expandedMenu) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      expandedMenu.classList.toggle('aberto');
+      toggleBtn.classList.toggle('ativo');
+
+      const icon = toggleBtn.querySelector('i');
+      if (expandedMenu.classList.contains('aberto')) {
+        icon.className = 'bi bi-x-lg';
+      } else {
+        icon.className = 'bi bi-grid-3x3-gap-fill';
+      }
+    });
+
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+      if (!expandedMenu.contains(e.target) && !toggleBtn.contains(e.target)) {
+        expandedMenu.classList.remove('aberto');
+        toggleBtn.classList.remove('ativo');
+        const icon = toggleBtn.querySelector('i');
+        if (icon) icon.className = 'bi bi-grid-3x3-gap-fill';
+      }
+    });
+
+    // Fechar ao clicar em item do menu
+    expandedMenu.querySelectorAll('.nav-expanded-item').forEach(item => {
+      item.addEventListener('click', () => {
+        expandedMenu.classList.remove('aberto');
+        toggleBtn.classList.remove('ativo');
+        const icon = toggleBtn.querySelector('i');
+        if (icon) icon.className = 'bi bi-grid-3x3-gap-fill';
+      });
+    });
+  }
+
+}
+
+// ============================================
+// SISTEMA DE QUESTÕES
+// ============================================
+
+const coresMateria = {
+  geral: '#8b5cf6',
+  portugues: '#ef4444',
+  matematica: '#3b82f6',
+  historia: '#f59e0b',
+  geografia: '#10b981',
+  biologia: '#22c55e',
+  fisica: '#8b5cf6',
+  quimica: '#ec4899',
+  filosofia: '#6366f1',
+  sociologia: '#f97316',
+  ingles: '#14b8a6'
+};
+
+const nomesMateria = {
+  geral: 'Geral',
+  portugues: 'Português',
+  matematica: 'Matemática',
+  historia: 'História',
+  geografia: 'Geografia',
+  biologia: 'Biologia',
+  fisica: 'Física',
+  quimica: 'Química',
+  filosofia: 'Filosofia',
+  sociologia: 'Sociologia',
+  ingles: 'Inglês'
+};
+
+function carregarQuestoes() {
+  const salvo = localStorage.getItem('lumed_questoes');
+  if (salvo) {
+    questoesData = JSON.parse(salvo);
+  }
+}
+
+function salvarQuestoes() {
+  localStorage.setItem('lumed_questoes', JSON.stringify(questoesData));
+}
+
+function inicializarEventosQuestoes() {
+  const btnAdicionar = document.getElementById('btn-adicionar-questoes');
+  const inputQuestoes = document.getElementById('input-questoes');
+  const btnLimpar = document.getElementById('btn-limpar-historico');
+
+  if (btnAdicionar) {
+    btnAdicionar.addEventListener('click', adicionarQuestoes);
+  }
+
+  if (inputQuestoes) {
+    inputQuestoes.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        adicionarQuestoes();
+      }
+    });
+  }
+
+  if (btnLimpar) {
+    btnLimpar.addEventListener('click', limparHistoricoQuestoes);
+  }
+}
+
+function limparHistoricoQuestoes() {
+  mostrarConfirmacao(
+    'Limpar histórico',
+    'Deseja limpar todo o histórico e zerar o contador de questões?',
+    () => {
+      questoesData = { total: 0, historico: [] };
+      salvarQuestoes();
+      atualizarQuestoesInterface();
+    }
+  );
+}
+
+// ============================================
+// MODAL DE CONFIRMAÇÃO PERSONALIZADO
+// ============================================
+
+let confirmacaoCallback = null;
+
+function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
+  const modal = document.getElementById('modal-confirmacao');
+  const tituloEl = document.getElementById('confirmacao-titulo');
+  const mensagemEl = document.getElementById('confirmacao-mensagem');
+  const btnConfirmar = document.getElementById('btn-confirmacao-confirmar');
+  const btnCancelar = document.getElementById('btn-confirmacao-cancelar');
+
+  if (!modal) return;
+
+  tituloEl.textContent = titulo;
+  mensagemEl.textContent = mensagem;
+  confirmacaoCallback = onConfirmar;
+
+  modal.classList.add('aberto');
+
+  // Remover listeners antigos
+  const novoBtnConfirmar = btnConfirmar.cloneNode(true);
+  const novoBtnCancelar = btnCancelar.cloneNode(true);
+  btnConfirmar.parentNode.replaceChild(novoBtnConfirmar, btnConfirmar);
+  btnCancelar.parentNode.replaceChild(novoBtnCancelar, btnCancelar);
+
+  // Confirmar
+  novoBtnConfirmar.addEventListener('click', () => {
+    modal.classList.remove('aberto');
+    if (confirmacaoCallback) {
+      confirmacaoCallback();
+      confirmacaoCallback = null;
+    }
+  });
+
+  // Cancelar
+  novoBtnCancelar.addEventListener('click', () => {
+    modal.classList.remove('aberto');
+    confirmacaoCallback = null;
+  });
+
+  // Fechar ao clicar fora
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('aberto');
+      confirmacaoCallback = null;
+    }
+  });
+}
+
+function adicionarQuestoes() {
+  const input = document.getElementById('input-questoes');
+  const select = document.getElementById('select-materia-questoes');
+
+  const quantidade = parseInt(input.value);
+  const materia = select.value;
+
+  if (isNaN(quantidade) || quantidade <= 0) {
+    alert('Por favor, insira uma quantidade válida.');
+    return;
+  }
+
+  // Adicionar ao total
+  questoesData.total += quantidade;
+
+  // Adicionar ao histórico
+  const registro = {
+    id: Date.now(),
+    quantidade: quantidade,
+    materia: materia,
+    data: new Date().toISOString(),
+    fonte: 'manual'
+  };
+
+  questoesData.historico.unshift(registro);
+
+  // Manter apenas os últimos 50 registros
+  if (questoesData.historico.length > 50) {
+    questoesData.historico = questoesData.historico.slice(0, 50);
+  }
+
+  salvarQuestoes();
+  atualizarQuestoesInterface();
+
+  // Limpar input
+  input.value = '';
+
+  // Feedback visual
+  input.style.borderColor = '#22c55e';
+  setTimeout(() => {
+    input.style.borderColor = '';
+  }, 500);
+}
+
+function atualizarQuestoesInterface() {
+  const totalEl = document.getElementById('total-questoes');
+  const hojeEl = document.getElementById('questoes-hoje');
+  const semanaEl = document.getElementById('questoes-semana');
+  const mesEl = document.getElementById('questoes-mes');
+  const historicoEl = document.getElementById('historico-questoes');
+
+  if (!totalEl) return;
+
+  // Total
+  totalEl.textContent = questoesData.total;
+
+  // Calcular hoje, semana, mês
+  const agora = new Date();
+  const inicioDia = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+  const inicioSemana = getInicioSemana(agora);
+  const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+
+  let questoesHoje = 0;
+  let questoesSemana = 0;
+  let questoesMes = 0;
+
+  questoesData.historico.forEach(item => {
+    const dataItem = new Date(item.data);
+
+    if (dataItem >= inicioDia) {
+      questoesHoje += item.quantidade;
+    }
+    if (dataItem >= inicioSemana) {
+      questoesSemana += item.quantidade;
+    }
+    if (dataItem >= inicioMes) {
+      questoesMes += item.quantidade;
+    }
+  });
+
+  if (hojeEl) hojeEl.textContent = questoesHoje;
+  if (semanaEl) semanaEl.textContent = questoesSemana;
+  if (mesEl) mesEl.textContent = questoesMes;
+
+  // Histórico
+  if (historicoEl) {
+    if (questoesData.historico.length === 0) {
+      historicoEl.innerHTML = `
+        <div class="historico-vazio">
+          <i class="bi bi-journal-x"></i>
+          <p>Nenhum registro ainda</p>
+        </div>
+      `;
+    } else {
+      historicoEl.innerHTML = questoesData.historico.slice(0, 10).map(item => {
+        const dataItem = new Date(item.data);
+        const dataFormatada = dataItem.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="historico-item">
+            <div class="historico-item-info">
+              <div class="historico-item-icon" style="background: ${coresMateria[item.materia] || '#8b5cf6'}">
+                <i class="bi bi-pencil-fill"></i>
+              </div>
+              <div class="historico-item-texto">
+                <strong>${item.quantidade}</strong> questões de ${nomesMateria[item.materia] || 'Geral'}
+              </div>
+            </div>
+            <div class="historico-item-data">${dataFormatada}</div>
+          </div>
+        `;
+      }).join('');
+    }
   }
 }

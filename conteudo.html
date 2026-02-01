@@ -23,89 +23,161 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/conteudo.css">
+  <link rel="stylesheet" href="css/conteudo.css?v=3">
 </head>
 
 <body>
 
-  <div class="app-layout app-layout-conteudo">
-
-    <!-- SIDEBAR ESQUERDA (MENU) -->
-    <aside class="sidebar-left" id="sidebar-left">
-      <!-- Botão Toggle Sidebar -->
-      <button class="sidebar-toggle" id="sidebar-toggle" title="Recolher menu">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-
-      <div class="logo">
+  <!-- NAVBAR TOPO -->
+  <nav class="navbar-top" id="navbar-top">
+    <div class="navbar-container">
+      <!-- Logo -->
+      <div class="navbar-logo">
         <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
         <span class="logo-text">LuMED</span>
       </div>
 
-      <nav class="menu">
-        <a href="index.html" class="menu-item" id="nav-painel" data-tooltip="Painel">
+      <!-- Menu Principal -->
+      <div class="navbar-menu" id="navbar-menu">
+        <a href="index.html" class="nav-item" id="nav-painel">
           <i class="bi bi-grid-fill"></i>
           <span>Painel</span>
         </a>
-        <div class="menu-item" id="nav-aulas" data-tooltip="Aulas">
+        <a href="index.html#planner" class="nav-item" id="nav-planner">
+          <i class="bi bi-calendar-week"></i>
+          <span>Planner</span>
+        </a>
+        <a href="index.html#timer" class="nav-item" id="nav-timer">
+          <i class="bi bi-stopwatch"></i>
+          <span>Timer</span>
+        </a>
+        <a href="index.html#aulas" class="nav-item" id="nav-aulas">
           <i class="bi bi-play-circle"></i>
           <span>Aulas</span>
-        </div>
-        <div class="menu-item" id="nav-simulados" data-tooltip="Simulados">
-          <i class="bi bi-file-earmark-text"></i>
-          <span>Simulados</span>
-        </div>
-        <a href="desempenho.html" class="menu-item" id="nav-desempenho" data-tooltip="Desempenho">
+        </a>
+        <a href="conteudo.html" class="nav-item active" id="nav-edital">
+          <i class="bi bi-journal-bookmark"></i>
+          <span>Edital</span>
+        </a>
+        <a href="desempenho.html" class="nav-item" id="nav-desempenho">
           <i class="bi bi-graph-up"></i>
           <span>Desempenho</span>
         </a>
-        <div class="menu-item" id="nav-cronograma" data-tooltip="Cronograma">
-          <i class="bi bi-calendar3"></i>
-          <span>Cronograma</span>
-        </div>
-        <div class="menu-item" id="nav-materiais" data-tooltip="Materiais">
-          <i class="bi bi-folder"></i>
-          <span>Materiais</span>
-        </div>
-        <div class="menu-item active" id="nav-conteudo" data-tooltip="Conteúdo">
-          <i class="bi bi-journal-bookmark"></i>
-          <span>Conteúdo</span>
-        </div>
-        <div class="menu-item" id="nav-config" data-tooltip="Configurações">
+        <a href="index.html#redacao" class="nav-item" id="nav-redacao">
+          <i class="bi bi-pencil-square"></i>
+          <span>Redação</span>
+        </a>
+        <a href="index.html#config" class="nav-item" id="nav-config">
           <i class="bi bi-gear"></i>
           <span>Configurações</span>
-        </div>
-      </nav>
+        </a>
+      </div>
 
-      <div class="menu-footer">
-        <div class="menu-item sair" id="btn-sair" data-tooltip="Sair">
-          <i class="bi bi-box-arrow-left"></i>
-          <span>Sair</span>
+      <!-- Ações direita -->
+      <div class="navbar-actions">
+        <div class="profile" id="btn-perfil">
+          <span class="avatar"></span>
+          <span class="name">Maria Luisa</span>
+          <i class="bi bi-chevron-down"></i>
         </div>
       </div>
-    </aside>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR UNIFICADA -->
+  <aside class="sidebar-painel" id="sidebar-painel">
+    <!-- Header com Busca -->
+    <div class="sidebar-header">
+      <div class="sidebar-titulo">Buscar</div>
+      <div class="sidebar-busca">
+        <i class="bi bi-search"></i>
+        <input type="text" id="sidebar-busca-input" placeholder="Buscar tópicos...">
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="sidebar-filtros">
+      <div class="sidebar-filtros-titulo">Filtrar por</div>
+      <div class="sidebar-filtros-lista">
+        <button class="sidebar-filtro-btn active" data-filtro="todos">
+          <i class="bi bi-list-ul"></i>
+          Todos
+        </button>
+        <button class="sidebar-filtro-btn" data-filtro="pendentes">
+          <i class="bi bi-circle"></i>
+          Pendentes
+        </button>
+        <button class="sidebar-filtro-btn" data-filtro="em-progresso">
+          <i class="bi bi-play-circle"></i>
+          Em progresso
+        </button>
+        <button class="sidebar-filtro-btn" data-filtro="concluidos">
+          <i class="bi bi-check-circle"></i>
+          Concluídos
+        </button>
+      </div>
+    </div>
+
+    <!-- Progresso Circular -->
+    <div class="sidebar-progresso">
+      <div class="progresso-card">
+        <div class="progresso-titulo">Seu progresso</div>
+        <div class="progresso-circular">
+          <div class="progresso-ring">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#7c3aed"/>
+                  <stop offset="50%" stop-color="#a855f7"/>
+                  <stop offset="100%" stop-color="#c084fc"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="50" cy="50" r="40" stroke-width="10" fill="none" stroke="#e2e8f0"/>
+              <circle class="ring-fill" id="progresso-ring-fill" cx="50" cy="50" r="40" stroke-width="10" fill="none" stroke="url(#progressGradient)" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+            </svg>
+            <div class="ring-valor">
+              <span class="valor-num" id="progresso-valor">0%</span>
+              <span class="valor-label">concluído</span>
+            </div>
+          </div>
+        </div>
+        <div class="progresso-detalhes">
+          <div class="progresso-stat feitos">
+            <span class="stat-valor" id="stat-concluidos">0</span>
+            <span class="stat-label">Feitos</span>
+          </div>
+          <div class="progresso-stat total">
+            <span class="stat-valor" id="stat-total">0</span>
+            <span class="stat-label">Total</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="sidebar-acoes">
+      <button class="sidebar-acao-btn" id="btn-modo-foco" data-tooltip="Esconder concluídos">
+        <i class="bi bi-eye"></i>
+        Foco
+      </button>
+      <button class="sidebar-acao-btn" id="btn-modo-compacto" data-tooltip="Visualização compacta">
+        <i class="bi bi-list"></i>
+        Compacto
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-layout app-layout-conteudo layout-top-nav has-sidebar">
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="main-content main-conteudo">
       <div class="content-wrapper">
 
-        <!-- HEADER -->
-        <header class="header">
-          <!-- Botão Menu Mobile -->
-          <button class="btn-menu-mobile" id="btn-menu-mobile" title="Abrir menu">
-            <i class="bi bi-list"></i>
-          </button>
-
+        <!-- HEADER DA PÁGINA -->
+        <header class="page-header">
           <div class="header-title">
             <i class="bi bi-journal-bookmark"></i>
             <h1>Conteúdo Programático</h1>
-          </div>
-          <div class="header-actions">
-            <div class="profile" id="btn-perfil">
-              <span class="avatar"></span>
-              <span class="name">Maria Luisa</span>
-              <i class="bi bi-chevron-down"></i>
-            </div>
           </div>
         </header>
 
@@ -117,7 +189,7 @@
           </button>
           <button class="tab-btn" data-tab="macro">
             <span class="tab-icon uea">UEA</span>
-            Macro UEA 2026
+            MACRO 2026
           </button>
           <button class="tab-btn" data-tab="enem">
             <span class="tab-icon enem">ENEM</span>
@@ -125,14 +197,47 @@
           </button>
         </div>
 
-        <!-- PROGRESSO GERAL -->
-        <div class="progresso-geral">
-          <div class="progresso-info">
-            <span class="progresso-label">Progresso Geral:</span>
-            <span class="progresso-valor" id="progresso-valor">0%</span>
+        <!-- BARRA DE FERRAMENTAS -->
+        <div class="toolbar-conteudo">
+          <!-- Busca -->
+          <div class="busca-container">
+            <i class="bi bi-search"></i>
+            <input type="text" id="busca-topicos" placeholder="Buscar tópicos..." class="busca-input">
+            <button class="busca-limpar" id="busca-limpar" title="Limpar busca">
+              <i class="bi bi-x"></i>
+            </button>
           </div>
-          <div class="progresso-barra">
-            <div class="progresso-fill" id="progresso-fill" style="width: 0%"></div>
+
+          <!-- Filtros -->
+          <div class="filtros-container">
+            <button class="filtro-btn active" data-filtro="todos">
+              <i class="bi bi-grid-3x3-gap"></i>
+              Todos
+            </button>
+            <button class="filtro-btn" data-filtro="pendentes">
+              <i class="bi bi-circle"></i>
+              Pendentes
+            </button>
+            <button class="filtro-btn" data-filtro="em-progresso">
+              <i class="bi bi-hourglass-split"></i>
+              Em Progresso
+            </button>
+            <button class="filtro-btn" data-filtro="concluidos">
+              <i class="bi bi-check-circle-fill"></i>
+              Concluídos
+            </button>
+          </div>
+
+          <!-- Ações Rápidas -->
+          <div class="acoes-rapidas">
+            <button class="acao-btn" id="btn-modo-foco" title="Modo Foco - Esconder concluídos">
+              <i class="bi bi-eye"></i>
+              <span>Modo Foco</span>
+            </button>
+            <button class="acao-btn" id="btn-modo-compacto" title="Modo Compacto">
+              <i class="bi bi-view-list"></i>
+              <span>Compacto</span>
+            </button>
           </div>
         </div>
 
@@ -155,28 +260,23 @@
               <!-- Navegação de Níveis -->
               <div class="niveis-nav">
                 <button class="nivel-tab nivelamento active" data-nivel="nivelamento">
-                  <i class="bi bi-star nivel-icon"></i>
                   Nivelamento
                   <span class="nivel-badge">0/3</span>
                 </button>
                 <button class="nivel-tab basico1" data-nivel="basico1">
-                  <i class="bi bi-1-circle nivel-icon"></i>
-                  Básico 1
+                  Básico
                   <span class="nivel-badge">0/4</span>
                 </button>
                 <button class="nivel-tab basico2" data-nivel="basico2">
-                  <i class="bi bi-2-circle nivel-icon"></i>
-                  Básico 2
+                  Fundamento
                   <span class="nivel-badge">0/4</span>
                 </button>
                 <button class="nivel-tab construcao" data-nivel="construcao">
-                  <i class="bi bi-hammer nivel-icon"></i>
-                  Construção
+                  Performance
                   <span class="nivel-badge">0/4</span>
                 </button>
                 <button class="nivel-tab ataque" data-nivel="ataque">
-                  <i class="bi bi-lightning nivel-icon"></i>
-                  Ataque
+                  Maestria
                   <span class="nivel-badge">0/3</span>
                 </button>
               </div>
@@ -205,24 +305,41 @@
                 <div class="topicos-grid">
                   <div class="topico-card" data-topico-id="bio-niv-1">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Citologia: estrutura e fisiologia celular</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Citologia: estrutura e fisiologia celular</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" title="Marcar teoria como estudada">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -232,24 +349,41 @@
 
                   <div class="topico-card" data-topico-id="bio-niv-2">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Divisão Celular (mitose e meiose)</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Divisão Celular (mitose e meiose)</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" title="Marcar teoria como estudada">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -259,24 +393,41 @@
 
                   <div class="topico-card" data-topico-id="bio-niv-3">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Metabolismo Energético (fotossíntese e respiração)</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Metabolismo Energético (fotossíntese e respiração)</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" title="Marcar teoria como estudada">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -310,7 +461,7 @@
                   <div class="nivel-progress-header">
                     <div class="nivel-progress-title">
                       <i class="bi bi-graph-up-arrow"></i>
-                      Progresso do Básico 1
+                      Progresso do Básico
                     </div>
                     <div class="nivel-progress-stats">
                       <strong>0</strong> de <strong>4</strong> concluídos
@@ -330,24 +481,41 @@
                 <div class="topicos-grid">
                   <div class="topico-card" data-topico-id="bio-b1-1">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Biologia Molecular: DNA e RNA</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Biologia Molecular: DNA e RNA</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -357,24 +525,41 @@
 
                   <div class="topico-card" data-topico-id="bio-b1-2">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Genética: Leis de Mendel</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Genética: Leis de Mendel</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -384,24 +569,41 @@
 
                   <div class="topico-card" data-topico-id="bio-b1-3">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Herança e Sexo</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Herança e Sexo</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -411,24 +613,41 @@
 
                   <div class="topico-card" data-topico-id="bio-b1-4">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Mutações Genéticas</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Mutações Genéticas</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -462,7 +681,7 @@
                   <div class="nivel-progress-header">
                     <div class="nivel-progress-title">
                       <i class="bi bi-graph-up-arrow"></i>
-                      Progresso do Básico 2
+                      Progresso do Fundamento
                     </div>
                     <div class="nivel-progress-stats">
                       <strong>0</strong> de <strong>4</strong> concluídos
@@ -482,24 +701,41 @@
                 <div class="topicos-grid">
                   <div class="topico-card" data-topico-id="bio-b2-1">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Biotecnologia</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Biotecnologia</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -509,24 +745,41 @@
 
                   <div class="topico-card" data-topico-id="bio-b2-2">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Evolução Biológica</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Evolução Biológica</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -536,24 +789,41 @@
 
                   <div class="topico-card" data-topico-id="bio-b2-3">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Classificação dos Seres Vivos</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Classificação dos Seres Vivos</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -563,24 +833,41 @@
 
                   <div class="topico-card" data-topico-id="bio-b2-4">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Ecologia: ecossistemas e cadeias tróficas</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Ecologia: ecossistemas e cadeias tróficas</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -614,7 +901,7 @@
                   <div class="nivel-progress-header">
                     <div class="nivel-progress-title">
                       <i class="bi bi-graph-up-arrow"></i>
-                      Progresso da Construção
+                      Progresso da Performance
                     </div>
                     <div class="nivel-progress-stats">
                       <strong>0</strong> de <strong>4</strong> concluídos
@@ -634,24 +921,41 @@
                 <div class="topicos-grid">
                   <div class="topico-card" data-topico-id="bio-c-1">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Ciclos Biogeoquímicos</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Ciclos Biogeoquímicos</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -661,24 +965,41 @@
 
                   <div class="topico-card" data-topico-id="bio-c-2">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Impactos Ambientais e Preservação</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Impactos Ambientais e Preservação</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -688,24 +1009,41 @@
 
                   <div class="topico-card" data-topico-id="bio-c-3">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Corpo Humano: sistemas e órgãos</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Corpo Humano: sistemas e órgãos</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -715,24 +1053,41 @@
 
                   <div class="topico-card" data-topico-id="bio-c-4">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">ISTs e Métodos Contraceptivos</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">ISTs e Métodos Contraceptivos</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -766,7 +1121,7 @@
                   <div class="nivel-progress-header">
                     <div class="nivel-progress-title">
                       <i class="bi bi-graph-up-arrow"></i>
-                      Progresso do Ataque
+                      Progresso do Maestria
                     </div>
                     <div class="nivel-progress-stats">
                       <strong>0</strong> de <strong>3</strong> concluídos
@@ -784,24 +1139,41 @@
                 <div class="topicos-grid">
                   <div class="topico-card" data-topico-id="bio-a-1">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Vacinas e Imunização</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Vacinas e Imunização</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -811,24 +1183,41 @@
 
                   <div class="topico-card" data-topico-id="bio-a-2">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Biodiversidade Amazônica</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Biodiversidade Amazônica</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -838,24 +1227,41 @@
 
                   <div class="topico-card" data-topico-id="bio-a-3">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Dinâmica de Populações</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Dinâmica de Populações</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -901,28 +1307,23 @@
             <div class="materia-content">
               <div class="niveis-nav">
                 <button class="nivel-tab nivelamento active" data-nivel="nivelamento">
-                  <i class="bi bi-star nivel-icon"></i>
                   Nivelamento
                   <span class="nivel-badge">0/4</span>
                 </button>
                 <button class="nivel-tab basico1" data-nivel="basico1">
-                  <i class="bi bi-1-circle nivel-icon"></i>
-                  Básico 1
+                  Básico
                   <span class="nivel-badge">0/4</span>
                 </button>
                 <button class="nivel-tab basico2" data-nivel="basico2">
-                  <i class="bi bi-2-circle nivel-icon"></i>
-                  Básico 2
+                  Fundamento
                   <span class="nivel-badge">0/4</span>
                 </button>
                 <button class="nivel-tab construcao" data-nivel="construcao">
-                  <i class="bi bi-hammer nivel-icon"></i>
-                  Construção
+                  Performance
                   <span class="nivel-badge">0/4</span>
                 </button>
                 <button class="nivel-tab ataque" data-nivel="ataque">
-                  <i class="bi bi-lightning nivel-icon"></i>
-                  Ataque
+                  Maestria
                   <span class="nivel-badge">0/4</span>
                 </button>
               </div>
@@ -953,24 +1354,41 @@
                 <div class="topicos-grid">
                   <div class="topico-card" data-topico-id="mat-niv-1">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Razão, Proporção e Porcentagem</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Razão, Proporção e Porcentagem</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -980,24 +1398,41 @@
 
                   <div class="topico-card" data-topico-id="mat-niv-2">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Juros Simples e Compostos</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Juros Simples e Compostos</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -1007,24 +1442,41 @@
 
                   <div class="topico-card" data-topico-id="mat-niv-3">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Função Polinomial de 1º grau</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Função Polinomial de 1º grau</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -1034,24 +1486,41 @@
 
                   <div class="topico-card" data-topico-id="mat-niv-4">
                     <div class="topico-left">
-                      <label class="topico-checkbox">
+                      <label class="topico-checkbox" data-tooltip="Marcar como concluído">
                         <input type="checkbox" onchange="toggleTopico(this)">
                         <span class="checkmark"></span>
                       </label>
                       <div class="topico-info">
-                        <div class="topico-nome">Função Polinomial de 2º grau</div>
+                        <div class="topico-header-card">
+                          <div class="topico-nome">Função Polinomial de 2º grau</div>
+                          <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
+                            <i class="bi bi-star"></i>
+                          </button>
+                        </div>
                         <div class="topico-meta">
-                          <span><i class="bi bi-book"></i> Teoria</span>
-                          <span><i class="bi bi-pencil"></i> 0 questões</span>
+                          <span class="meta-teoria"><i class="bi bi-book"></i> Teoria</span>
+                          <span class="meta-questoes"><i class="bi bi-pencil"></i> 0 questões</span>
+                        </div>
+                        <div class="topico-progress-mini">
+                          <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" style="width: 0%"></div>
+                          </div>
+                          <span class="progress-mini-text">0%</span>
                         </div>
                       </div>
                     </div>
+                    <div class="topico-status">
+                      <span class="status-badge pendente">
+                        <i class="bi bi-circle"></i>
+                        Pendente
+                      </span>
+                    </div>
                     <div class="topico-actions">
-                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)">
+                      <button class="action-btn btn-teoria" onclick="toggleTeoria(this)" data-tooltip="Marcar teoria como estudada">
                         <i class="bi bi-book"></i>
                         Teoria
                       </button>
-                      <div class="questoes-counter">
+                      <div class="questoes-counter" data-tooltip="Questões resolvidas">
                         <button class="counter-btn minus" onclick="decrementarQuestoes(this)">-</button>
                         <span>0</span>
                         <button class="counter-btn" onclick="incrementarQuestoes(this)">+</button>
@@ -1102,24 +1571,19 @@
             <div class="materia-content">
               <div class="niveis-nav">
                 <button class="nivel-tab nivelamento active" data-nivel="nivelamento">
-                  <i class="bi bi-star nivel-icon"></i>
                   Nivelamento
                 </button>
                 <button class="nivel-tab basico1" data-nivel="basico1">
-                  <i class="bi bi-1-circle nivel-icon"></i>
-                  Básico 1
+                  Básico
                 </button>
                 <button class="nivel-tab basico2" data-nivel="basico2">
-                  <i class="bi bi-2-circle nivel-icon"></i>
-                  Básico 2
+                  Fundamento
                 </button>
                 <button class="nivel-tab construcao" data-nivel="construcao">
-                  <i class="bi bi-hammer nivel-icon"></i>
-                  Construção
+                  Performance
                 </button>
                 <button class="nivel-tab ataque" data-nivel="ataque">
-                  <i class="bi bi-lightning nivel-icon"></i>
-                  Ataque
+                  Maestria
                 </button>
               </div>
               <div class="nivel-content active" data-nivel-content="nivelamento">
@@ -1143,24 +1607,19 @@
             <div class="materia-content">
               <div class="niveis-nav">
                 <button class="nivel-tab nivelamento active" data-nivel="nivelamento">
-                  <i class="bi bi-star nivel-icon"></i>
                   Nivelamento
                 </button>
                 <button class="nivel-tab basico1" data-nivel="basico1">
-                  <i class="bi bi-1-circle nivel-icon"></i>
-                  Básico 1
+                  Básico
                 </button>
                 <button class="nivel-tab basico2" data-nivel="basico2">
-                  <i class="bi bi-2-circle nivel-icon"></i>
-                  Básico 2
+                  Fundamento
                 </button>
                 <button class="nivel-tab construcao" data-nivel="construcao">
-                  <i class="bi bi-hammer nivel-icon"></i>
-                  Construção
+                  Performance
                 </button>
                 <button class="nivel-tab ataque" data-nivel="ataque">
-                  <i class="bi bi-lightning nivel-icon"></i>
-                  Ataque
+                  Maestria
                 </button>
               </div>
               <div class="nivel-content active" data-nivel-content="nivelamento">
@@ -1184,24 +1643,19 @@
             <div class="materia-content">
               <div class="niveis-nav">
                 <button class="nivel-tab nivelamento active" data-nivel="nivelamento">
-                  <i class="bi bi-star nivel-icon"></i>
                   Nivelamento
                 </button>
                 <button class="nivel-tab basico1" data-nivel="basico1">
-                  <i class="bi bi-1-circle nivel-icon"></i>
-                  Básico 1
+                  Básico
                 </button>
                 <button class="nivel-tab basico2" data-nivel="basico2">
-                  <i class="bi bi-2-circle nivel-icon"></i>
-                  Básico 2
+                  Fundamento
                 </button>
                 <button class="nivel-tab construcao" data-nivel="construcao">
-                  <i class="bi bi-hammer nivel-icon"></i>
-                  Construção
+                  Performance
                 </button>
                 <button class="nivel-tab ataque" data-nivel="ataque">
-                  <i class="bi bi-lightning nivel-icon"></i>
-                  Ataque
+                  Maestria
                 </button>
               </div>
               <div class="nivel-content active" data-nivel-content="nivelamento">
@@ -1225,24 +1679,19 @@
             <div class="materia-content">
               <div class="niveis-nav">
                 <button class="nivel-tab nivelamento active" data-nivel="nivelamento">
-                  <i class="bi bi-star nivel-icon"></i>
                   Nivelamento
                 </button>
                 <button class="nivel-tab basico1" data-nivel="basico1">
-                  <i class="bi bi-1-circle nivel-icon"></i>
-                  Básico 1
+                  Básico
                 </button>
                 <button class="nivel-tab basico2" data-nivel="basico2">
-                  <i class="bi bi-2-circle nivel-icon"></i>
-                  Básico 2
+                  Fundamento
                 </button>
                 <button class="nivel-tab construcao" data-nivel="construcao">
-                  <i class="bi bi-hammer nivel-icon"></i>
-                  Construção
+                  Performance
                 </button>
                 <button class="nivel-tab ataque" data-nivel="ataque">
-                  <i class="bi bi-lightning nivel-icon"></i>
-                  Ataque
+                  Maestria
                 </button>
               </div>
               <div class="nivel-content active" data-nivel-content="nivelamento">
@@ -1266,24 +1715,19 @@
             <div class="materia-content">
               <div class="niveis-nav">
                 <button class="nivel-tab nivelamento active" data-nivel="nivelamento">
-                  <i class="bi bi-star nivel-icon"></i>
                   Nivelamento
                 </button>
                 <button class="nivel-tab basico1" data-nivel="basico1">
-                  <i class="bi bi-1-circle nivel-icon"></i>
-                  Básico 1
+                  Básico
                 </button>
                 <button class="nivel-tab basico2" data-nivel="basico2">
-                  <i class="bi bi-2-circle nivel-icon"></i>
-                  Básico 2
+                  Fundamento
                 </button>
                 <button class="nivel-tab construcao" data-nivel="construcao">
-                  <i class="bi bi-hammer nivel-icon"></i>
-                  Construção
+                  Performance
                 </button>
                 <button class="nivel-tab ataque" data-nivel="ataque">
-                  <i class="bi bi-lightning nivel-icon"></i>
-                  Ataque
+                  Maestria
                 </button>
               </div>
               <div class="nivel-content active" data-nivel-content="nivelamento">
@@ -1315,9 +1759,6 @@
 
   </div>
 
-  <!-- OVERLAY MENU MOBILE -->
-  <div class="menu-overlay" id="menu-overlay"></div>
-
   <!-- WIDGET MOTIVACIONAL -->
   <div class="widget-motivacional" id="widget-motivacional">
     <button class="widget-toggle" id="widget-toggle" title="Minimizar">
@@ -1331,6 +1772,13 @@
       <img src="imagem/widget.jpg" alt="Motivação">
     </div>
   </div>
+
+  <!-- Container de Confete para Animação -->
+  <div class="confetti-container" id="confetti-container"></div>
+
+  <!-- Supabase Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/auth.js"></script>
 
   <script src="js/conteudo.js"></script>
 

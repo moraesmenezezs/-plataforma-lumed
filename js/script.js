@@ -371,6 +371,8 @@ btnConfirmar.addEventListener('click', () => {
   const materia = materiaSelecionada;
   const nomeMateria = nomesMaterias[materia];
   const icone = iconesMaterias[materia];
+  const inputQuestoes = document.getElementById('questoes-tarefa');
+  const questoes = inputQuestoes ? parseInt(inputQuestoes.value) || 0 : 0;
 
   if (!nome || !materia) return;
 
@@ -381,6 +383,12 @@ btnConfirmar.addEventListener('click', () => {
   // Cria wrapper com sistema de swipe
   const wrapper = document.createElement('div');
   wrapper.className = 'todo-item-wrapper';
+  wrapper.dataset.questoes = questoes;
+  wrapper.dataset.materia = materia;
+  wrapper.dataset.contabilizado = 'false';
+
+  const questoesLabel = questoes > 0 ? `<span class="todo-questoes"><i class="bi bi-pencil-square"></i> ${questoes} questões</span>` : '';
+
   wrapper.innerHTML = `
     <div class="todo-delete-bg" onclick="excluirTarefa(this.parentElement)" title="Excluir tarefa">
       <i class="bi bi-trash-fill"></i>
@@ -392,7 +400,7 @@ btnConfirmar.addEventListener('click', () => {
       </label>
       <div class="todo-content">
         <span class="todo-text">${nome}</span>
-        <span class="todo-meta"><i class="bi ${icone}"></i> ${nomeMateria}</span>
+        <span class="todo-meta"><i class="bi ${icone}"></i> ${nomeMateria} ${questoesLabel}</span>
       </div>
     </div>
   `;
@@ -408,6 +416,9 @@ btnConfirmar.addEventListener('click', () => {
 
   // Fecha modal
   fecharModal();
+
+  // Limpa campo de questões
+  if (inputQuestoes) inputQuestoes.value = '';
 
   // Atualiza progresso
   atualizarProgressoTarefas();
@@ -518,17 +529,64 @@ function excluirTarefa(wrapper) {
 // Marcar tarefa como concluída
 function marcarTarefa(checkbox) {
   const todoItem = checkbox.closest('.todo-item');
+  const wrapper = checkbox.closest('.todo-item-wrapper');
 
   if (checkbox.checked) {
     todoItem.classList.add('completed');
     checkbox.nextElementSibling.innerHTML = '<i class="bi bi-check"></i>';
+
+    // Adicionar questões ao desempenho se ainda não contabilizado
+    if (wrapper && wrapper.dataset.contabilizado !== 'true') {
+      const questoes = parseInt(wrapper.dataset.questoes) || 0;
+      const materia = wrapper.dataset.materia || 'geral';
+
+      if (questoes > 0) {
+        adicionarQuestoesDesempenho(questoes, materia);
+        wrapper.dataset.contabilizado = 'true';
+      }
+    }
   } else {
     todoItem.classList.remove('completed');
     checkbox.nextElementSibling.innerHTML = '';
+    // Não reverte as questões ao desmarcar
   }
 
   salvarTarefas();
   atualizarProgressoTarefas();
+  atualizarBannerQuestoes();
+}
+
+// Adicionar questões ao sistema de desempenho
+function adicionarQuestoesDesempenho(quantidade, materia) {
+  let questoesData = JSON.parse(localStorage.getItem('lumed_questoes')) || { total: 0, historico: [] };
+
+  questoesData.total += quantidade;
+
+  const registro = {
+    id: Date.now(),
+    quantidade: quantidade,
+    materia: materia,
+    data: new Date().toISOString(),
+    fonte: 'tarefa'
+  };
+
+  questoesData.historico.unshift(registro);
+
+  if (questoesData.historico.length > 50) {
+    questoesData.historico = questoesData.historico.slice(0, 50);
+  }
+
+  localStorage.setItem('lumed_questoes', JSON.stringify(questoesData));
+}
+
+// Atualizar banner com total de questões
+function atualizarBannerQuestoes() {
+  const questoesData = JSON.parse(localStorage.getItem('lumed_questoes')) || { total: 0, historico: [] };
+  const bannerQuestoes = document.querySelector('.welcome-stats .stat-item:first-child .stat-value');
+
+  if (bannerQuestoes) {
+    bannerQuestoes.textContent = questoesData.total;
+  }
 }
 
 // Atualizar barra de progresso
@@ -557,8 +615,11 @@ function salvarTarefas() {
     const iconeEl = metaEl.querySelector('i');
     const icone = iconeEl ? iconeEl.className.replace('bi ', '') : 'bi-book';
     const completada = item.classList.contains('completed');
+    const questoes = parseInt(wrapper.dataset.questoes) || 0;
+    const materia = wrapper.dataset.materia || 'geral';
+    const contabilizado = wrapper.dataset.contabilizado === 'true';
 
-    tarefas.push({ texto, meta, icone, completada });
+    tarefas.push({ texto, meta, icone, completada, questoes, materia, contabilizado });
   });
 
   localStorage.setItem('lumed_tarefas', JSON.stringify(tarefas));
@@ -587,6 +648,10 @@ function carregarTarefas() {
   tarefas.forEach(tarefa => {
     const wrapper = document.createElement('div');
     wrapper.className = 'todo-item-wrapper';
+    wrapper.dataset.questoes = tarefa.questoes || 0;
+    wrapper.dataset.materia = tarefa.materia || 'geral';
+    wrapper.dataset.contabilizado = tarefa.contabilizado ? 'true' : 'false';
+
     wrapper.innerHTML = `
       <div class="todo-delete-bg" onclick="excluirTarefa(this.parentElement)" title="Excluir tarefa">
         <i class="bi bi-trash-fill"></i>
@@ -629,12 +694,59 @@ document.head.appendChild(style);
 document.addEventListener('DOMContentLoaded', () => {
   carregarTarefas();
   inicializarWidget();
-  inicializarSidebarToggle();
-  inicializarMenuMobile();
+  inicializarNavbar();
   inicializarCalendario();
   inicializarCronometro();
   atualizarContadorENEM();
+  atualizarRadarVestibulares();
+  atualizarBannerQuestoes();
+  verificarPaginaInicial();
 });
+
+// Verificar se deve abrir uma página específica (via query string ou hash)
+function verificarPaginaInicial() {
+  const params = new URLSearchParams(window.location.search);
+  const pagina = params.get('pagina');
+  const hash = window.location.hash.replace('#', '');
+
+  // Verificar query string primeiro
+  if (pagina === 'planner') {
+    const navPlanner = document.getElementById('nav-planner');
+    if (navPlanner) navPlanner.click();
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return;
+  }
+
+  // Verificar hash da URL (vindo de outras páginas)
+  if (hash) {
+    let navElement = null;
+
+    switch(hash) {
+      case 'planner':
+        navElement = document.getElementById('nav-planner');
+        break;
+      case 'timer':
+        navElement = document.getElementById('nav-timer');
+        break;
+      case 'aulas':
+        navElement = document.getElementById('nav-aulas');
+        break;
+      case 'redacao':
+        navElement = document.getElementById('nav-redacao');
+        break;
+      case 'config':
+        navElement = document.getElementById('nav-config');
+        break;
+    }
+
+    if (navElement) {
+      navElement.click();
+    }
+
+    // Limpar hash da URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
 
 // ============================================
 // MENU MOBILE
@@ -923,12 +1035,12 @@ function salvarEvento() {
 function excluirEvento() {
   if (!diaSelecionado) return;
 
-  if (confirm('Tem certeza que deseja excluir este evento?')) {
+  mostrarConfirmacao('Excluir evento', 'Tem certeza que deseja excluir este evento?', () => {
     delete eventosCalendario[diaSelecionado];
     salvarEventos();
     renderizarCalendario();
     fecharModalEvento();
-  }
+  });
 }
 
 function configurarModalEventos() {
@@ -1054,26 +1166,24 @@ function pausarCronometro() {
 }
 
 function zerarTempoDia() {
-  if (!confirm('Tem certeza que deseja zerar o tempo de estudo de hoje?')) {
-    return;
-  }
+  mostrarConfirmacao('Zerar tempo', 'Tem certeza que deseja zerar o tempo de estudo de hoje?', () => {
+    // Pausar cronômetro
+    if (cronometroRodando) {
+      pausarCronometro();
+    }
 
-  // Pausar cronômetro
-  if (cronometroRodando) {
-    pausarCronometro();
-  }
+    // Zerar sessão atual
+    cronometroSegundos = 0;
 
-  // Zerar sessão atual
-  cronometroSegundos = 0;
+    // Zerar tempo de hoje no localStorage
+    const hoje = obterDataHoje();
+    const tempos = obterTemposEstudo();
+    tempos[hoje] = 0;
+    localStorage.setItem('lumed_tempos_estudo', JSON.stringify(tempos));
 
-  // Zerar tempo de hoje no localStorage
-  const hoje = obterDataHoje();
-  const tempos = obterTemposEstudo();
-  tempos[hoje] = 0;
-  localStorage.setItem('lumed_tempos_estudo', JSON.stringify(tempos));
-
-  // Atualizar exibição
-  atualizarExibicaoTempo();
+    // Atualizar exibição
+    atualizarExibicaoTempo();
+  });
 }
 
 function formatarHoras(segundos) {
@@ -1132,25 +1242,950 @@ function atualizarExibicaoTempo() {
 }
 
 // ============================================
-// CONTADOR DIAS PARA O ENEM
+// CONTADOR DIAS PARA VESTIBULARES
 // ============================================
 
-function atualizarContadorENEM() {
-  const elementoDias = document.getElementById('dias-enem');
-  if (!elementoDias) return;
+// Datas dos vestibulares 2026
+const datasVestibulares = {
+  enem: { data: new Date(2026, 10, 1), nome: 'ENEM 2026', ajustarDomingo: true }, // 1º domingo de novembro
+  uea: { data: new Date(2026, 9, 26), nome: 'MACRO 2026', ajustarDomingo: false }, // 26 de outubro
+  psi: { data: new Date(2026, 9, 13), nome: 'PSI 2026', ajustarDomingo: false } // 13 de outubro
+};
 
-  // Data do ENEM 2026 (primeiro domingo de novembro)
-  const enemData = new Date(2026, 10, 1); // Novembro = 10 (mês base 0)
-  // Ajustar para o primeiro domingo
-  while (enemData.getDay() !== 0) {
-    enemData.setDate(enemData.getDate() + 1);
+function calcularDiasRestantes(dataAlvo, ajustarDomingo = false) {
+  const data = new Date(dataAlvo);
+
+  // Se precisa ajustar para o primeiro domingo (ENEM)
+  if (ajustarDomingo) {
+    while (data.getDay() !== 0) {
+      data.setDate(data.getDate() + 1);
+    }
   }
 
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
 
-  const diffTime = enemData - hoje;
+  const diffTime = data - hoje;
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  elementoDias.textContent = diffDays;
+  return diffDays;
 }
+
+function atualizarContadorENEM() {
+  const elementoDias = document.getElementById('dias-enem');
+  if (!elementoDias) return;
+
+  const dias = calcularDiasRestantes(datasVestibulares.enem.data, datasVestibulares.enem.ajustarDomingo);
+  elementoDias.textContent = dias;
+}
+
+function atualizarRadarVestibulares() {
+  const listaVestibulares = document.getElementById('lista-vestibulares');
+  if (!listaVestibulares) return;
+
+  // Calcula os dias para cada vestibular
+  const diasEnem = calcularDiasRestantes(datasVestibulares.enem.data, datasVestibulares.enem.ajustarDomingo);
+  const diasUea = calcularDiasRestantes(datasVestibulares.uea.data, datasVestibulares.uea.ajustarDomingo);
+  const diasPsi = calcularDiasRestantes(datasVestibulares.psi.data, datasVestibulares.psi.ajustarDomingo);
+
+  // Atualiza o HTML do radar
+  listaVestibulares.innerHTML = `
+    <!-- ENEM -->
+    <div class="vestibular-mini">
+      <div class="vestibular-logo-mini enem">ENEM</div>
+      <div class="vestibular-info-mini">
+        <span class="vestibular-nome-mini">${datasVestibulares.enem.nome}</span>
+        <span class="vestibular-dias"><strong>${diasEnem}</strong> dias</span>
+      </div>
+    </div>
+
+    <!-- MACRO UEA -->
+    <div class="vestibular-mini">
+      <div class="vestibular-logo-mini uea">UEA</div>
+      <div class="vestibular-info-mini">
+        <span class="vestibular-nome-mini">${datasVestibulares.uea.nome}</span>
+        <span class="vestibular-dias"><strong>${diasUea}</strong> dias</span>
+      </div>
+    </div>
+
+    <!-- PSI -->
+    <div class="vestibular-mini">
+      <div class="vestibular-logo-mini psi">PSI</div>
+      <div class="vestibular-info-mini">
+        <span class="vestibular-nome-mini">${datasVestibulares.psi.nome}</span>
+        <span class="vestibular-dias"><strong>${diasPsi}</strong> dias</span>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================
+// NAVBAR SUPERIOR
+// ============================================
+
+function inicializarNavbar() {
+  const navbar = document.querySelector('.navbar-top');
+  const toggleBtn = document.querySelector('.navbar-toggle');
+  const expandedMenu = document.querySelector('.navbar-expanded');
+
+  if (!navbar) return;
+
+  // Toggle menu expandido
+  if (toggleBtn && expandedMenu) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      expandedMenu.classList.toggle('aberto');
+      toggleBtn.classList.toggle('ativo');
+
+      const icon = toggleBtn.querySelector('i');
+      if (expandedMenu.classList.contains('aberto')) {
+        icon.className = 'bi bi-x-lg';
+      } else {
+        icon.className = 'bi bi-grid-3x3-gap-fill';
+      }
+    });
+
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+      if (!expandedMenu.contains(e.target) && !toggleBtn.contains(e.target)) {
+        expandedMenu.classList.remove('aberto');
+        toggleBtn.classList.remove('ativo');
+        const icon = toggleBtn.querySelector('i');
+        if (icon) icon.className = 'bi bi-grid-3x3-gap-fill';
+      }
+    });
+
+    // Fechar ao clicar em item do menu
+    expandedMenu.querySelectorAll('.nav-expanded-item').forEach(item => {
+      item.addEventListener('click', () => {
+        expandedMenu.classList.remove('aberto');
+        toggleBtn.classList.remove('ativo');
+        const icon = toggleBtn.querySelector('i');
+        if (icon) icon.className = 'bi bi-grid-3x3-gap-fill';
+      });
+    });
+  }
+
+}
+
+// ============================================
+// PLANNER DE ESTUDOS
+// ============================================
+
+(function() {
+  const plannerSection = document.getElementById('planner-section');
+  const mainContent = document.querySelector('.main-content');
+  const navPlanner = document.getElementById('nav-planner');
+  const navPainel = document.getElementById('nav-painel');
+  const gridBody = document.getElementById('grid-body');
+
+  if (!plannerSection || !navPlanner) return;
+
+  // Horários do dia
+  const horarios = [
+    '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
+    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+    '18:00', '19:00', '20:00', '21:00'
+  ];
+
+  // Cores das matérias
+  const coresMateria = {
+    portugues: '#ef4444',
+    matematica: '#3b82f6',
+    historia: '#f59e0b',
+    geografia: '#10b981',
+    biologia: '#22c55e',
+    fisica: '#8b5cf6',
+    quimica: '#ec4899',
+    redacao: '#6366f1',
+    ingles: '#14b8a6',
+    revisao: '#64748b'
+  };
+
+  const nomesMateria = {
+    portugues: 'Português',
+    matematica: 'Matemática',
+    historia: 'História',
+    geografia: 'Geografia',
+    biologia: 'Biologia',
+    fisica: 'Física',
+    quimica: 'Química',
+    redacao: 'Redação',
+    ingles: 'Inglês',
+    revisao: 'Revisão'
+  };
+
+  let materiaSelecionada = null;
+  let gradeData = JSON.parse(localStorage.getItem('plannerGrade')) || {};
+
+  // Gerar grid
+  function gerarGrid() {
+    if (!gridBody) return;
+    gridBody.innerHTML = '';
+
+    horarios.forEach(horario => {
+      const row = document.createElement('div');
+      row.className = 'grid-row';
+
+      // Célula de horário
+      const timeCell = document.createElement('div');
+      timeCell.className = 'grid-time';
+      timeCell.textContent = horario;
+      row.appendChild(timeCell);
+
+      // 7 células para os dias
+      for (let dia = 0; dia < 7; dia++) {
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.dataset.horario = horario;
+        cell.dataset.dia = dia;
+
+        // Carregar dados salvos
+        const key = `${dia}-${horario}`;
+        if (gradeData[key]) {
+          cell.classList.add('filled');
+          cell.style.setProperty('--cor', coresMateria[gradeData[key]]);
+          cell.textContent = nomesMateria[gradeData[key]];
+        }
+
+        cell.addEventListener('click', () => handleCellClick(cell, key));
+        row.appendChild(cell);
+      }
+
+      gridBody.appendChild(row);
+    });
+  }
+
+  // Clique na célula
+  function handleCellClick(cell, key) {
+    if (materiaSelecionada) {
+      // Preencher célula
+      cell.classList.add('filled');
+      cell.style.setProperty('--cor', coresMateria[materiaSelecionada]);
+      cell.textContent = nomesMateria[materiaSelecionada];
+      gradeData[key] = materiaSelecionada;
+      salvarGrade();
+    } else if (gradeData[key]) {
+      // Limpar célula se já tiver algo
+      cell.classList.remove('filled');
+      cell.style.removeProperty('--cor');
+      cell.textContent = '';
+      delete gradeData[key];
+      salvarGrade();
+    }
+  }
+
+  // Salvar grade
+  function salvarGrade() {
+    localStorage.setItem('plannerGrade', JSON.stringify(gradeData));
+  }
+
+  // Botões de matéria
+  document.querySelectorAll('.materia-planner').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const materia = btn.dataset.materia;
+
+      if (materiaSelecionada === materia) {
+        // Desselecionar
+        materiaSelecionada = null;
+        btn.classList.remove('selected');
+      } else {
+        // Selecionar nova
+        document.querySelectorAll('.materia-planner').forEach(b => b.classList.remove('selected'));
+        materiaSelecionada = materia;
+        btn.classList.add('selected');
+      }
+    });
+  });
+
+  // Limpar grade
+  const btnLimpar = document.getElementById('btn-limpar-grade');
+  if (btnLimpar) {
+    btnLimpar.addEventListener('click', () => {
+      mostrarConfirmacao('Limpar grade', 'Deseja limpar toda a grade de estudos?', () => {
+        gradeData = {};
+        salvarGrade();
+        gerarGrid();
+      });
+    });
+  }
+
+  // Navegação entre Painel e Planner
+  navPlanner.addEventListener('click', () => {
+    mainContent.style.display = 'none';
+    plannerSection.style.display = 'block';
+
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    navPlanner.classList.add('active');
+
+    gerarGrid();
+    gerarCalendarioPlanner();
+  });
+
+  if (navPainel) {
+    navPainel.addEventListener('click', () => {
+      plannerSection.style.display = 'none';
+      mainContent.style.display = 'block';
+
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      navPainel.classList.add('active');
+    });
+  }
+
+  // Calendário do Planner
+  let currentMonth = new Date().getMonth();
+  let currentYear = new Date().getFullYear();
+
+  function gerarCalendarioPlanner() {
+    const calendarDays = document.getElementById('calendar-days-planner');
+    const mesAtual = document.getElementById('mes-atual-planner');
+
+    if (!calendarDays) return;
+
+    const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    mesAtual.textContent = `${meses[currentMonth]} ${currentYear}`;
+
+    const primeiroDia = new Date(currentYear, currentMonth, 1).getDay();
+    const diasNoMes = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const hoje = new Date();
+
+    calendarDays.innerHTML = '';
+
+    // Dias vazios
+    for (let i = 0; i < primeiroDia; i++) {
+      const empty = document.createElement('span');
+      empty.className = 'day empty';
+      calendarDays.appendChild(empty);
+    }
+
+    // Dias do mês
+    for (let dia = 1; dia <= diasNoMes; dia++) {
+      const dayEl = document.createElement('span');
+      dayEl.className = 'day';
+      dayEl.textContent = dia;
+
+      if (dia === hoje.getDate() && currentMonth === hoje.getMonth() && currentYear === hoje.getFullYear()) {
+        dayEl.classList.add('today');
+      }
+
+      calendarDays.appendChild(dayEl);
+    }
+  }
+
+  // Navegação do calendário
+  const prevMonth = document.getElementById('prev-month');
+  const nextMonth = document.getElementById('next-month');
+
+  if (prevMonth) {
+    prevMonth.addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      gerarCalendarioPlanner();
+    });
+  }
+
+  if (nextMonth) {
+    nextMonth.addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      gerarCalendarioPlanner();
+    });
+  }
+
+})();
+
+// ============================================
+// MODAL DE CONFIRMAÇÃO PERSONALIZADO
+// ============================================
+
+let confirmacaoCallback = null;
+
+function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
+  const modal = document.getElementById('modal-confirmacao');
+  const tituloEl = document.getElementById('confirmacao-titulo');
+  const mensagemEl = document.getElementById('confirmacao-mensagem');
+  const btnConfirmar = document.getElementById('btn-confirmacao-confirmar');
+  const btnCancelar = document.getElementById('btn-confirmacao-cancelar');
+
+  if (!modal) {
+    // Fallback para confirm nativo se modal não existir
+    if (confirm(mensagem)) {
+      onConfirmar();
+    }
+    return;
+  }
+
+  tituloEl.textContent = titulo;
+  mensagemEl.textContent = mensagem;
+  confirmacaoCallback = onConfirmar;
+
+  modal.classList.add('aberto');
+
+  // Remover listeners antigos clonando os botões
+  const novoBtnConfirmar = btnConfirmar.cloneNode(true);
+  const novoBtnCancelar = btnCancelar.cloneNode(true);
+  btnConfirmar.parentNode.replaceChild(novoBtnConfirmar, btnConfirmar);
+  btnCancelar.parentNode.replaceChild(novoBtnCancelar, btnCancelar);
+
+  // Confirmar
+  novoBtnConfirmar.addEventListener('click', () => {
+    modal.classList.remove('aberto');
+    if (confirmacaoCallback) {
+      confirmacaoCallback();
+      confirmacaoCallback = null;
+    }
+  });
+
+  // Cancelar
+  novoBtnCancelar.addEventListener('click', () => {
+    modal.classList.remove('aberto');
+    confirmacaoCallback = null;
+  });
+
+  // Fechar ao clicar fora
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('aberto');
+      confirmacaoCallback = null;
+    }
+  };
+}
+
+// ============================================
+// TIMER DE ESTUDOS
+// ============================================
+
+(function() {
+  const timerSection = document.getElementById('timer-section');
+  const mainContent = document.querySelector('.main-content');
+  const plannerSection = document.getElementById('planner-section');
+  const navTimer = document.getElementById('nav-timer');
+  const navPainel = document.getElementById('nav-painel');
+  const navPlanner = document.getElementById('nav-planner');
+
+  if (!timerSection || !navTimer) return;
+
+  // Elementos do timer
+  const timerDisplay = document.getElementById('timer-display');
+  const btnToggle = document.getElementById('btn-timer-toggle');
+  const btnSave = document.getElementById('btn-timer-save');
+  const fraseElement = document.getElementById('frase-motivacional');
+
+  // Estado do timer
+  let timerInterval = null;
+  let isRunning = false;
+  let seconds = parseInt(localStorage.getItem('timerSeconds')) || 0;
+
+  // Frases motivacionais
+  const frases = [
+    "O sucesso é a soma de pequenos esforços repetidos dia após dia.",
+    "Não importa o quão devagar você vá, desde que não pare.",
+    "O único lugar onde o sucesso vem antes do trabalho é no dicionário.",
+    "Acredite em si mesmo e todo o resto virá naturalmente.",
+    "Cada hora de estudo te aproxima do seu sonho.",
+    "A disciplina é a ponte entre metas e conquistas.",
+    "Você não precisa ser perfeito, precisa ser persistente.",
+    "O esforço de hoje é o sucesso de amanhã.",
+    "Sua única limitação é aquela que você impõe a si mesmo.",
+    "Grandes conquistas são feitas por pessoas que não desistem.",
+    "O conhecimento é a única coisa que ninguém pode tirar de você.",
+    "Estude como se fosse viver para sempre.",
+    "Não espere por oportunidades, crie-as.",
+    "A medicina começa com dedicação e termina com realização.",
+    "Seu futuro está sendo construído agora, neste momento."
+  ];
+
+  // Atualizar display do timer
+  function atualizarDisplay() {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    const hoursSpan = timerDisplay.querySelector('.timer-hours');
+    const minutesSpan = timerDisplay.querySelector('.timer-minutes');
+    const secondsSpan = timerDisplay.querySelector('.timer-seconds');
+
+    hoursSpan.textContent = hrs.toString().padStart(2, '0');
+    minutesSpan.textContent = mins.toString().padStart(2, '0');
+    secondsSpan.textContent = secs.toString().padStart(2, '0');
+
+    // Atualizar o tempo no banner também
+    atualizarTempoBanner();
+  }
+
+  // Atualizar tempo no banner
+  function atualizarTempoBanner() {
+    const tempoEstudoElement = document.getElementById('tempo-hoje');
+    if (tempoEstudoElement) {
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+
+      if (hrs > 0) {
+        tempoEstudoElement.textContent = `${hrs}h ${mins}m`;
+      } else if (mins > 0) {
+        tempoEstudoElement.textContent = `${mins}m`;
+      } else {
+        tempoEstudoElement.textContent = `${seconds}s`;
+      }
+    }
+  }
+
+  // Iniciar/Pausar timer
+  function toggleTimer() {
+    if (isRunning) {
+      // Pausar
+      clearInterval(timerInterval);
+      isRunning = false;
+      btnToggle.innerHTML = '<i class="bi bi-play-fill"></i><span>Iniciar</span>';
+      btnToggle.classList.remove('running');
+      timerSection.classList.remove('running');
+    } else {
+      // Iniciar
+      timerInterval = setInterval(() => {
+        seconds++;
+        atualizarDisplay();
+        localStorage.setItem('timerSeconds', seconds);
+      }, 1000);
+      isRunning = true;
+      btnToggle.innerHTML = '<i class="bi bi-pause-fill"></i><span>Pausar</span>';
+      btnToggle.classList.add('running');
+      timerSection.classList.add('running');
+    }
+  }
+
+  // Salvar tempo
+  function salvarTempo() {
+    localStorage.setItem('timerSeconds', seconds);
+
+    // Feedback visual
+    btnSave.innerHTML = '<i class="bi bi-check-lg"></i>';
+    btnSave.style.background = '#22c55e';
+    btnSave.style.color = 'white';
+
+    setTimeout(() => {
+      btnSave.innerHTML = '<i class="bi bi-check-lg"></i>';
+      btnSave.style.background = '';
+      btnSave.style.color = '';
+    }, 1500);
+
+    // Mostrar notificação
+    mostrarNotificacao('Tempo salvo com sucesso!', 'success');
+  }
+
+  // Mostrar notificação
+  function mostrarNotificacao(mensagem, tipo) {
+    const notif = document.createElement('div');
+    notif.className = `notificacao-timer ${tipo}`;
+    notif.innerHTML = `<i class="bi bi-check-circle-fill"></i> ${mensagem}`;
+    notif.style.cssText = `
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      background: ${tipo === 'success' ? '#22c55e' : '#ef4444'};
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 9999;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    `;
+    document.body.appendChild(notif);
+
+    setTimeout(() => {
+      notif.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notif.remove(), 300);
+    }, 2000);
+  }
+
+  // Frase aleatória
+  function mostrarFraseAleatoria() {
+    const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
+    fraseElement.textContent = `"${fraseAleatoria}"`;
+  }
+
+  // Event listeners
+  btnToggle.addEventListener('click', toggleTimer);
+  btnSave.addEventListener('click', salvarTempo);
+
+  // Navegação para Timer
+  navTimer.addEventListener('click', () => {
+    mainContent.style.display = 'none';
+    plannerSection.style.display = 'none';
+    timerSection.style.display = 'block';
+
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    navTimer.classList.add('active');
+
+    mostrarFraseAleatoria();
+    atualizarDisplay();
+  });
+
+  // Atualizar navegação para Painel (esconder timer)
+  if (navPainel) {
+    const originalPainelClick = navPainel.onclick;
+    navPainel.addEventListener('click', () => {
+      timerSection.style.display = 'none';
+    });
+  }
+
+  // Atualizar navegação para Planner (esconder timer)
+  if (navPlanner) {
+    const originalPlannerClick = navPlanner.onclick;
+    navPlanner.addEventListener('click', () => {
+      timerSection.style.display = 'none';
+    });
+  }
+
+  // Inicializar display
+  atualizarDisplay();
+  mostrarFraseAleatoria();
+})();
+
+// ============================================
+// SEÇÃO DE AULAS GRAVADAS
+// ============================================
+
+(function() {
+  const aulasSection = document.getElementById('aulas-section');
+  const mainContent = document.querySelector('.main-content');
+  const plannerSection = document.getElementById('planner-section');
+  const timerSection = document.getElementById('timer-section');
+  const navAulas = document.getElementById('nav-aulas');
+  const navPainel = document.getElementById('nav-painel');
+
+  if (!aulasSection || !navAulas) return;
+
+  // Estado
+  let todasAulas = [];
+  let aulaAoVivo = null;
+  let aulasCarregadas = false;
+
+  // Nomes das matérias
+  const nomesMateriasAulas = {
+    biologia: 'Biologia',
+    quimica: 'Química',
+    fisica: 'Física',
+    matematica: 'Matemática',
+    portugues: 'Português',
+    historia: 'História',
+    geografia: 'Geografia',
+    filosofia: 'Filosofia',
+    sociologia: 'Sociologia',
+    ingles: 'Inglês',
+    redacao: 'Redação'
+  };
+
+  // Navegação para Aulas
+  navAulas.addEventListener('click', () => {
+    mainContent.style.display = 'none';
+    plannerSection.style.display = 'none';
+    timerSection.style.display = 'none';
+    aulasSection.style.display = 'block';
+
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    navAulas.classList.add('active');
+
+    // Carregar aulas apenas uma vez
+    if (!aulasCarregadas) {
+      carregarAulasFirebase();
+      verificarAulaAoVivoFirebase();
+      aulasCarregadas = true;
+    }
+  });
+
+  // Esconder seção de aulas ao clicar em outras abas
+  if (navPainel) {
+    navPainel.addEventListener('click', () => {
+      aulasSection.style.display = 'none';
+    });
+  }
+
+  const navPlanner = document.getElementById('nav-planner');
+  if (navPlanner) {
+    navPlanner.addEventListener('click', () => {
+      aulasSection.style.display = 'none';
+    });
+  }
+
+  const navTimer = document.getElementById('nav-timer');
+  if (navTimer) {
+    navTimer.addEventListener('click', () => {
+      aulasSection.style.display = 'none';
+    });
+  }
+
+  // Carregar aulas do Firebase
+  async function carregarAulasFirebase() {
+    const aulasGrid = document.getElementById('aulas-grid');
+    const loading = document.getElementById('loading-aulas');
+
+    try {
+      // Verificar se Firebase está disponível
+      if (typeof aulasRef === 'undefined') {
+        throw new Error('Firebase não configurado');
+      }
+
+      // Buscar aulas
+      const snapshotAoVivo = await aulasRef.where('status', '==', 'ao-vivo').get();
+      const snapshotFinalizada = await aulasRef.where('status', '==', 'finalizada').get();
+      const snapshotAguardando = await aulasRef.where('status', '==', 'aguardando-video').get();
+
+      todasAulas = [];
+
+      snapshotAoVivo.forEach(doc => {
+        todasAulas.push({ id: doc.id, ...doc.data() });
+      });
+
+      snapshotFinalizada.forEach(doc => {
+        todasAulas.push({ id: doc.id, ...doc.data() });
+      });
+
+      snapshotAguardando.forEach(doc => {
+        todasAulas.push({ id: doc.id, ...doc.data() });
+      });
+
+      // Ordenar
+      todasAulas.sort((a, b) => {
+        if (a.status === 'ao-vivo' && b.status !== 'ao-vivo') return -1;
+        if (b.status === 'ao-vivo' && a.status !== 'ao-vivo') return 1;
+        const dataA = a.dataInicio?.toDate ? a.dataInicio.toDate() : new Date(a.dataInicio);
+        const dataB = b.dataInicio?.toDate ? b.dataInicio.toDate() : new Date(b.dataInicio);
+        return dataB - dataA;
+      });
+
+      renderizarAulasGrid(todasAulas);
+
+    } catch (error) {
+      console.error('Erro ao carregar aulas:', error);
+      if (loading) loading.style.display = 'none';
+      aulasGrid.innerHTML = `
+        <div class="aulas-vazio">
+          <i class="bi bi-exclamation-triangle"></i>
+          <h3>Erro ao carregar aulas</h3>
+          <p>Verifique a configuração do Firebase</p>
+        </div>
+      `;
+    }
+  }
+
+  // Renderizar aulas
+  function renderizarAulasGrid(aulas) {
+    const aulasGrid = document.getElementById('aulas-grid');
+    const loading = document.getElementById('loading-aulas');
+
+    if (loading) loading.style.display = 'none';
+
+    if (aulas.length === 0) {
+      aulasGrid.innerHTML = `
+        <div class="aulas-vazio">
+          <i class="bi bi-collection-play"></i>
+          <h3>Nenhuma aula encontrada</h3>
+          <p>As aulas gravadas aparecerão aqui</p>
+        </div>
+      `;
+      return;
+    }
+
+    aulasGrid.innerHTML = '';
+
+    aulas.forEach(aula => {
+      const card = criarCardAulaElement(aula);
+      aulasGrid.appendChild(card);
+    });
+  }
+
+  // Criar card de aula
+  function criarCardAulaElement(aula) {
+    const div = document.createElement('div');
+    div.className = 'aula-card';
+
+    const nomeMateria = nomesMateriasAulas[aula.materia] || aula.materia;
+    const data = formatarDataAula(aula.dataInicio);
+    const duracao = aula.duracao ? formatarDuracaoAula(aula.duracao) : '';
+    const aguardandoVideo = aula.status === 'aguardando-video';
+    const aoVivo = aula.status === 'ao-vivo';
+
+    let thumbnailClass = '';
+    let icone = 'bi-play-circle';
+    let btnTexto = 'Assistir Aula';
+    let btnClass = '';
+    let badgeExtra = '';
+
+    if (aoVivo) {
+      thumbnailClass = 'ao-vivo';
+      icone = 'bi-broadcast';
+      btnTexto = 'Entrar ao Vivo';
+      btnClass = 'btn-ao-vivo';
+      badgeExtra = '<span class="aula-ao-vivo-badge"><span class="dot-ao-vivo"></span> AO VIVO</span>';
+    } else if (aguardandoVideo) {
+      thumbnailClass = 'processando';
+      icone = 'bi-hourglass-split';
+      btnTexto = 'Processando...';
+      btnClass = 'btn-aguardando';
+      badgeExtra = '<span class="aula-processando">Processando vídeo...</span>';
+    }
+
+    div.innerHTML = `
+      <div class="aula-thumbnail ${thumbnailClass}">
+        <i class="bi ${icone} aula-thumbnail-icon"></i>
+        <span class="aula-materia-badge materia-${aula.materia}">${nomeMateria}</span>
+        ${duracao ? `<span class="aula-duracao">${duracao}</span>` : ''}
+        ${badgeExtra}
+      </div>
+      <div class="aula-card-body">
+        <div class="aula-card-materia">
+          <i class="bi bi-bookmark-fill"></i>
+          ${nomeMateria}
+        </div>
+        <div class="aula-card-tema">${aula.tema}</div>
+        <div class="aula-card-meta">
+          <span><i class="bi bi-calendar3"></i> ${data}</span>
+          ${duracao ? `<span><i class="bi bi-clock"></i> ${duracao}</span>` : ''}
+          ${aoVivo ? '<span class="meta-ao-vivo"><i class="bi bi-broadcast"></i> Ao Vivo</span>' : ''}
+        </div>
+        <button class="btn-assistir ${btnClass}" ${aguardandoVideo ? 'disabled' : ''}>
+          <i class="bi ${aoVivo ? 'bi-broadcast' : (aguardandoVideo ? 'bi-hourglass-split' : 'bi-play-fill')}"></i>
+          ${btnTexto}
+        </button>
+      </div>
+    `;
+
+    // Evento do botão
+    const btn = div.querySelector('.btn-assistir');
+    if (aoVivo) {
+      btn.addEventListener('click', () => {
+        if (aula.meetLink) window.open(aula.meetLink, '_blank');
+      });
+    } else if (!aguardandoVideo) {
+      btn.addEventListener('click', () => {
+        if (aula.videoUrl) window.open(aula.videoUrl, '_blank');
+      });
+    }
+
+    return div;
+  }
+
+  // Verificar aula ao vivo
+  async function verificarAulaAoVivoFirebase() {
+    try {
+      if (typeof aulasRef === 'undefined') return;
+
+      const snapshot = await aulasRef.where('status', '==', 'ao-vivo').limit(1).get();
+
+      if (!snapshot.empty) {
+        const doc = snapshot.docs[0];
+        aulaAoVivo = { id: doc.id, ...doc.data() };
+        mostrarBannerAoVivoElement();
+      }
+    } catch (error) {
+      console.error('Erro ao verificar aula ao vivo:', error);
+    }
+
+    setTimeout(verificarAulaAoVivoFirebase, 30000);
+  }
+
+  // Mostrar banner ao vivo
+  function mostrarBannerAoVivoElement() {
+    if (!aulaAoVivo) return;
+
+    const bannerAoVivo = document.getElementById('banner-ao-vivo');
+    const aoVivoMateria = document.getElementById('ao-vivo-materia');
+    const btnAoVivo = document.getElementById('btn-ao-vivo');
+
+    if (!bannerAoVivo) return;
+
+    const nomeMateria = nomesMateriasAulas[aulaAoVivo.materia] || aulaAoVivo.materia;
+    aoVivoMateria.textContent = `${nomeMateria} - ${aulaAoVivo.tema}`;
+    bannerAoVivo.style.display = 'flex';
+
+    btnAoVivo.onclick = () => {
+      if (aulaAoVivo.meetLink) window.open(aulaAoVivo.meetLink, '_blank');
+    };
+  }
+
+  // Formatar data
+  function formatarDataAula(timestamp) {
+    if (!timestamp) return '';
+    const data = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  // Formatar duração
+  function formatarDuracaoAula(minutos) {
+    if (!minutos) return '';
+    const horas = Math.floor(minutos / 60);
+    const mins = minutos % 60;
+    return horas > 0 ? `${horas}h ${mins}min` : `${mins}min`;
+  }
+
+  // Filtros
+  const filtroMateria = document.getElementById('filtro-materia');
+  const filtroMes = document.getElementById('filtro-mes');
+  const buscaAulas = document.getElementById('busca-aulas');
+
+  function filtrarAulasGrid() {
+    const materia = filtroMateria?.value || '';
+    const mes = filtroMes?.value || '';
+    const busca = buscaAulas?.value.toLowerCase().trim() || '';
+
+    let aulasFiltradas = todasAulas;
+
+    if (materia) {
+      aulasFiltradas = aulasFiltradas.filter(a => a.materia === materia);
+    }
+
+    if (mes) {
+      aulasFiltradas = aulasFiltradas.filter(a => {
+        const dataAula = a.dataInicio?.toDate ? a.dataInicio.toDate() : new Date(a.dataInicio);
+        const mesAula = String(dataAula.getMonth() + 1).padStart(2, '0');
+        return mesAula === mes;
+      });
+    }
+
+    if (busca) {
+      aulasFiltradas = aulasFiltradas.filter(a =>
+        a.tema.toLowerCase().includes(busca) ||
+        (nomesMateriasAulas[a.materia] || a.materia).toLowerCase().includes(busca)
+      );
+    }
+
+    renderizarAulasGrid(aulasFiltradas);
+  }
+
+  if (filtroMateria) filtroMateria.addEventListener('change', filtrarAulasGrid);
+  if (filtroMes) filtroMes.addEventListener('change', filtrarAulasGrid);
+  if (buscaAulas) buscaAulas.addEventListener('input', filtrarAulasGrid);
+
+  // Modal de vídeo
+  const modalVideo = document.getElementById('modal-video');
+  const fecharVideoBtn = document.getElementById('fechar-video');
+
+  if (fecharVideoBtn) {
+    fecharVideoBtn.addEventListener('click', () => {
+      modalVideo.classList.remove('show');
+      const videoPlayer = document.getElementById('video-player');
+      if (videoPlayer) videoPlayer.src = '';
+    });
+  }
+
+  if (modalVideo) {
+    modalVideo.addEventListener('click', (e) => {
+      if (e.target === modalVideo) {
+        modalVideo.classList.remove('show');
+        const videoPlayer = document.getElementById('video-player');
+        if (videoPlayer) videoPlayer.src = '';
+      }
+    });
+  }
+
+})();
