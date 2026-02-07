@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Treino | Kumon Digital</title>
+  <meta name="description" content="Sessão de treino do Kumon Digital. Resolva questões e avance nos níveis.">
+
+  <!-- Fonts e Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/treino.css">
+</head>
+
+<body>
+
+  <!-- Botão voltar LuMED -->
+  <a href="../index.html" class="btn-back-lumed-float" title="Voltar para LuMED">
+    <i class="bi bi-arrow-left"></i>
+    <span>LuMED</span>
+  </a>
+
+  <!-- CONTEÚDO DO TREINO -->
+  <div class="app-container" style="padding-top: 24px;">
+    <div class="treino-container">
+
+      <!-- Header do Treino -->
+      <div class="treino-header">
+        <div class="treino-info">
+          <div class="treino-nivel">
+            <i class="bi bi-calculator"></i>
+            <span>Carregando...</span>
+          </div>
+          <div class="treino-progresso">
+            Questão <strong>1/20</strong>
+          </div>
+        </div>
+
+        <div class="treino-timer">
+          <i class="bi bi-stopwatch"></i>
+          <span>05:00</span>
+        </div>
+      </div>
+
+      <!-- Barra de Progresso -->
+      <div class="progress-bar-container">
+        <div class="progress-bar-header">
+          <span>Progresso</span>
+          <strong>0/20</strong>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+        <div class="progress-dots">
+          <!-- Renderizado via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Card da Questão -->
+      <div class="questao-card">
+        <span class="questao-numero">Questão 1</span>
+        <span class="questao-tipo">Soma</span>
+
+        <div class="questao-enunciado">
+          <!-- Renderizado via JavaScript -->
+          Carregando...
+        </div>
+
+        <div class="resposta-container">
+          <!-- Input normal (números inteiros) -->
+          <input
+            type="text"
+            id="resposta-input"
+            class="resposta-input"
+            placeholder="?"
+            autocomplete="off"
+            inputmode="text"
+          >
+          <!-- Input fração (numerador/denominador) -->
+          <div class="fracao-input" id="fracao-input" style="display:none;">
+            <input type="text" id="fracao-numerador" class="fracao-campo" placeholder="?" autocomplete="off" inputmode="numeric">
+            <div class="fracao-barra"></div>
+            <input type="text" id="fracao-denominador" class="fracao-campo" placeholder="?" autocomplete="off" inputmode="numeric">
+          </div>
+          <button class="btn-confirmar">
+            <i class="bi bi-check-lg"></i>
+            Confirmar
+          </button>
+        </div>
+
+        <!-- Feedback -->
+        <div class="feedback-container">
+          <div class="feedback-icon">
+            <i class="bi bi-check-lg"></i>
+          </div>
+          <span class="feedback-text">Correto!</span>
+          <span class="feedback-resposta"></span>
+        </div>
+      </div>
+
+      <!-- Painel de Dicas -->
+      <div class="dicas-panel" id="dicas-panel" style="display:none;">
+        <div class="dicas-header">
+          <i class="bi bi-lightbulb-fill"></i>
+          <span>Dicas</span>
+        </div>
+        <ul class="dicas-lista" id="dicas-lista">
+          <!-- Renderizado via JavaScript -->
+        </ul>
+      </div>
+
+      <!-- Teclado Numérico (Mobile) -->
+      <div class="teclado-numerico">
+        <button class="tecla" data-valor="1">1</button>
+        <button class="tecla" data-valor="2">2</button>
+        <button class="tecla" data-valor="3">3</button>
+        <button class="tecla" data-valor="4">4</button>
+        <button class="tecla" data-valor="5">5</button>
+        <button class="tecla" data-valor="6">6</button>
+        <button class="tecla" data-valor="7">7</button>
+        <button class="tecla" data-valor="8">8</button>
+        <button class="tecla" data-valor="9">9</button>
+        <button class="tecla" data-valor="/">&#47;</button>
+        <button class="tecla" data-valor="0">0</button>
+        <button class="tecla" data-valor=".">.</button>
+        <button class="tecla" data-valor="-">−</button>
+        <button class="tecla clear" data-valor="clear">
+          <i class="bi bi-backspace"></i>
+        </button>
+        <button class="tecla submit" data-valor="submit">
+          <i class="bi bi-check-lg"></i>
+        </button>
+      </div>
+
+      <!-- Ações -->
+      <div class="treino-actions">
+        <button class="btn-sair">
+          <i class="bi bi-x-lg"></i>
+          Sair
+        </button>
+        <button class="btn-proximo">
+          Próxima
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/questoes.js"></script>
+  <script src="js/progressao.js"></script>
+  <script src="js/conquistas.js"></script>
+  <script src="js/treino.js"></script>
+
+</body>
+</html>

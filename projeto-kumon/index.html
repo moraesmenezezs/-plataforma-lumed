@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO -->
+  <title>Kumon Digital - Matemática Progressiva</title>
+  <meta name="description" content="Aprenda matemática com o método Kumon Digital. Pratique diariamente, desbloqueie níveis e conquiste medalhas. Sistema progressivo de aprendizado.">
+  <meta name="keywords" content="kumon, matemática, aprendizado, prática diária, exercícios, soma, subtração, multiplicação, divisão, frações">
+
+  <!-- Fonts e Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <!-- Logo -->
+      <div class="navbar-logo">
+        <a href="../index.html" class="btn-back-lumed" title="Voltar para LuMED">
+          <i class="bi bi-arrow-left"></i>
+          <span>LuMED</span>
+        </a>
+        <span class="logo-icon"><i class="bi bi-calculator-fill"></i></span>
+        <span class="logo-text">Kumon Digital</span>
+      </div>
+
+      <!-- Hamburger -->
+      <button class="hamburger-btn" id="hamburger-btn" aria-label="Menu">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <!-- Menu -->
+      <div class="navbar-menu" id="navbar-menu">
+        <a href="index.html" class="nav-link active">
+          <i class="bi bi-grid-fill"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="historico.html" class="nav-link">
+          <i class="bi bi-clock-history"></i>
+          <span>Histórico</span>
+        </a>
+      </div>
+
+      <!-- User -->
+      <div class="navbar-user">
+        <div class="user-streak">
+          <i class="bi bi-fire"></i>
+          <span>0</span>
+        </div>
+        <div class="user-profile">
+          <div class="user-avatar">E</div>
+          <span class="user-name">Estudante</span>
+          <i class="bi bi-chevron-down"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="app-container">
+    <main class="main-content">
+
+      <!-- Seção de Boas Vindas -->
+      <section class="welcome-section">
+        <div class="welcome-content">
+          <h1>Olá, Estudante!</h1>
+          <p>Continue sua jornada matemática. A prática leva à perfeição!</p>
+
+          <div class="welcome-stats">
+            <div class="welcome-stat">
+              <i class="bi bi-fire"></i>
+              <div class="welcome-stat-info">
+                <span>Streak</span>
+                <strong class="streak-valor">0 dias</strong>
+              </div>
+            </div>
+            <div class="welcome-stat">
+              <i class="bi bi-graph-up"></i>
+              <div class="welcome-stat-info">
+                <span>Nível Atual</span>
+                <strong>Fase 1.1</strong>
+              </div>
+            </div>
+            <div class="welcome-stat">
+              <i class="bi bi-check2-all"></i>
+              <div class="welcome-stat-info">
+                <span>Questões Resolvidas</span>
+                <strong>0</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats Cards -->
+      <div class="stats-row">
+        <div class="stat-card" id="stat-streak">
+          <div class="stat-icon green">
+            <i class="bi bi-fire"></i>
+          </div>
+          <div class="stat-info">
+            <h3>0 dias</h3>
+            <span>Streak atual</span>
+          </div>
+        </div>
+        <div class="stat-card" id="stat-nivel">
+          <div class="stat-icon blue">
+            <i class="bi bi-layers"></i>
+          </div>
+          <div class="stat-info">
+            <h3>1.1</h3>
+            <span>Nível atual</span>
+          </div>
+        </div>
+        <div class="stat-card" id="stat-questoes">
+          <div class="stat-icon purple">
+            <i class="bi bi-check2-square"></i>
+          </div>
+          <div class="stat-info">
+            <h3>0</h3>
+            <span>Questões resolvidas</span>
+          </div>
+        </div>
+        <div class="stat-card" id="stat-conquistas">
+          <div class="stat-icon yellow">
+            <i class="bi bi-trophy"></i>
+          </div>
+          <div class="stat-info">
+            <h3>0</h3>
+            <span>Conquistas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de Níveis -->
+      <section class="levels-section">
+        <div id="levels-grid">
+          <!-- Renderizado via JavaScript -->
+        </div>
+      </section>
+
+      <!-- Gráfico de Evolução -->
+      <section class="chart-section">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="bi bi-graph-up"></i>
+            <h2>Sua Evolução (Últimos 7 dias)</h2>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-evolucao"></canvas>
+        </div>
+      </section>
+
+      <!-- Conquistas -->
+      <section class="achievements-section">
+        <div class="section-header">
+          <div class="section-title">
+            <i class="bi bi-trophy-fill"></i>
+            <h2>Suas Conquistas</h2>
+          </div>
+          <a href="historico.html" class="btn btn-secondary btn-sm">
+            Ver todas
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+        <div class="achievements-grid" id="achievements-grid">
+          <!-- Renderizado via JavaScript -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="js/supabase-config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/questoes.js"></script>
+  <script src="js/progressao.js"></script>
+  <script src="js/conquistas.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

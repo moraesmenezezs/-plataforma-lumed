@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Resultado | Kumon Digital</title>
+  <meta name="description" content="Resultado da sua sessão de treino no Kumon Digital.">
+
+  <!-- Fonts e Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .resultado-container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .resultado-status {
+      text-align: center;
+      padding: 48px 24px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+
+    .resultado-status.sucesso {
+      background: linear-gradient(135deg, var(--green-100), var(--green-200));
+    }
+
+    .resultado-status.falha {
+      background: linear-gradient(135deg, #fef2f2, #fecaca);
+    }
+
+    .resultado-status.parcial {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+    }
+
+    .status-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+
+    .resultado-status.sucesso .status-icon {
+      background: var(--gradient);
+      color: white;
+    }
+
+    .resultado-status.falha .status-icon {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .resultado-status.parcial .status-icon {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+    }
+
+    .resultado-status h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .resultado-status p {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .resultado-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .resultado-stat {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+    }
+
+    .resultado-stat .stat-valor {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-dark);
+      display: block;
+    }
+
+    .resultado-stat .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .progressao-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .progressao-mensagem p {
+      font-size: 16px;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+    }
+
+    .dias-progresso {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--green-50);
+      border-radius: var(--radius-sm);
+    }
+
+    .dias-visual {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dia-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--green-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: transparent;
+    }
+
+    .dia-circle.completo {
+      background: var(--gradient);
+      color: white;
+    }
+
+    .desbloqueio-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--gradient);
+      color: white;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      margin-top: 16px;
+    }
+
+    .desbloqueio-badge i {
+      font-size: 24px;
+    }
+
+    .reset-aviso {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #fef2f2;
+      color: #dc2626;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      margin-top: 16px;
+    }
+
+    .streak-card {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: white;
+      border-radius: var(--radius-full);
+      font-size: 24px;
+      font-weight: 800;
+      color: #92400e;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .streak-badge i {
+      color: #f59e0b;
+    }
+
+    .streak-card p {
+      margin-top: 12px;
+      color: #92400e;
+    }
+
+    .detalhes-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .detalhes-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+
+    .questoes-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .questao-detalhe {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-xs);
+    }
+
+    .questao-detalhe.correta {
+      background: var(--green-50);
+    }
+
+    .questao-detalhe.errada {
+      background: #fef2f2;
+    }
+
+    .questao-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .questao-detalhe.correta .questao-num {
+      background: var(--gradient);
+      color: white;
+    }
+
+    .questao-detalhe.errada .questao-num {
+      background: #ef4444;
+      color: white;
+    }
+
+    .questao-sua-resposta {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .questao-resposta-correta {
+      font-size: 13px;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .questao-detalhe i {
+      font-size: 20px;
+    }
+
+    .questao-detalhe.correta i {
+      color: var(--status-success);
+    }
+
+    .questao-detalhe.errada i {
+      color: var(--status-danger);
+    }
+
+    .resultado-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      .resultado-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .resultado-actions {
+        flex-direction: column;
+      }
+
+      .resultado-actions .btn {
+        width: 100%;
+        min-height: 44px;
+      }
+
+      .resultado-container {
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .resultado-container {
+        padding: 12px;
+      }
+
+      .resultado-status {
+        padding: 32px 16px;
+        border-radius: 12px;
+      }
+
+      .resultado-status h1 {
+        font-size: 22px;
+      }
+
+      .resultado-status p {
+        font-size: 14px;
+      }
+
+      .status-icon {
+        width: 64px;
+        height: 64px;
+        font-size: 32px;
+      }
+
+      .resultado-stats {
+        gap: 10px;
+      }
+
+      .resultado-stat {
+        padding: 14px;
+      }
+
+      .resultado-stat .stat-valor {
+        font-size: 22px;
+      }
+
+      .resultado-stat .stat-label {
+        font-size: 11px;
+      }
+
+      .progressao-card {
+        padding: 16px;
+      }
+
+      .streak-card {
+        padding: 16px;
+      }
+
+      .streak-badge {
+        font-size: 20px;
+        padding: 10px 20px;
+      }
+
+      .detalhes-card {
+        padding: 16px;
+      }
+
+      .questao-detalhe {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+
+      .dia-circle {
+        width: 30px;
+        height: 30px;
+      }
+
+      .btn-back-lumed-float {
+        top: 12px;
+        left: 12px;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .resultado-status h1 {
+        font-size: 20px;
+      }
+
+      .resultado-stat .stat-valor {
+        font-size: 18px;
+      }
+
+      .resultado-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .resultado-stat {
+        padding: 12px;
+      }
+
+      .questoes-lista {
+        max-height: 250px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Botão voltar LuMED -->
+  <a href="../index.html" class="btn-back-lumed-float" title="Voltar para LuMED">
+    <i class="bi bi-arrow-left"></i>
+    <span>LuMED</span>
+  </a>
+
+  <div class="app-container" style="padding-top: 24px;">
+    <div class="resultado-container">
+
+      <!-- Status -->
+      <div class="resultado-status sucesso">
+        <div class="status-icon">
+          <i class="bi bi-trophy-fill"></i>
+        </div>
+        <h1>Carregando...</h1>
+        <p>Analisando seu resultado...</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="resultado-stats">
+        <div class="resultado-stat" id="stat-acertos">
+          <span class="stat-valor">0/0</span>
+          <span class="stat-label">Acertos</span>
+        </div>
+        <div class="resultado-stat" id="stat-erros">
+          <span class="stat-valor">0</span>
+          <span class="stat-label">Erros</span>
+        </div>
+        <div class="resultado-stat" id="stat-porcentagem">
+          <span class="stat-valor">0%</span>
+          <span class="stat-label">Taxa</span>
+        </div>
+        <div class="resultado-stat" id="stat-tempo">
+          <span class="stat-valor">0:00</span>
+          <span class="stat-label">Tempo</span>
+        </div>
+      </div>
+
+      <!-- Progressão -->
+      <div class="progressao-card">
+        <div class="progressao-mensagem">
+          <p>Carregando informações de progressão...</p>
+        </div>
+      </div>
+
+      <!-- Streak -->
+      <div class="streak-card">
+        <div class="streak-info">
+          <div class="streak-badge">
+            <i class="bi bi-fire"></i>
+            <span>0 dias</span>
+          </div>
+          <p>Seu streak de prática</p>
+        </div>
+      </div>
+
+      <!-- Detalhes -->
+      <div class="detalhes-card" id="detalhes-questoes">
+        <!-- Renderizado via JavaScript -->
+      </div>
+
+      <!-- Ações -->
+      <div class="resultado-actions">
+        <button class="btn btn-secondary btn-lg" onclick="voltarDashboard()">
+          <i class="bi bi-house"></i>
+          Voltar ao início
+        </button>
+        <button class="btn btn-primary btn-lg" onclick="tentarNovamente()">
+          <i class="bi bi-arrow-repeat"></i>
+          Praticar novamente
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/questoes.js"></script>
+  <script src="js/progressao.js"></script>
+  <script src="js/conquistas.js"></script>
+  <script src="js/resultado.js"></script>
+
+</body>
+</html>
