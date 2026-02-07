@@ -31,17 +31,32 @@
           <i class="bi bi-play-circle"></i>
           <span>Aulas</span>
         </a>
+        <a href="projeto kumon/index.html" class="nav-item" id="nav-kumon">
+          <i class="bi bi-calculator"></i>
+          <span>Kumon</span>
+        </a>
         <a href="professor.html" class="nav-item active">
           <i class="bi bi-person-video3"></i>
           <span>Professor</span>
         </a>
       </div>
       <div class="navbar-actions">
+        <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+        </button>
         <div class="profile" id="btn-perfil">
           <span class="avatar"></span>
           <span class="name">Professor</span>
           <i class="bi bi-chevron-down"></i>
         </div>
+      </div>
+    </div>
+    <div class="navbar-expanded" id="navbar-expanded">
+      <div class="navbar-expanded-content">
+        <a href="index.html" class="nav-expanded-item"><i class="bi bi-house"></i><span>Início</span></a>
+        <a href="aulas.html" class="nav-expanded-item"><i class="bi bi-play-circle"></i><span>Aulas</span></a>
+        <a href="projeto kumon/index.html" class="nav-expanded-item"><i class="bi bi-calculator"></i><span>Kumon</span></a>
+        <a href="professor.html" class="nav-expanded-item active"><i class="bi bi-person-video3"></i><span>Professor</span></a>
       </div>
     </div>
   </nav>
@@ -194,5 +209,25 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/professor.js"></script>
+  <script>
+    // Navbar toggle (mobile)
+    (function(){
+      const navbar = document.querySelector('.navbar-top');
+      const toggleBtn = document.getElementById('navbar-toggle');
+      const expanded = document.getElementById('navbar-expanded');
+      if (!toggleBtn || !expanded) return;
+      toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        navbar.classList.toggle('menu-open');
+        toggleBtn.querySelector('i').className = navbar.classList.contains('menu-open') ? 'bi bi-x-lg' : 'bi bi-grid-3x3-gap-fill';
+      });
+      document.addEventListener('click', function(e) {
+        if (!expanded.contains(e.target) && !toggleBtn.contains(e.target)) {
+          navbar.classList.remove('menu-open');
+          toggleBtn.querySelector('i').className = 'bi bi-grid-3x3-gap-fill';
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

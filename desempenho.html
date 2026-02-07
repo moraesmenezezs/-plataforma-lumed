@@ -62,6 +62,10 @@
           <i class="bi bi-graph-up"></i>
           <span>Desempenho</span>
         </a>
+        <a href="projeto kumon/index.html" class="nav-item" id="nav-kumon">
+          <i class="bi bi-calculator"></i>
+          <span>Kumon</span>
+        </a>
         <a href="index.html#redacao" class="nav-item" id="nav-redacao">
           <i class="bi bi-pencil-square"></i>
           <span>Redação</span>
@@ -74,6 +78,9 @@
 
       <!-- Ações direita -->
       <div class="navbar-actions">
+        <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+        </button>
         <div class="profile" id="btn-perfil">
           <span class="avatar"></span>
           <span class="name">Maria Luisa</span>
@@ -81,7 +88,19 @@
         </div>
       </div>
     </div>
-
+    <div class="navbar-expanded" id="navbar-expanded">
+      <div class="navbar-expanded-content">
+        <a href="index.html" class="nav-expanded-item"><i class="bi bi-grid-fill"></i><span>Painel</span></a>
+        <a href="index.html#planner" class="nav-expanded-item"><i class="bi bi-calendar-week"></i><span>Planner</span></a>
+        <a href="index.html#timer" class="nav-expanded-item"><i class="bi bi-stopwatch"></i><span>Timer</span></a>
+        <a href="aulas.html" class="nav-expanded-item"><i class="bi bi-play-circle"></i><span>Aulas</span></a>
+        <a href="conteudo.html" class="nav-expanded-item"><i class="bi bi-journal-bookmark"></i><span>Edital</span></a>
+        <a href="desempenho.html" class="nav-expanded-item active"><i class="bi bi-graph-up"></i><span>Desempenho</span></a>
+        <a href="projeto kumon/index.html" class="nav-expanded-item"><i class="bi bi-calculator"></i><span>Kumon</span></a>
+        <a href="index.html#redacao" class="nav-expanded-item"><i class="bi bi-pencil-square"></i><span>Redação</span></a>
+        <a href="index.html#config" class="nav-expanded-item"><i class="bi bi-gear"></i><span>Configurações</span></a>
+      </div>
+    </div>
   </nav>
 
   <div class="app-layout app-layout-desempenho layout-top-nav">
@@ -551,6 +570,26 @@
   <script src="js/auth.js"></script>
 
   <script src="js/desempenho.js"></script>
+  <script>
+    // Navbar toggle (mobile)
+    (function(){
+      const navbar = document.querySelector('.navbar-top');
+      const toggleBtn = document.getElementById('navbar-toggle');
+      const expanded = document.getElementById('navbar-expanded');
+      if (!toggleBtn || !expanded) return;
+      toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        navbar.classList.toggle('menu-open');
+        toggleBtn.querySelector('i').className = navbar.classList.contains('menu-open') ? 'bi bi-x-lg' : 'bi bi-grid-3x3-gap-fill';
+      });
+      document.addEventListener('click', function(e) {
+        if (!expanded.contains(e.target) && !toggleBtn.contains(e.target)) {
+          navbar.classList.remove('menu-open');
+          toggleBtn.querySelector('i').className = 'bi bi-grid-3x3-gap-fill';
+        }
+      });
+    })();
+  </script>
 
 </body>
 </html>

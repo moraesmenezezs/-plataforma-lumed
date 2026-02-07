@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Histórico | Kumon Digital</title>
+  <meta name="description" content="Histórico de sessões e estatísticas do Kumon Digital.">
+
+  <!-- Fonts e Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .historico-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .historico-header h1 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+    }
+
+    .historico-header h1 i {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .historico-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+    }
+
+    .stats-resumo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-resumo-card {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .stat-resumo-card h3 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .stat-resumo-card span {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .filtros-container {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .filtros-container select {
+      padding: 10px 16px;
+      border: 2px solid var(--green-200);
+      border-radius: var(--radius-xs);
+      font-family: inherit;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+    }
+
+    .filtros-container select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .historico-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .historico-item {
+      display: grid;
+      grid-template-columns: 120px 1fr 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: white;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-card);
+    }
+
+    .historico-data {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .historico-data .dia {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .historico-data .hora {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .historico-nivel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .historico-nivel i {
+      width: 40px;
+      height: 40px;
+      background: var(--green-100);
+      border-radius: var(--radius-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--primary);
+    }
+
+    .nivel-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nivel-nome {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .nivel-fase {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .historico-resultado {
+      display: flex;
+      gap: 20px;
+    }
+
+    .resultado-acertos,
+    .resultado-porcentagem,
+    .resultado-tempo {
+      text-align: center;
+    }
+
+    .historico-resultado .valor {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .historico-resultado .label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .historico-status {
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .historico-status.aprovado {
+      background: var(--green-100);
+      color: var(--primary-dark);
+    }
+
+    .historico-status.reprovado {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .historico-status.parcial {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .historico-vazio {
+      text-align: center;
+      padding: 48px 24px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
+    }
+
+    .historico-vazio i {
+      font-size: 48px;
+      color: var(--green-300);
+      margin-bottom: 16px;
+    }
+
+    .historico-vazio h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .historico-vazio p {
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stats-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .stats-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stats-card h3 i {
+      color: var(--primary);
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--green-100);
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .stat-row span {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .stat-row strong {
+      font-size: 14px;
+      color: var(--text-dark);
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .chart-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .chart-container-small {
+      height: 200px;
+    }
+
+    .btn-exportar {
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 1024px) {
+      .historico-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar-stats {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .stats-card,
+      .chart-card {
+        flex: 1;
+        min-width: 280px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .historico-item {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .historico-resultado {
+        justify-content: space-around;
+      }
+
+      .stats-resumo {
+        grid-template-columns: 1fr;
+      }
+
+      .historico-header h1 {
+        font-size: 20px;
+      }
+
+      .filtros-container {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .historico-header {
+        margin-bottom: 16px;
+      }
+
+      .historico-header h1 {
+        font-size: 18px;
+        gap: 8px;
+      }
+
+      .stat-resumo-card {
+        padding: 14px;
+      }
+
+      .stat-resumo-card h3 {
+        font-size: 22px;
+      }
+
+      .historico-item {
+        padding: 12px 14px;
+      }
+
+      .historico-resultado {
+        gap: 12px;
+      }
+
+      .historico-resultado .valor {
+        font-size: 14px;
+      }
+
+      .stats-card {
+        padding: 14px;
+      }
+
+      .chart-card {
+        padding: 14px;
+      }
+
+      .chart-container-small {
+        height: 160px;
+      }
+
+      .sidebar-stats {
+        flex-direction: column;
+      }
+
+      .stats-card, .chart-card {
+        min-width: auto;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .stat-resumo-card h3 {
+        font-size: 20px;
+      }
+
+      .historico-header h1 {
+        font-size: 16px;
+      }
+
+      .historico-nivel i {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <a href="../index.html" class="btn-back-lumed" title="Voltar para LuMED">
+          <i class="bi bi-arrow-left"></i>
+          <span>LuMED</span>
+        </a>
+        <span class="logo-icon"><i class="bi bi-calculator-fill"></i></span>
+        <span class="logo-text">Kumon Digital</span>
+      </div>
+
+      <!-- Hamburger -->
+      <button class="hamburger-btn" id="hamburger-btn" aria-label="Menu">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <div class="navbar-menu" id="navbar-menu">
+        <a href="index.html" class="nav-link">
+          <i class="bi bi-grid-fill"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="historico.html" class="nav-link active">
+          <i class="bi bi-clock-history"></i>
+          <span>Histórico</span>
+        </a>
+      </div>
+
+      <div class="navbar-user">
+        <div class="user-streak">
+          <i class="bi bi-fire"></i>
+          <span>0</span>
+        </div>
+        <div class="user-profile">
+          <div class="user-avatar">E</div>
+          <span class="user-name">Estudante</span>
+          <i class="bi bi-chevron-down"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTEÚDO -->
+  <div class="app-container">
+    <main class="main-content">
+
+      <!-- Header -->
+      <div class="historico-header">
+        <h1>
+          <i class="bi bi-clock-history"></i>
+          Histórico de Sessões
+        </h1>
+        <button class="btn btn-secondary" onclick="exportarHistorico()">
+          <i class="bi bi-download"></i>
+          Exportar dados
+        </button>
+      </div>
+
+      <!-- Stats Resumo -->
+      <div class="stats-resumo">
+        <div class="stat-resumo-card">
+          <h3 id="total-sessoes">0</h3>
+          <span>Total de sessões</span>
+        </div>
+        <div class="stat-resumo-card">
+          <h3 id="total-questoes">0</h3>
+          <span>Questões resolvidas</span>
+        </div>
+        <div class="stat-resumo-card">
+          <h3 id="taxa-acerto">0%</h3>
+          <span>Taxa de acerto</span>
+        </div>
+      </div>
+
+      <!-- Grid Principal -->
+      <div class="historico-grid">
+
+        <!-- Lista de Sessões -->
+        <div class="historico-main">
+          <div class="filtros-container">
+            <select id="filtro-fase">
+              <option value="todas">Todas as fases</option>
+              <option value="1">Fase 1</option>
+              <option value="2">Fase 2</option>
+              <option value="3">Fase 3</option>
+            </select>
+            <select id="filtro-resultado">
+              <option value="todos">Todos os resultados</option>
+              <option value="aprovado">Aprovados</option>
+              <option value="reprovado">Reprovados</option>
+            </select>
+          </div>
+
+          <div class="historico-lista" id="historico-lista">
+            <!-- Renderizado via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Sidebar Stats -->
+        <div class="sidebar-stats">
+
+          <div class="stats-card">
+            <h3><i class="bi bi-calendar-week"></i> Últimos 7 dias</h3>
+            <div class="stat-row">
+              <span>Sessões</span>
+              <strong id="sessoes-7dias">0</strong>
+            </div>
+            <div class="stat-row">
+              <span>Questões</span>
+              <strong id="questoes-7dias">0</strong>
+            </div>
+          </div>
+
+          <div class="stats-card">
+            <h3><i class="bi bi-calendar-month"></i> Últimos 30 dias</h3>
+            <div class="stat-row">
+              <span>Sessões</span>
+              <strong id="sessoes-30dias">0</strong>
+            </div>
+            <div class="stat-row">
+              <span>Questões</span>
+              <strong id="questoes-30dias">0</strong>
+            </div>
+          </div>
+
+          <div class="stats-card">
+            <h3><i class="bi bi-bar-chart"></i> Estatísticas Gerais</h3>
+            <div class="stat-row">
+              <span>Total de acertos</span>
+              <strong id="total-acertos">0</strong>
+            </div>
+            <div class="stat-row">
+              <span>Tempo total</span>
+              <strong id="tempo-total">0min</strong>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Acertos por dia</h3>
+            <div class="chart-container-small">
+              <canvas id="chart-historico"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="js/supabase-config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/questoes.js"></script>
+  <script src="js/progressao.js"></script>
+  <script src="js/conquistas.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/historico.js"></script>
+
+</body>
+</html>

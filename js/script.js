@@ -1334,11 +1334,10 @@ function inicializarNavbar() {
   if (toggleBtn && expandedMenu) {
     toggleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      expandedMenu.classList.toggle('aberto');
-      toggleBtn.classList.toggle('ativo');
+      navbar.classList.toggle('menu-open');
 
       const icon = toggleBtn.querySelector('i');
-      if (expandedMenu.classList.contains('aberto')) {
+      if (navbar.classList.contains('menu-open')) {
         icon.className = 'bi bi-x-lg';
       } else {
         icon.className = 'bi bi-grid-3x3-gap-fill';
@@ -1348,8 +1347,7 @@ function inicializarNavbar() {
     // Fechar ao clicar fora
     document.addEventListener('click', (e) => {
       if (!expandedMenu.contains(e.target) && !toggleBtn.contains(e.target)) {
-        expandedMenu.classList.remove('aberto');
-        toggleBtn.classList.remove('ativo');
+        navbar.classList.remove('menu-open');
         const icon = toggleBtn.querySelector('i');
         if (icon) icon.className = 'bi bi-grid-3x3-gap-fill';
       }
@@ -1358,8 +1356,7 @@ function inicializarNavbar() {
     // Fechar ao clicar em item do menu
     expandedMenu.querySelectorAll('.nav-expanded-item').forEach(item => {
       item.addEventListener('click', () => {
-        expandedMenu.classList.remove('aberto');
-        toggleBtn.classList.remove('ativo');
+        navbar.classList.remove('menu-open');
         const icon = toggleBtn.querySelector('i');
         if (icon) icon.className = 'bi bi-grid-3x3-gap-fill';
       });

@@ -1,0 +1,1127 @@
+/* ============================================
+   Kumon Digital - Estilos da Tela de Treino
+   ============================================ */
+
+/* =========================
+   1. LAYOUT DO TREINO
+   ========================= */
+
+.treino-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.treino-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.treino-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.treino-nivel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: var(--gradient);
+  color: white;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+.treino-nivel i {
+  font-size: 18px;
+}
+
+.treino-progresso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.treino-progresso strong {
+  color: var(--text-dark);
+  font-size: 16px;
+}
+
+.treino-timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: white;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.treino-timer i {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.treino-timer span {
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dark);
+}
+
+.treino-timer.warning {
+  background: #fef3c7;
+}
+
+.treino-timer.warning i,
+.treino-timer.warning span {
+  color: #d97706;
+}
+
+.treino-timer.danger {
+  background: #fef2f2;
+  animation: pulse 1s infinite;
+}
+
+.treino-timer.danger i,
+.treino-timer.danger span {
+  color: #dc2626;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+/* =========================
+   2. BARRA DE PROGRESSO
+   ========================= */
+
+.progress-bar-container {
+  margin-bottom: 32px;
+}
+
+.progress-bar-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.progress-bar-header span {
+  color: var(--text-muted);
+}
+
+.progress-bar-header strong {
+  color: var(--primary-dark);
+}
+
+.progress-bar-track {
+  height: 12px;
+  background: var(--green-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-dots {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.progress-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.progress-dot.completed {
+  background: var(--gradient);
+  color: white;
+}
+
+.progress-dot.current {
+  background: white;
+  border: 3px solid var(--primary);
+  color: var(--primary);
+  transform: scale(1.1);
+}
+
+.progress-dot.wrong {
+  background: #fef2f2;
+  border: 2px solid #ef4444;
+  color: #ef4444;
+}
+
+/* =========================
+   3. CARD DE QUESTÃO
+   ========================= */
+
+.questao-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: var(--shadow-medium);
+  margin-bottom: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.questao-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient);
+}
+
+.questao-numero {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 6px 14px;
+  background: var(--green-100);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.questao-tipo {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 6px 14px;
+  background: var(--green-50);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.questao-enunciado {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 40px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.questao-enunciado .operador {
+  color: var(--primary);
+  margin: 0 16px;
+}
+
+.questao-enunciado .igual {
+  color: var(--accent);
+}
+
+.resposta-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+/* Quando fração ativa, centraliza tudo em coluna */
+.resposta-container.modo-fracao {
+  flex-direction: column;
+  gap: 20px;
+}
+
+.resposta-input {
+  width: 180px;
+  padding: 16px 24px;
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  border: 3px solid var(--green-200);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  transition: all 0.2s ease;
+}
+
+.resposta-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+}
+
+.resposta-input.correct {
+  border-color: var(--status-success);
+  background: #f0fdf4;
+  color: var(--status-success);
+}
+
+.resposta-input.wrong {
+  border-color: var(--status-danger);
+  background: #fef2f2;
+  color: var(--status-danger);
+  animation: shake 0.5s ease;
+}
+
+/* Input de Fração — layout vertical (fração de verdade) */
+.fracao-input {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.fracao-campo {
+  width: 110px;
+  padding: 10px 8px;
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  border: 3px solid var(--green-200);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.fracao-campo:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+}
+
+.resposta-container .fracao-barra {
+  width: 130px;
+  height: 5px;
+  background: var(--primary);
+  border-radius: 3px;
+  margin: 6px 0;
+  user-select: none;
+  font-size: 0;
+  line-height: 0;
+}
+
+.fracao-input.correct .fracao-campo {
+  border-color: var(--status-success);
+  background: #f0fdf4;
+  color: var(--status-success);
+}
+
+.fracao-input.correct .fracao-barra {
+  background: var(--status-success);
+}
+
+.fracao-input.wrong .fracao-campo {
+  border-color: var(--status-danger);
+  background: #fef2f2;
+  color: var(--status-danger);
+  animation: shake 0.5s ease;
+}
+
+.fracao-input.wrong .fracao-barra {
+  background: var(--status-danger);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.btn-confirmar {
+  padding: 16px 32px;
+  background: var(--gradient);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-btn);
+}
+
+.btn-confirmar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+}
+
+.btn-confirmar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================
+   4. FEEDBACK
+   ========================= */
+
+.feedback-container {
+  display: none;
+  padding: 20px;
+  border-radius: var(--radius-sm);
+  margin-top: 24px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feedback-container.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.feedback-container.correct {
+  background: var(--green-100);
+  border: 2px solid var(--green-300);
+}
+
+.feedback-container.wrong {
+  background: #fef2f2;
+  border: 2px solid #fecaca;
+}
+
+.feedback-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+}
+
+.feedback-container.correct .feedback-icon {
+  background: var(--status-success);
+}
+
+.feedback-container.wrong .feedback-icon {
+  background: var(--status-danger);
+}
+
+.feedback-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.feedback-container.correct .feedback-text {
+  color: var(--primary-dark);
+}
+
+.feedback-container.wrong .feedback-text {
+  color: #dc2626;
+}
+
+.feedback-resposta {
+  font-size: 14px;
+  color: #6b7280;
+  margin-left: 8px;
+}
+
+/* =========================
+   4B. PAINEL DE DICAS
+   ========================= */
+
+.dicas-panel {
+  background: linear-gradient(135deg, #fef9c3, #fef3c7);
+  border: 2px solid #fbbf24;
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.dicas-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #92400e;
+}
+
+.dicas-header i {
+  font-size: 20px;
+  color: #f59e0b;
+}
+
+.dicas-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dicas-lista li {
+  font-size: 14px;
+  color: #78350f;
+  line-height: 1.5;
+  padding-left: 20px;
+  position: relative;
+}
+
+.dicas-lista li::before {
+  content: '💡';
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* =========================
+   4C. ESTILOS MATEMÁTICOS
+   ========================= */
+
+.questao-enunciado sup {
+  font-size: 0.6em;
+  vertical-align: super;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.questao-enunciado .radical {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.questao-enunciado .radical-simbolo {
+  font-size: 1.2em;
+  margin-right: 2px;
+}
+
+.questao-enunciado .radical-conteudo {
+  border-top: 3px solid var(--text-dark);
+  padding: 0 6px;
+}
+
+.questao-enunciado .equacao {
+  font-size: 36px;
+  letter-spacing: 2px;
+}
+
+.questao-enunciado .variavel {
+  color: #3b82f6;
+  font-style: italic;
+  font-weight: 700;
+}
+
+/* =========================
+   5. TECLADO NUMÉRICO (MOBILE)
+   ========================= */
+
+.teclado-numerico {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 300px;
+  margin: 24px auto 0;
+}
+
+.tecla {
+  padding: 20px;
+  background: white;
+  border: 2px solid var(--green-200);
+  border-radius: var(--radius-sm);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+  transition: all 0.15s ease;
+}
+
+.tecla:hover {
+  background: var(--green-100);
+  border-color: var(--primary);
+}
+
+.tecla:active {
+  transform: scale(0.95);
+  background: var(--green-200);
+}
+
+.tecla.clear {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.tecla.submit {
+  background: var(--gradient);
+  border-color: transparent;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .teclado-numerico {
+    display: grid;
+  }
+
+  .resposta-input {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .resposta-container {
+    flex-direction: column;
+  }
+
+  .btn-confirmar {
+    display: none;
+  }
+}
+
+/* =========================
+   6. BOTÕES DE AÇÃO
+   ========================= */
+
+.treino-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-sair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: white;
+  border: 2px solid var(--green-200);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-sair:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.btn-proximo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--gradient);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-btn);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.btn-proximo.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.btn-proximo:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================
+   7. QUESTÃO FRAÇÕES
+   ========================= */
+
+.fracao {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 12px;
+}
+
+.fracao-num, .fracao-den {
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.fracao-barra {
+  width: 100%;
+  height: 3px;
+  background: var(--text-dark);
+  margin: 4px 0;
+}
+
+/* =========================
+   8. QUESTÃO PORCENTAGEM
+   ========================= */
+
+.questao-porcentagem {
+  font-size: 24px;
+  line-height: 1.6;
+}
+
+.questao-porcentagem .destaque {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* =========================
+   9. QUESTÃO REGRA DE 3
+   ========================= */
+
+.regra-tres-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.regra-tres-linha {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.regra-tres-linha span {
+  min-width: 80px;
+  text-align: center;
+}
+
+.regra-tres-linha .seta {
+  color: var(--primary);
+}
+
+.regra-tres-linha .incognita {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+/* =========================
+   10. LOADING/LOADING OVERLAY
+   ========================= */
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--green-200);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 16px;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* =========================
+   11. DICAS COLAPSÁVEIS (MOBILE)
+   ========================= */
+
+.dicas-toggle {
+  display: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dicas-toggle .dicas-chevron {
+  transition: transform 0.3s ease;
+  font-size: 18px;
+  margin-left: auto;
+}
+
+.dicas-toggle .dicas-chevron.open {
+  transform: rotate(180deg);
+}
+
+.dicas-panel.collapsible .dicas-header {
+  cursor: pointer;
+}
+
+.dicas-panel.collapsible .dicas-lista {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0;
+}
+
+.dicas-panel.collapsible .dicas-lista.open {
+  max-height: 500px;
+  padding-top: 12px;
+}
+
+/* =========================
+   12. RESPONSIVO
+   ========================= */
+
+@media (max-width: 768px) {
+  .treino-container {
+    padding: 16px;
+    padding-top: 8px;
+  }
+
+  .treino-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .treino-info {
+    justify-content: space-between;
+  }
+
+  .treino-timer {
+    align-self: center;
+    padding: 10px 24px;
+    border-radius: var(--radius-full);
+  }
+
+  .treino-timer span {
+    font-size: 22px;
+  }
+
+  .questao-card {
+    padding: 24px 16px;
+  }
+
+  .questao-enunciado {
+    font-size: 30px;
+    margin: 32px 0;
+  }
+
+  .questao-enunciado .equacao {
+    font-size: 28px;
+  }
+
+  .questao-numero,
+  .questao-tipo {
+    position: static;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+
+  .progress-dots {
+    display: none;
+  }
+
+  .teclado-numerico {
+    display: grid;
+    max-width: 340px;
+    gap: 10px;
+  }
+
+  .tecla {
+    padding: 16px;
+    font-size: 22px;
+    min-height: 52px;
+  }
+
+  .fracao-campo {
+    width: 90px;
+    font-size: 28px;
+    padding: 8px 6px;
+  }
+
+  .resposta-container .fracao-barra {
+    width: 110px;
+  }
+
+  .feedback-container.show {
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .feedback-text {
+    font-size: 15px;
+  }
+
+  .feedback-resposta {
+    margin-left: 0;
+  }
+
+  .treino-actions {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .btn-sair, .btn-proximo {
+    min-height: 44px;
+    padding: 10px 20px;
+  }
+
+  /* Dicas colapsáveis no mobile */
+  .dicas-toggle {
+    display: flex;
+  }
+
+  .dicas-panel {
+    padding: 16px;
+  }
+
+  .dicas-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+
+  /* Regra de 3 mobile */
+  .regra-tres-linha {
+    font-size: 22px;
+    gap: 16px;
+  }
+
+  .regra-tres-linha span {
+    min-width: 60px;
+  }
+
+  /* Porcentagem mobile */
+  .questao-porcentagem {
+    font-size: 20px;
+  }
+
+  .progress-bar-container {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .treino-container {
+    padding: 12px;
+  }
+
+  .questao-enunciado {
+    font-size: 26px;
+    margin: 24px 0;
+  }
+
+  .questao-enunciado .equacao {
+    font-size: 22px;
+  }
+
+  .questao-enunciado .operador {
+    margin: 0 8px;
+  }
+
+  .questao-card {
+    padding: 20px 14px;
+    border-radius: var(--radius-sm);
+  }
+
+  .resposta-input {
+    font-size: 24px;
+    padding: 12px 16px;
+    max-width: 160px;
+  }
+
+  .fracao-campo {
+    width: 80px;
+    font-size: 24px;
+    padding: 8px 6px;
+  }
+
+  .resposta-container .fracao-barra {
+    width: 100px;
+  }
+
+  .teclado-numerico {
+    max-width: 300px;
+    gap: 8px;
+  }
+
+  .tecla {
+    padding: 14px;
+    font-size: 20px;
+    min-height: 48px;
+  }
+
+  .treino-timer {
+    padding: 8px 18px;
+  }
+
+  .treino-timer span {
+    font-size: 20px;
+  }
+
+  .treino-timer i {
+    font-size: 18px;
+  }
+
+  .treino-nivel {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .treino-progresso {
+    font-size: 13px;
+  }
+
+  .regra-tres-linha {
+    font-size: 18px;
+    gap: 12px;
+  }
+
+  .questao-porcentagem {
+    font-size: 17px;
+  }
+
+  .feedback-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .dicas-panel {
+    padding: 14px;
+  }
+
+  .dicas-lista li {
+    font-size: 13px;
+  }
+
+  /* Fracao no enunciado */
+  .fracao-num, .fracao-den {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 360px) {
+  .treino-container {
+    padding: 10px;
+  }
+
+  .questao-enunciado {
+    font-size: 22px;
+    margin: 20px 0;
+  }
+
+  .questao-enunciado .equacao {
+    font-size: 18px;
+  }
+
+  .questao-card {
+    padding: 16px 12px;
+  }
+
+  .fracao-campo {
+    width: 70px;
+    font-size: 22px;
+  }
+
+  .resposta-container .fracao-barra {
+    width: 90px;
+  }
+
+  .resposta-input {
+    font-size: 22px;
+    max-width: 140px;
+  }
+
+  .teclado-numerico {
+    max-width: 260px;
+    gap: 6px;
+  }
+
+  .tecla {
+    padding: 12px;
+    font-size: 18px;
+    min-height: 44px;
+  }
+
+  .treino-nivel span {
+    font-size: 12px;
+  }
+
+  .treino-timer span {
+    font-size: 18px;
+  }
+
+  .regra-tres-linha {
+    font-size: 16px;
+    gap: 8px;
+  }
+
+  .regra-tres-linha span {
+    min-width: 50px;
+  }
+
+  .fracao-num, .fracao-den {
+    font-size: 20px;
+  }
+
+  .btn-sair, .btn-proximo {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
