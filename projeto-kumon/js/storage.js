@@ -325,6 +325,16 @@ async function sincronizarComSupabase(usuario) {
   }
 }
 
+// Desbloquear todos os níveis
+function desbloquearTodosNiveis() {
+  const usuario = getUsuario();
+  for (const nivelId in usuario.progresso) {
+    usuario.progresso[nivelId].desbloqueado = true;
+  }
+  salvarUsuario(usuario);
+  return true;
+}
+
 // Limpar todos os dados (reset)
 function limparDados() {
   localStorage.removeItem(STORAGE_KEYS.USUARIO);
@@ -372,6 +382,7 @@ window.kumonStorage = {
   desbloquearConquista,
   temConquista,
   getEstatisticasDias,
+  desbloquearTodosNiveis,
   limparDados,
   exportarDados,
   importarDados,

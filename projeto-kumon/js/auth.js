@@ -143,6 +143,57 @@ function criarOverlayLogin() {
   });
 }
 
+// Gerencia dados Kumon por usuário (cada conta tem seu próprio progresso)
+function gerenciarDadosUsuario(user) {
+  const userId = user.id;
+  const storedUserId = localStorage.getItem('kumon_current_uid');
+
+  if (!storedUserId) {
+    // Primeiro usuário a logar = conta teste → desbloquear tudo
+    localStorage.setItem('kumon_current_uid', userId);
+    localStorage.setItem('kumon_admin_uid', userId);
+    if (window.kumonStorage) {
+      window.kumonStorage.desbloquearTodosNiveis();
+      console.log('[Auth] Conta teste detectada — todos os níveis desbloqueados');
+    }
+  } else if (storedUserId !== userId) {
+    // Usuário diferente logando → salvar dados do anterior e carregar os deste
+    const adminUid = localStorage.getItem('kumon_admin_uid');
+
+    // Backup dos dados do usuário anterior
+    const dadosAnteriores = window.kumonStorage ? window.kumonStorage.exportarDados() : null;
+    if (dadosAnteriores) {
+      localStorage.setItem('kumon_backup_' + storedUserId, JSON.stringify(dadosAnteriores));
+    }
+
+    // Verificar se este usuário já tem dados salvos
+    const backupEsteUsuario = localStorage.getItem('kumon_backup_' + userId);
+    if (backupEsteUsuario) {
+      // Restaurar dados deste usuário
+      const dados = JSON.parse(backupEsteUsuario);
+      window.kumonStorage.importarDados(dados);
+      console.log('[Auth] Dados do usuário restaurados');
+    } else {
+      // Novo usuário → criar dados padrão (níveis bloqueados)
+      window.kumonStorage.limparDados();
+      console.log('[Auth] Novo usuário — progresso iniciado do zero');
+    }
+
+    // Se é a conta admin/teste, desbloquear tudo
+    if (userId === adminUid && window.kumonStorage) {
+      window.kumonStorage.desbloquearTodosNiveis();
+    }
+
+    localStorage.setItem('kumon_current_uid', userId);
+  } else {
+    // Mesmo usuário — verificar se é admin e desbloquear
+    const adminUid = localStorage.getItem('kumon_admin_uid');
+    if (userId === adminUid && window.kumonStorage) {
+      window.kumonStorage.desbloquearTodosNiveis();
+    }
+  }
+}
+
 // Remove overlay e atualiza UI com dados do usuário
 function removerOverlay(session) {
   const overlay = document.getElementById('auth-overlay');
@@ -155,6 +206,9 @@ function removerOverlay(session) {
 
   const user = session.user;
   const nome = user.user_metadata?.nome || user.email?.split('@')[0] || 'Estudante';
+
+  // Gerenciar dados Kumon por usuário
+  gerenciarDadosUsuario(user);
 
   // Atualiza nome do usuário na navbar
   const userNameEl = document.querySelector('.user-name');
