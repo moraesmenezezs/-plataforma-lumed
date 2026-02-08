@@ -1,6 +1,7 @@
 // ============================================
 // Kumon Digital - Geração Algorítmica de Questões
 // 8 Fases, 30 Níveis — Matemática Completa ENEM
+// DIFICULDADE AUMENTADA — Números grandes, operações longas
 // ============================================
 
 // ===== FUNÇÕES AUXILIARES =====
@@ -57,7 +58,7 @@ const NIVEIS_CONFIG = {
 
   '1_1': {
     nome: 'Soma',
-    descricao: 'Adição de números de 1 a 100',
+    descricao: 'Adição com números grandes e múltiplos termos',
     fase: 1, nivel: 1,
     icone: 'bi-plus-lg',
     tempoLimite: 300,
@@ -72,7 +73,7 @@ const NIVEIS_CONFIG = {
   },
   '1_2': {
     nome: 'Subtração',
-    descricao: 'Subtração de números de 1 a 100',
+    descricao: 'Subtração com números grandes',
     fase: 1, nivel: 2,
     icone: 'bi-dash-lg',
     tempoLimite: 300,
@@ -87,7 +88,7 @@ const NIVEIS_CONFIG = {
   },
   '1_3': {
     nome: 'Multiplicação',
-    descricao: 'Tabuada de 1 a 12',
+    descricao: 'Multiplicação com números grandes',
     fase: 1, nivel: 3,
     icone: 'bi-x-lg',
     tempoLimite: 360,
@@ -102,7 +103,7 @@ const NIVEIS_CONFIG = {
   },
   '1_4': {
     nome: 'Divisão',
-    descricao: 'Divisões exatas',
+    descricao: 'Divisões com números grandes',
     fase: 1, nivel: 4,
     icone: 'bi-slash-lg',
     tempoLimite: 360,
@@ -545,47 +546,89 @@ const NIVEIS_CONFIG = {
 
 // ===================================================
 // GERADORES DE QUESTÕES — FASE 1 (FUNDAMENTOS)
+// Dificuldade AUMENTADA: números grandes, múltiplos termos
 // ===================================================
 
 function gerarSoma(sublivel) {
-  let a, b;
+  let nums;
   switch (sublivel) {
-    case 'basico': a = randomInt(1, 20); b = randomInt(1, 20); break;
-    case 'intermediario': a = randomInt(10, 50); b = randomInt(10, 50); break;
-    case 'avancado': a = randomInt(20, 100); b = randomInt(20, 100); break;
-    default: a = randomInt(1, 50); b = randomInt(1, 50);
+    case 'basico':
+      nums = [randomInt(50, 500), randomInt(50, 500)];
+      break;
+    case 'intermediario': {
+      const count = randomInt(3, 4);
+      nums = [];
+      for (let i = 0; i < count; i++) nums.push(randomInt(100, 999));
+      break;
+    }
+    case 'avancado': {
+      const count = randomInt(3, 5);
+      nums = [];
+      for (let i = 0; i < count; i++) nums.push(randomInt(500, 9999));
+      break;
+    }
+    default:
+      nums = [randomInt(50, 300), randomInt(50, 300)];
   }
-  return {
-    tipo: 'soma',
-    enunciado: `${a} + ${b}`,
-    enunciadoHTML: `${a} <span class="operador">+</span> ${b} <span class="igual">=</span>`,
-    resposta: a + b
-  };
+  const total = nums.reduce((s, n) => s + n, 0);
+  const enunciado = nums.join(' + ');
+  const enunciadoHTML = nums.join(' <span class="operador">+</span> ') + ' <span class="igual">=</span>';
+  return { tipo: 'soma', enunciado, enunciadoHTML, resposta: total };
 }
 
 function gerarSubtracao(sublivel) {
-  let a, b;
   switch (sublivel) {
-    case 'basico': a = randomInt(10, 30); b = randomInt(1, a); break;
-    case 'intermediario': a = randomInt(30, 70); b = randomInt(10, a); break;
-    case 'avancado': a = randomInt(50, 150); b = randomInt(20, a); break;
-    default: a = randomInt(20, 100); b = randomInt(1, a);
+    case 'basico': {
+      const a = randomInt(100, 999);
+      const b = randomInt(10, a - 1);
+      return {
+        tipo: 'subtracao',
+        enunciado: `${a} − ${b}`,
+        enunciadoHTML: `${a} <span class="operador">−</span> ${b} <span class="igual">=</span>`,
+        resposta: a - b
+      };
+    }
+    case 'intermediario': {
+      const a = randomInt(500, 5000);
+      const b = randomInt(100, a - 50);
+      return {
+        tipo: 'subtracao',
+        enunciado: `${a} − ${b}`,
+        enunciadoHTML: `${a} <span class="operador">−</span> ${b} <span class="igual">=</span>`,
+        resposta: a - b
+      };
+    }
+    case 'avancado': {
+      const a = randomInt(3000, 9999);
+      const b = randomInt(500, Math.floor(a * 0.5));
+      const c = randomInt(100, Math.floor((a - b) * 0.5));
+      return {
+        tipo: 'subtracao',
+        enunciado: `${a} − ${b} − ${c}`,
+        enunciadoHTML: `${a} <span class="operador">−</span> ${b} <span class="operador">−</span> ${c} <span class="igual">=</span>`,
+        resposta: a - b - c
+      };
+    }
+    default: {
+      const a = randomInt(100, 500);
+      const b = randomInt(10, a - 1);
+      return {
+        tipo: 'subtracao',
+        enunciado: `${a} − ${b}`,
+        enunciadoHTML: `${a} <span class="operador">−</span> ${b} <span class="igual">=</span>`,
+        resposta: a - b
+      };
+    }
   }
-  return {
-    tipo: 'subtracao',
-    enunciado: `${a} - ${b}`,
-    enunciadoHTML: `${a} <span class="operador">−</span> ${b} <span class="igual">=</span>`,
-    resposta: a - b
-  };
 }
 
 function gerarMultiplicacao(sublivel) {
   let a, b;
   switch (sublivel) {
-    case 'basico': a = randomInt(2, 5); b = randomInt(2, 5); break;
-    case 'intermediario': a = randomInt(3, 9); b = randomInt(3, 9); break;
-    case 'avancado': a = randomInt(6, 12); b = randomInt(6, 12); break;
-    default: a = randomInt(2, 10); b = randomInt(2, 10);
+    case 'basico': a = randomInt(12, 50); b = randomInt(2, 9); break;
+    case 'intermediario': a = randomInt(20, 99); b = randomInt(11, 50); break;
+    case 'avancado': a = randomInt(100, 500); b = randomInt(11, 99); break;
+    default: a = randomInt(12, 50); b = randomInt(2, 9);
   }
   return {
     tipo: 'multiplicacao',
@@ -598,10 +641,10 @@ function gerarMultiplicacao(sublivel) {
 function gerarDivisao(sublivel) {
   let divisor, quociente;
   switch (sublivel) {
-    case 'basico': divisor = randomInt(2, 5); quociente = randomInt(2, 5); break;
-    case 'intermediario': divisor = randomInt(3, 9); quociente = randomInt(3, 9); break;
-    case 'avancado': divisor = randomInt(6, 12); quociente = randomInt(6, 12); break;
-    default: divisor = randomInt(2, 10); quociente = randomInt(2, 10);
+    case 'basico': divisor = randomInt(3, 12); quociente = randomInt(11, 50); break;
+    case 'intermediario': divisor = randomInt(11, 25); quociente = randomInt(11, 50); break;
+    case 'avancado': divisor = randomInt(12, 50); quociente = randomInt(20, 99); break;
+    default: divisor = randomInt(3, 12); quociente = randomInt(11, 30);
   }
   const dividendo = divisor * quociente;
   return {
@@ -615,17 +658,17 @@ function gerarDivisao(sublivel) {
 
 // ===================================================
 // GERADORES DE QUESTÕES — FASE 2 (FRAÇÕES)
+// Dificuldade AUMENTADA: denominadores maiores
 // ===================================================
 
 function gerarSimplificacao(sublivel) {
   let num, den, fator;
   switch (sublivel) {
-    case 'basico': fator = randomInt(2, 4); num = randomInt(1, 5) * fator; den = randomInt(2, 6) * fator; break;
-    case 'intermediario': fator = randomInt(2, 6); num = randomInt(2, 8) * fator; den = randomInt(3, 10) * fator; break;
-    case 'avancado': fator = randomInt(3, 9); num = randomInt(2, 10) * fator; den = randomInt(3, 12) * fator; break;
-    default: fator = randomInt(2, 5); num = randomInt(1, 6) * fator; den = randomInt(2, 8) * fator;
+    case 'basico': fator = randomInt(2, 5); num = randomInt(2, 8) * fator; den = randomInt(3, 10) * fator; break;
+    case 'intermediario': fator = randomInt(3, 8); num = randomInt(3, 12) * fator; den = randomInt(4, 15) * fator; break;
+    case 'avancado': fator = randomInt(5, 12); num = randomInt(3, 15) * fator; den = randomInt(4, 20) * fator; break;
+    default: fator = randomInt(2, 6); num = randomInt(2, 8) * fator; den = randomInt(3, 10) * fator;
   }
-  // Ensure num < den for proper fraction (sometimes)
   if (num > den) [num, den] = [den, num];
   if (num === den) den += fator;
 
@@ -656,27 +699,27 @@ function gerarSomaSubFracoes(sublivel) {
   let num1, den1, num2, den2, operacao;
   switch (sublivel) {
     case 'basico':
-      den1 = den2 = randomInt(2, 8);
+      den1 = den2 = randomInt(3, 12);
       num1 = randomInt(1, den1 - 1);
       num2 = randomInt(1, den1 - 1);
       operacao = escolher(['+', '-']);
       break;
     case 'intermediario':
-      den1 = randomInt(2, 6);
-      den2 = randomInt(2, 6);
+      den1 = randomInt(3, 12);
+      den2 = randomInt(3, 12);
       num1 = randomInt(1, den1 - 1);
       num2 = randomInt(1, den2 - 1);
       operacao = escolher(['+', '-']);
       break;
     case 'avancado':
-      den1 = randomInt(3, 10);
-      den2 = randomInt(3, 10);
+      den1 = randomInt(5, 20);
+      den2 = randomInt(5, 20);
       num1 = randomInt(1, den1);
       num2 = randomInt(1, den2);
       operacao = escolher(['+', '-']);
       break;
     default:
-      den1 = den2 = randomInt(2, 6);
+      den1 = den2 = randomInt(3, 10);
       num1 = randomInt(1, den1 - 1);
       num2 = randomInt(1, den2 - 1);
       operacao = '+';
@@ -734,23 +777,23 @@ function gerarMultDivFracoes(sublivel) {
   let num1, den1, num2, den2, operacao;
   switch (sublivel) {
     case 'basico':
-      den1 = randomInt(2, 5); num1 = randomInt(1, den1);
-      den2 = randomInt(2, 5); num2 = randomInt(1, den2);
+      den1 = randomInt(2, 8); num1 = randomInt(1, den1);
+      den2 = randomInt(2, 8); num2 = randomInt(1, den2);
       operacao = '×';
       break;
     case 'intermediario':
-      den1 = randomInt(2, 7); num1 = randomInt(1, den1);
-      den2 = randomInt(2, 7); num2 = randomInt(1, den2);
+      den1 = randomInt(3, 12); num1 = randomInt(1, den1);
+      den2 = randomInt(3, 12); num2 = randomInt(1, den2);
       operacao = escolher(['×', '÷']);
       break;
     case 'avancado':
-      den1 = randomInt(2, 9); num1 = randomInt(1, den1);
-      den2 = randomInt(2, 9); num2 = randomInt(1, den2);
+      den1 = randomInt(4, 15); num1 = randomInt(1, den1);
+      den2 = randomInt(4, 15); num2 = randomInt(1, den2);
       operacao = escolher(['×', '÷']);
       break;
     default:
-      den1 = randomInt(2, 5); num1 = randomInt(1, den1);
-      den2 = randomInt(2, 5); num2 = randomInt(1, den2);
+      den1 = randomInt(2, 8); num1 = randomInt(1, den1);
+      den2 = randomInt(2, 8); num2 = randomInt(1, den2);
       operacao = '×';
   }
 
@@ -797,15 +840,14 @@ function gerarMultDivFracoes(sublivel) {
 }
 
 function gerarNumerosMistos(sublivel) {
-  // Convert mixed to improper or improper to mixed
   const tipo = escolher(['misto_para_impropria', 'impropria_para_misto']);
   let inteiro, num, den;
 
   switch (sublivel) {
-    case 'basico': inteiro = randomInt(1, 3); den = randomInt(2, 4); num = randomInt(1, den - 1); break;
-    case 'intermediario': inteiro = randomInt(2, 5); den = randomInt(2, 6); num = randomInt(1, den - 1); break;
-    case 'avancado': inteiro = randomInt(3, 8); den = randomInt(2, 8); num = randomInt(1, den - 1); break;
-    default: inteiro = randomInt(1, 4); den = randomInt(2, 5); num = randomInt(1, den - 1);
+    case 'basico': inteiro = randomInt(1, 5); den = randomInt(2, 6); num = randomInt(1, den - 1); break;
+    case 'intermediario': inteiro = randomInt(3, 8); den = randomInt(3, 8); num = randomInt(1, den - 1); break;
+    case 'avancado': inteiro = randomInt(5, 15); den = randomInt(3, 12); num = randomInt(1, den - 1); break;
+    default: inteiro = randomInt(1, 5); den = randomInt(2, 6); num = randomInt(1, den - 1);
   }
 
   const numImpropria = inteiro * den + num;
@@ -832,24 +874,24 @@ function gerarNumerosMistos(sublivel) {
 }
 
 function gerarOperacoesCombFracoes(sublivel) {
-  // Generate a simple two-operation expression with fractions
-  let num1, den1, num2, den2;
+  let num1, den1, num2, den2, inteiro;
   switch (sublivel) {
     case 'basico':
-      den1 = randomInt(2, 4); num1 = randomInt(1, den1);
-      den2 = randomInt(2, 4); num2 = randomInt(1, den2);
-      break;
-    case 'intermediario':
       den1 = randomInt(2, 6); num1 = randomInt(1, den1);
       den2 = randomInt(2, 6); num2 = randomInt(1, den2);
+      inteiro = randomInt(2, 6);
+      break;
+    case 'intermediario':
+      den1 = randomInt(3, 8); num1 = randomInt(1, den1);
+      den2 = randomInt(3, 8); num2 = randomInt(1, den2);
+      inteiro = randomInt(3, 8);
       break;
     default:
-      den1 = randomInt(2, 5); num1 = randomInt(1, den1);
-      den2 = randomInt(2, 5); num2 = randomInt(1, den2);
+      den1 = randomInt(3, 12); num1 = randomInt(1, den1);
+      den2 = randomInt(3, 12); num2 = randomInt(1, den2);
+      inteiro = randomInt(4, 10);
   }
 
-  // Simple: (num1/den1) × inteiro + num2/den2 ... too complex.
-  // Instead: multiply two fractions and simplify
   const op = escolher(['+', '×']);
 
   let resNum, resDen;
@@ -861,8 +903,6 @@ function gerarOperacoesCombFracoes(sublivel) {
     resDen = den1 * den2;
   }
 
-  // Add a third integer multiplication
-  const inteiro = randomInt(2, 4);
   resNum = resNum * inteiro;
 
   const d = mdc(Math.abs(resNum), Math.abs(resDen));
@@ -897,15 +937,16 @@ function gerarOperacoesCombFracoes(sublivel) {
 
 // ===================================================
 // GERADORES DE QUESTÕES — FASE 3 (MMC, MDC, EXPRESSÕES)
+// Dificuldade AUMENTADA: números maiores, expressões mais complexas
 // ===================================================
 
 function gerarMmcMdc(sublivel) {
   let a, b;
   switch (sublivel) {
-    case 'basico': a = randomInt(4, 12); b = randomInt(4, 12); break;
-    case 'intermediario': a = randomInt(8, 24); b = randomInt(8, 24); break;
-    case 'avancado': a = randomInt(12, 48); b = randomInt(12, 48); break;
-    default: a = randomInt(6, 18); b = randomInt(6, 18);
+    case 'basico': a = randomInt(6, 24); b = randomInt(6, 24); break;
+    case 'intermediario': a = randomInt(12, 60); b = randomInt(12, 60); break;
+    case 'avancado': a = randomInt(24, 120); b = randomInt(24, 120); break;
+    default: a = randomInt(8, 30); b = randomInt(8, 30);
   }
 
   const tipo = escolher(['mmc', 'mdc']);
@@ -928,11 +969,13 @@ function gerarMmcMdc(sublivel) {
 }
 
 function gerarExpressoesNumericas(sublivel) {
-  let a, b, c, expressao, resultado;
+  let expressao, resultado;
 
   switch (sublivel) {
-    case 'basico':
-      a = randomInt(2, 10); b = randomInt(2, 5); c = randomInt(1, 10);
+    case 'basico': {
+      const a = randomInt(10, 50);
+      const b = randomInt(3, 12);
+      const c = randomInt(5, 30);
       if (escolher([true, false])) {
         resultado = a + b * c;
         expressao = `${a} + ${b} × ${c}`;
@@ -941,22 +984,33 @@ function gerarExpressoesNumericas(sublivel) {
         expressao = `${a} × ${b} − ${c}`;
       }
       break;
-    case 'intermediario':
-      a = randomInt(2, 8); b = randomInt(2, 6); c = randomInt(2, 8);
-      const d = randomInt(1, 5);
+    }
+    case 'intermediario': {
+      const a = randomInt(5, 20);
+      const b = randomInt(5, 15);
+      const c = randomInt(3, 12);
+      const d = randomInt(5, 25);
       resultado = (a + b) * c - d;
       expressao = `(${a} + ${b}) × ${c} − ${d}`;
       break;
-    case 'avancado':
-      a = randomInt(2, 6); b = randomInt(2, 5); c = randomInt(2, 4);
-      const e = randomInt(1, 10);
-      resultado = a * b + c * c - e;
-      expressao = `${a} × ${b} + ${c}² − ${e}`;
+    }
+    case 'avancado': {
+      const a = randomInt(5, 15);
+      const b = randomInt(3, 10);
+      const c = randomInt(3, 8);
+      const d = randomInt(2, 6);
+      const e = randomInt(5, 20);
+      resultado = a * b + c * d - e;
+      expressao = `${a} × ${b} + ${c} × ${d} − ${e}`;
       break;
-    default:
-      a = randomInt(2, 10); b = randomInt(2, 5); c = randomInt(1, 8);
+    }
+    default: {
+      const a = randomInt(10, 40);
+      const b = randomInt(3, 10);
+      const c = randomInt(5, 20);
       resultado = a + b * c;
       expressao = `${a} + ${b} × ${c}`;
+    }
   }
 
   return {
@@ -972,34 +1026,47 @@ function gerarExpressoesMistas(sublivel) {
 
   switch (sublivel) {
     case 'basico': {
-      const base = randomInt(2, 5);
+      const base = randomInt(2, 6);
       const exp = randomInt(2, 3);
-      const add = randomInt(1, 10);
+      const add = randomInt(5, 30);
       resultado = Math.pow(base, exp) + add;
       expressao = `${base}<sup>${exp}</sup> + ${add}`;
       break;
     }
     case 'intermediario': {
-      const base = randomInt(2, 4);
+      const base = randomInt(2, 5);
       const exp = randomInt(2, 3);
-      const mult = randomInt(2, 5);
+      const mult = randomInt(3, 10);
       resultado = Math.pow(base, exp) * mult;
       expressao = `${base}<sup>${exp}</sup> × ${mult}`;
       break;
     }
     case 'avancado': {
-      const b1 = randomInt(2, 3);
+      const b1 = randomInt(2, 5);
       const e1 = randomInt(2, 3);
-      const b2 = randomInt(2, 3);
+      const b2 = randomInt(2, 5);
       const e2 = randomInt(2, 3);
-      resultado = Math.pow(b1, e1) + Math.pow(b2, e2);
-      expressao = `${b1}<sup>${e1}</sup> + ${b2}<sup>${e2}</sup>`;
+      const op = escolher(['+', '-']);
+      if (op === '+') {
+        resultado = Math.pow(b1, e1) + Math.pow(b2, e2);
+        expressao = `${b1}<sup>${e1}</sup> + ${b2}<sup>${e2}</sup>`;
+      } else {
+        const val1 = Math.pow(b1, e1);
+        const val2 = Math.pow(b2, e2);
+        if (val1 >= val2) {
+          resultado = val1 - val2;
+          expressao = `${b1}<sup>${e1}</sup> − ${b2}<sup>${e2}</sup>`;
+        } else {
+          resultado = val2 - val1;
+          expressao = `${b2}<sup>${e2}</sup> − ${b1}<sup>${e1}</sup>`;
+        }
+      }
       break;
     }
     default: {
-      const base = randomInt(2, 5);
+      const base = randomInt(2, 6);
       const exp = 2;
-      const add = randomInt(1, 10);
+      const add = randomInt(5, 25);
       resultado = Math.pow(base, exp) + add;
       expressao = `${base}<sup>${exp}</sup> + ${add}`;
     }
@@ -1016,20 +1083,20 @@ function gerarExpressoesMistas(sublivel) {
 
 // ===================================================
 // GERADORES DE QUESTÕES — FASE 4 (POTENCIAÇÃO E RADICIAÇÃO)
+// Dificuldade AUMENTADA: bases e expoentes maiores
 // ===================================================
 
 function gerarPotenciacao(sublivel) {
   let base, exp;
   switch (sublivel) {
-    case 'basico': base = randomInt(2, 5); exp = 2; break;
-    case 'intermediario': base = randomInt(2, 6); exp = escolher([2, 3]); break;
-    case 'avancado': base = randomInt(2, 10); exp = escolher([2, 3, 4]); break;
-    default: base = randomInt(2, 6); exp = 2;
+    case 'basico': base = randomInt(2, 10); exp = 2; break;
+    case 'intermediario': base = randomInt(2, 12); exp = escolher([2, 3]); break;
+    case 'avancado': base = randomInt(2, 15); exp = escolher([2, 3, 4]); break;
+    default: base = randomInt(2, 8); exp = 2;
   }
 
-  // Limit to reasonable numbers
-  if (Math.pow(base, exp) > 10000) {
-    base = randomInt(2, 5);
+  if (Math.pow(base, exp) > 50000) {
+    base = randomInt(2, 6);
     exp = 2;
   }
 
@@ -1049,21 +1116,21 @@ function gerarPropriedadesPotencia(sublivel) {
 
   switch (tipo) {
     case 'produto':
-      base = randomInt(2, 5);
-      m = randomInt(1, 4);
-      n = randomInt(1, 4);
+      base = randomInt(2, 6);
+      m = randomInt(2, 5);
+      n = randomInt(2, 5);
       resultado = Math.pow(base, m + n);
       expressao = `${base}<sup>${m}</sup> × ${base}<sup>${n}</sup>`;
       break;
     case 'quociente':
-      base = randomInt(2, 5);
-      m = randomInt(3, 6);
+      base = randomInt(2, 6);
+      m = randomInt(4, 8);
       n = randomInt(1, m - 1);
       resultado = Math.pow(base, m - n);
       expressao = `${base}<sup>${m}</sup> ÷ ${base}<sup>${n}</sup>`;
       break;
     case 'potencia_de_potencia':
-      base = randomInt(2, 3);
+      base = randomInt(2, 4);
       m = randomInt(2, 3);
       n = randomInt(2, 3);
       resultado = Math.pow(base, m * n);
@@ -1071,10 +1138,10 @@ function gerarPropriedadesPotencia(sublivel) {
       break;
   }
 
-  if (resultado > 10000) {
-    base = 2; m = 2; n = 2;
-    resultado = Math.pow(2, 4);
-    expressao = `(2<sup>2</sup>)<sup>2</sup>`;
+  if (resultado > 50000) {
+    base = 2; m = 3; n = 2;
+    resultado = Math.pow(2, 6);
+    expressao = `(2<sup>3</sup>)<sup>2</sup>`;
   }
 
   return {
@@ -1091,10 +1158,10 @@ function gerarRadiciacao(sublivel) {
   if (tipo === 'raiz_quadrada') {
     let n;
     switch (sublivel) {
-      case 'basico': n = escolher([4, 9, 16, 25, 36]); break;
-      case 'intermediario': n = escolher([49, 64, 81, 100, 121, 144]); break;
-      case 'avancado': n = escolher([169, 196, 225, 256, 289, 324, 361, 400]); break;
-      default: n = escolher([4, 9, 16, 25, 36, 49, 64]);
+      case 'basico': n = escolher([4, 9, 16, 25, 36, 49, 64, 81]); break;
+      case 'intermediario': n = escolher([100, 121, 144, 169, 196, 225, 256, 289]); break;
+      case 'avancado': n = escolher([324, 361, 400, 441, 484, 529, 576, 625, 676, 729, 784, 841, 900]); break;
+      default: n = escolher([4, 9, 16, 25, 36, 49, 64, 81, 100]);
     }
     const raiz = Math.round(Math.sqrt(n));
     return {
@@ -1106,10 +1173,10 @@ function gerarRadiciacao(sublivel) {
   } else {
     let n;
     switch (sublivel) {
-      case 'basico': n = escolher([8, 27]); break;
-      case 'intermediario': n = escolher([8, 27, 64, 125]); break;
-      case 'avancado': n = escolher([8, 27, 64, 125, 216, 343, 512, 729]); break;
-      default: n = escolher([8, 27, 64]);
+      case 'basico': n = escolher([8, 27, 64]); break;
+      case 'intermediario': n = escolher([8, 27, 64, 125, 216]); break;
+      case 'avancado': n = escolher([8, 27, 64, 125, 216, 343, 512, 729, 1000]); break;
+      default: n = escolher([8, 27, 64, 125]);
     }
     const raiz = Math.round(Math.cbrt(n));
     return {
@@ -1129,19 +1196,19 @@ function gerarNotacaoCientifica(sublivel) {
     switch (sublivel) {
       case 'basico':
         mantissa = randomInt(1, 9);
-        expoente = randomInt(2, 4);
+        expoente = randomInt(3, 5);
         break;
       case 'intermediario':
         mantissa = parseFloat((randomInt(10, 99) / 10).toFixed(1));
-        expoente = randomInt(3, 6);
+        expoente = randomInt(4, 8);
         break;
       case 'avancado':
         mantissa = parseFloat((randomInt(10, 99) / 10).toFixed(1));
-        expoente = randomInt(5, 9);
+        expoente = randomInt(6, 12);
         break;
       default:
         mantissa = randomInt(1, 9);
-        expoente = randomInt(2, 5);
+        expoente = randomInt(3, 6);
     }
     const numero = mantissa * Math.pow(10, expoente);
     return {
@@ -1153,10 +1220,10 @@ function gerarNotacaoCientifica(sublivel) {
   } else {
     let mantissa, expoente;
     switch (sublivel) {
-      case 'basico': mantissa = randomInt(1, 9); expoente = randomInt(1, 3); break;
-      case 'intermediario': mantissa = randomInt(1, 9); expoente = randomInt(2, 4); break;
-      case 'avancado': mantissa = randomInt(1, 9); expoente = randomInt(3, 6); break;
-      default: mantissa = randomInt(1, 9); expoente = randomInt(1, 3);
+      case 'basico': mantissa = randomInt(1, 9); expoente = randomInt(2, 4); break;
+      case 'intermediario': mantissa = randomInt(1, 9); expoente = randomInt(3, 6); break;
+      case 'avancado': mantissa = randomInt(1, 9); expoente = randomInt(5, 9); break;
+      default: mantissa = randomInt(1, 9); expoente = randomInt(2, 4);
     }
     const zeros = '0'.repeat(expoente - 1);
     const numeroStr = `0.${zeros}${mantissa}`;
@@ -1172,19 +1239,19 @@ function gerarNotacaoCientifica(sublivel) {
 
 // ===================================================
 // GERADORES DE QUESTÕES — FASE 5 (RAZÃO, PROPORÇÃO, %)
+// Dificuldade AUMENTADA: números maiores
 // ===================================================
 
 function gerarRazaoProporcao(sublivel) {
   let a, b, c, x;
   switch (sublivel) {
-    case 'basico': a = randomInt(2, 6); b = randomInt(2, 6); c = randomInt(2, 5); break;
-    case 'intermediario': a = randomInt(3, 10); b = randomInt(3, 10); c = randomInt(2, 8); break;
-    case 'avancado': a = randomInt(5, 15); b = randomInt(5, 15); c = randomInt(3, 12); break;
-    default: a = randomInt(2, 8); b = randomInt(2, 8); c = randomInt(2, 6);
+    case 'basico': a = randomInt(2, 10); b = randomInt(2, 10); c = randomInt(2, 8); break;
+    case 'intermediario': a = randomInt(5, 20); b = randomInt(5, 20); c = randomInt(3, 15); break;
+    case 'avancado': a = randomInt(10, 40); b = randomInt(10, 40); c = randomInt(5, 25); break;
+    default: a = randomInt(3, 12); b = randomInt(3, 12); c = randomInt(2, 8);
   }
 
   x = (b * c) / a;
-  // Ensure integer result
   while (x % 1 !== 0) {
     b = b + a;
     x = (b * c) / a;
@@ -1202,16 +1269,16 @@ function gerarRegraDe3Simples(sublivel) {
   let a, b, c, x;
   switch (sublivel) {
     case 'basico':
-      a = randomInt(2, 10); b = randomInt(2, 10) * a; c = randomInt(2, 5);
+      a = randomInt(3, 15); b = randomInt(2, 10) * a; c = randomInt(2, 8);
       break;
     case 'intermediario':
-      a = randomInt(5, 15); b = randomInt(10, 50); c = randomInt(2, 8);
+      a = randomInt(8, 25); b = randomInt(20, 80); c = randomInt(5, 15);
       break;
     case 'avancado':
-      a = randomInt(10, 30); b = randomInt(20, 100); c = randomInt(5, 20);
+      a = randomInt(15, 50); b = randomInt(50, 200); c = randomInt(10, 40);
       break;
     default:
-      a = randomInt(2, 10); b = randomInt(10, 30); c = randomInt(2, 5);
+      a = randomInt(3, 12); b = randomInt(10, 40); c = randomInt(2, 8);
   }
   x = (b * c) / a;
   while (x % 1 !== 0) {
@@ -1238,19 +1305,19 @@ function gerarPorcentagem(sublivel) {
   let valor, porcentagem;
   switch (sublivel) {
     case 'basico':
-      valor = escolher([50, 100, 200, 500, 1000]);
-      porcentagem = escolher([10, 20, 25, 50]);
+      valor = escolher([100, 200, 300, 400, 500, 600, 800, 1000, 1500, 2000]);
+      porcentagem = escolher([5, 10, 15, 20, 25, 30, 40, 50, 75]);
       break;
     case 'intermediario':
-      valor = randomInt(50, 200) * 5;
-      porcentagem = escolher([5, 10, 15, 20, 25, 30, 50]);
+      valor = randomInt(100, 500) * 5;
+      porcentagem = escolher([5, 8, 10, 12, 15, 18, 20, 25, 30, 35, 40, 50, 60, 75]);
       break;
     case 'avancado':
-      valor = randomInt(100, 500);
-      porcentagem = randomInt(1, 90);
+      valor = randomInt(200, 2000);
+      porcentagem = randomInt(1, 95);
       break;
     default:
-      valor = 100;
+      valor = escolher([100, 200, 500, 1000]);
       porcentagem = escolher([10, 20, 25, 50]);
   }
   const resposta = (valor * porcentagem) / 100;
@@ -1266,20 +1333,20 @@ function gerarRegraDe3Composta(sublivel) {
   let trabalhadores1, produtos1, dias1, trabalhadores2, dias2;
   switch (sublivel) {
     case 'basico':
-      trabalhadores1 = randomInt(2, 5); produtos1 = trabalhadores1 * randomInt(2, 5); dias1 = randomInt(2, 5);
-      trabalhadores2 = randomInt(2, 5); dias2 = randomInt(2, 5);
-      break;
-    case 'intermediario':
-      trabalhadores1 = randomInt(3, 8); produtos1 = trabalhadores1 * randomInt(3, 6); dias1 = randomInt(3, 7);
+      trabalhadores1 = randomInt(3, 8); produtos1 = trabalhadores1 * randomInt(3, 8); dias1 = randomInt(3, 7);
       trabalhadores2 = randomInt(3, 8); dias2 = randomInt(3, 7);
       break;
-    case 'avancado':
-      trabalhadores1 = randomInt(5, 12); produtos1 = trabalhadores1 * randomInt(4, 8); dias1 = randomInt(4, 10);
+    case 'intermediario':
+      trabalhadores1 = randomInt(5, 12); produtos1 = trabalhadores1 * randomInt(5, 10); dias1 = randomInt(4, 10);
       trabalhadores2 = randomInt(5, 12); dias2 = randomInt(4, 10);
       break;
+    case 'avancado':
+      trabalhadores1 = randomInt(8, 20); produtos1 = trabalhadores1 * randomInt(8, 15); dias1 = randomInt(5, 15);
+      trabalhadores2 = randomInt(8, 20); dias2 = randomInt(5, 15);
+      break;
     default:
-      trabalhadores1 = randomInt(2, 6); produtos1 = trabalhadores1 * 3; dias1 = randomInt(2, 5);
-      trabalhadores2 = randomInt(2, 6); dias2 = randomInt(2, 5);
+      trabalhadores1 = randomInt(3, 8); produtos1 = trabalhadores1 * 5; dias1 = randomInt(3, 7);
+      trabalhadores2 = randomInt(3, 8); dias2 = randomInt(3, 7);
   }
   const produtividade = produtos1 / (trabalhadores1 * dias1);
   const produtos2 = produtividade * trabalhadores2 * dias2;
@@ -1302,14 +1369,15 @@ function gerarRegraDe3Composta(sublivel) {
 
 // ===================================================
 // GERADORES DE QUESTÕES — FASE 6 (EQUAÇÕES)
+// Dificuldade AUMENTADA: coeficientes maiores
 // ===================================================
 
 function gerarEquacao1Grau(sublivel) {
   let a, b, x;
   switch (sublivel) {
     case 'basico':
-      x = randomInt(1, 10);
-      a = randomInt(2, 5);
+      x = randomInt(2, 20);
+      a = randomInt(2, 9);
       b = a * x;
       return {
         tipo: 'equacao1grau',
@@ -1318,9 +1386,9 @@ function gerarEquacao1Grau(sublivel) {
         resposta: x
       };
     case 'intermediario':
-      x = randomInt(-5, 10);
-      a = randomInt(2, 6);
-      b = randomInt(1, 15);
+      x = randomInt(-10, 20);
+      a = randomInt(3, 12);
+      b = randomInt(5, 30);
       const resultado = a * x + b;
       return {
         tipo: 'equacao1grau',
@@ -1328,21 +1396,23 @@ function gerarEquacao1Grau(sublivel) {
         enunciadoHTML: `<div class="questao-porcentagem">Resolva:<br><br><span class="destaque">${a}<span class="variavel">x</span> + ${b} = ${resultado}</span></div>`,
         resposta: x
       };
-    case 'avancado':
-      x = randomInt(-8, 12);
-      a = randomInt(2, 7);
-      const c = randomInt(1, 5);
-      const d = randomInt(1, 10);
-      const res = a * x - c + d;
+    case 'avancado': {
+      x = randomInt(-10, 15);
+      a = randomInt(3, 12);
+      const c2 = randomInt(1, 8);
+      const d = randomInt(5, 25);
+      // ax - c + d = res  →  ax = res + c - d  →  x = (res + c - d) / a
+      const res = a * x - c2 + d;
       return {
         tipo: 'equacao1grau',
-        enunciado: `${a}x - ${c} + ${d} = ${res}`,
-        enunciadoHTML: `<div class="questao-porcentagem">Resolva:<br><br><span class="destaque">${a}<span class="variavel">x</span> − ${c} + ${d} = ${res}</span></div>`,
+        enunciado: `${a}x - ${c2} + ${d} = ${res}`,
+        enunciadoHTML: `<div class="questao-porcentagem">Resolva:<br><br><span class="destaque">${a}<span class="variavel">x</span> − ${c2} + ${d} = ${res}</span></div>`,
         resposta: x
       };
+    }
     default:
-      x = randomInt(1, 10);
-      a = randomInt(2, 5);
+      x = randomInt(2, 15);
+      a = randomInt(2, 8);
       b = a * x;
       return {
         tipo: 'equacao1grau',
@@ -1354,33 +1424,31 @@ function gerarEquacao1Grau(sublivel) {
 }
 
 function gerarSistemaEquacoes(sublivel) {
-  // Generate system with integer solutions
-  let x = randomInt(1, 8);
-  let y = randomInt(1, 8);
+  let x = randomInt(1, 12);
+  let y = randomInt(1, 12);
 
   let a1, b1, a2, b2;
   switch (sublivel) {
     case 'basico':
       a1 = 1; b1 = 1;
-      a2 = randomInt(1, 3); b2 = randomInt(1, 3);
-      break;
-    case 'intermediario':
-      a1 = randomInt(1, 3); b1 = randomInt(1, 3);
       a2 = randomInt(1, 4); b2 = randomInt(1, 4);
       break;
-    case 'avancado':
-      a1 = randomInt(1, 5); b1 = randomInt(1, 5);
+    case 'intermediario':
+      a1 = randomInt(1, 4); b1 = randomInt(1, 4);
       a2 = randomInt(1, 5); b2 = randomInt(1, 5);
+      break;
+    case 'avancado':
+      a1 = randomInt(2, 6); b1 = randomInt(2, 6);
+      a2 = randomInt(2, 7); b2 = randomInt(2, 7);
       break;
     default:
       a1 = 1; b1 = 1;
-      a2 = randomInt(1, 3); b2 = randomInt(1, 3);
+      a2 = randomInt(1, 4); b2 = randomInt(1, 4);
   }
 
   const c1 = a1 * x + b1 * y;
   const c2 = a2 * x + b2 * y;
 
-  // Ask for x value
   const perguntaVar = escolher(['x', 'y']);
   const respostaFinal = perguntaVar === 'x' ? x : y;
 
@@ -1398,28 +1466,25 @@ function gerarSistemaEquacoes(sublivel) {
 }
 
 function gerarEquacao2Grau(sublivel) {
-  // Generate ax² + bx + c = 0 with integer roots
   let r1, r2;
   switch (sublivel) {
     case 'basico':
-      r1 = randomInt(1, 5); r2 = randomInt(1, 5);
+      r1 = randomInt(1, 8); r2 = randomInt(1, 8);
       break;
     case 'intermediario':
-      r1 = randomInt(-5, 5); r2 = randomInt(1, 8);
+      r1 = randomInt(-8, 10); r2 = randomInt(1, 12);
       break;
     case 'avancado':
-      r1 = randomInt(-8, 8); r2 = randomInt(-8, 8);
+      r1 = randomInt(-12, 12); r2 = randomInt(-12, 12);
       break;
     default:
-      r1 = randomInt(1, 5); r2 = randomInt(1, 5);
+      r1 = randomInt(1, 8); r2 = randomInt(1, 8);
   }
 
-  // (x - r1)(x - r2) = x² - (r1+r2)x + r1*r2
   const a = 1;
   const b = -(r1 + r2);
   const c = r1 * r2;
 
-  // Resposta = maior raiz
   const maiorRaiz = Math.max(r1, r2);
 
   let bStr = '';
@@ -1445,19 +1510,19 @@ function gerarEquacao2Grau(sublivel) {
 function gerarProblemasEquacoes(sublivel) {
   const problemas = [
     () => {
-      const x = randomInt(5, 30);
-      const k = randomInt(2, 5);
+      const x = randomInt(10, 50);
+      const k = randomInt(2, 7);
       const soma = k * x + x;
       return {
         tipo: 'problema_equacao',
-        enunciado: `O dobro... de um número somado com ele mesmo dá ${soma}`,
+        enunciado: `${k} vezes um número somado com ele mesmo dá ${soma}`,
         enunciadoHTML: `<div class="questao-porcentagem">${k === 2 ? 'O dobro' : k === 3 ? 'O triplo' : k + ' vezes'} um número, somado com o próprio número, resulta em <span class="destaque">${soma}</span>. Qual é esse número?</div>`,
         resposta: x
       };
     },
     () => {
-      const idade1 = randomInt(10, 30);
-      const diff = randomInt(2, 10);
+      const idade1 = randomInt(15, 45);
+      const diff = randomInt(3, 20);
       const soma = idade1 + (idade1 + diff);
       return {
         tipo: 'problema_equacao',
@@ -1467,8 +1532,8 @@ function gerarProblemasEquacoes(sublivel) {
       };
     },
     () => {
-      const preco = randomInt(20, 100);
-      const desconto = escolher([10, 15, 20, 25, 30]);
+      const preco = randomInt(50, 500);
+      const desconto = escolher([5, 10, 12, 15, 20, 25, 30, 35, 40]);
       const final_ = preco * (1 - desconto / 100);
       return {
         tipo: 'problema_equacao',
@@ -1478,13 +1543,35 @@ function gerarProblemasEquacoes(sublivel) {
       };
     },
     () => {
-      const n = randomInt(5, 20);
-      const tri = n * 3;
+      const n = randomInt(10, 40);
+      const k = escolher([3, 4, 5, 6]);
+      const resultado = k * n;
       return {
         tipo: 'problema_equacao',
-        enunciado: `Triplo de um número é ${tri}`,
-        enunciadoHTML: `<div class="questao-porcentagem">O triplo de um número é <span class="destaque">${tri}</span>. Qual é esse número?</div>`,
+        enunciado: `${k} vezes um número é ${resultado}`,
+        enunciadoHTML: `<div class="questao-porcentagem">${k === 3 ? 'O triplo' : k === 4 ? 'O quádruplo' : k + ' vezes'} um número é <span class="destaque">${resultado}</span>. Qual é esse número?</div>`,
         resposta: n
+      };
+    },
+    () => {
+      const n = randomInt(5, 25);
+      const soma = n + (n + 1) + (n + 2);
+      return {
+        tipo: 'problema_equacao',
+        enunciado: `Três consecutivos somam ${soma}`,
+        enunciadoHTML: `<div class="questao-porcentagem">A soma de três números <span class="destaque">consecutivos</span> é <span class="destaque">${soma}</span>. Qual é o <span class="destaque">menor</span> deles?</div>`,
+        resposta: n
+      };
+    },
+    () => {
+      const comp = randomInt(10, 40);
+      const larg = randomInt(5, comp - 2);
+      const perimetro = 2 * (comp + larg);
+      return {
+        tipo: 'problema_equacao',
+        enunciado: `Perímetro ${perimetro}, comprimento ${comp}`,
+        enunciadoHTML: `<div class="questao-porcentagem">Um retângulo tem perímetro <span class="destaque">${perimetro}</span> e comprimento <span class="destaque">${comp}</span>. Qual a <span class="destaque">largura</span>?</div>`,
+        resposta: larg
       };
     }
   ];
@@ -1495,26 +1582,27 @@ function gerarProblemasEquacoes(sublivel) {
 
 // ===================================================
 // GERADORES DE QUESTÕES — FASE 7 (CONJUNTOS E LÓGICA)
+// Dificuldade AUMENTADA: conjuntos maiores, sequências mais difíceis
 // ===================================================
 
 function gerarConjuntos(sublivel) {
   let totalA, totalB, intersecao;
   switch (sublivel) {
     case 'basico':
-      totalA = randomInt(10, 30); totalB = randomInt(10, 30);
-      intersecao = randomInt(5, Math.min(totalA, totalB) - 2);
+      totalA = randomInt(20, 50); totalB = randomInt(20, 50);
+      intersecao = randomInt(8, Math.min(totalA, totalB) - 5);
       break;
     case 'intermediario':
-      totalA = randomInt(20, 50); totalB = randomInt(20, 50);
-      intersecao = randomInt(10, Math.min(totalA, totalB) - 5);
-      break;
-    case 'avancado':
-      totalA = randomInt(30, 80); totalB = randomInt(30, 80);
+      totalA = randomInt(40, 100); totalB = randomInt(40, 100);
       intersecao = randomInt(15, Math.min(totalA, totalB) - 10);
       break;
+    case 'avancado':
+      totalA = randomInt(60, 150); totalB = randomInt(60, 150);
+      intersecao = randomInt(20, Math.min(totalA, totalB) - 15);
+      break;
     default:
-      totalA = randomInt(15, 40); totalB = randomInt(15, 40);
-      intersecao = randomInt(5, 15);
+      totalA = randomInt(25, 60); totalB = randomInt(25, 60);
+      intersecao = randomInt(10, 25);
   }
 
   const apenasA = totalA - intersecao;
@@ -1549,24 +1637,28 @@ function gerarConjuntos(sublivel) {
 
 function gerarLogica(sublivel) {
   const problemas = [
+    // PA - sequência aritmética
     () => {
-      const inicio = randomInt(1, 10);
-      const passo = randomInt(2, 5);
+      const inicio = randomInt(3, 30);
+      const passo = randomInt(3, 12);
+      const termos = sublivel === 'avancado' ? 6 : 5;
       const seq = [];
-      for (let i = 0; i < 5; i++) seq.push(inicio + i * passo);
+      for (let i = 0; i < termos; i++) seq.push(inicio + i * passo);
       return {
         tipo: 'logica',
         enunciado: `Próximo: ${seq.join(', ')}, ...?`,
         enunciadoHTML: `<div class="questao-porcentagem">Qual o próximo número da sequência:<br><br><span class="destaque">${seq.join(', ')}, ...</span></div>`,
-        resposta: inicio + 5 * passo
+        resposta: inicio + termos * passo
       };
     },
+    // PG - sequência geométrica
     () => {
-      const inicio = randomInt(1, 3);
-      const fator = randomInt(2, 3);
+      const inicio = randomInt(1, 5);
+      const fator = randomInt(2, 4);
+      const termos = sublivel === 'avancado' ? 5 : 4;
       const seq = [];
       let atual = inicio;
-      for (let i = 0; i < 4; i++) { seq.push(atual); atual *= fator; }
+      for (let i = 0; i < termos; i++) { seq.push(atual); atual *= fator; }
       return {
         tipo: 'logica',
         enunciado: `Próximo: ${seq.join(', ')}, ...?`,
@@ -1574,14 +1666,28 @@ function gerarLogica(sublivel) {
         resposta: atual
       };
     },
+    // Soma de 1 a n
     () => {
-      const n = randomInt(5, 15);
+      const n = sublivel === 'avancado' ? randomInt(20, 50) : randomInt(8, 25);
       const soma = (n * (n + 1)) / 2;
       return {
         tipo: 'logica',
         enunciado: `Soma de 1 até ${n}?`,
         enunciadoHTML: `<div class="questao-porcentagem">Qual a soma de todos os números de <span class="destaque">1</span> até <span class="destaque">${n}</span>?</div>`,
         resposta: soma
+      };
+    },
+    // Quadrados perfeitos
+    () => {
+      const seq = [];
+      const start = randomInt(1, 5);
+      for (let i = start; i < start + 5; i++) seq.push(i * i);
+      const proximo = (start + 5) * (start + 5);
+      return {
+        tipo: 'logica',
+        enunciado: `Próximo: ${seq.join(', ')}, ...?`,
+        enunciadoHTML: `<div class="questao-porcentagem">Qual o próximo número da sequência:<br><br><span class="destaque">${seq.join(', ')}, ...</span></div>`,
+        resposta: proximo
       };
     }
   ];
@@ -1594,7 +1700,7 @@ function gerarCombinatoria(sublivel) {
 
   switch (tipo) {
     case 'fatorial': {
-      const n = sublivel === 'avancado' ? randomInt(5, 7) : randomInt(3, 5);
+      const n = sublivel === 'avancado' ? randomInt(6, 8) : sublivel === 'intermediario' ? randomInt(5, 7) : randomInt(4, 6);
       let fat = 1;
       for (let i = 2; i <= n; i++) fat *= i;
       return {
@@ -1605,29 +1711,31 @@ function gerarCombinatoria(sublivel) {
       };
     }
     case 'principio_multiplicativo': {
-      const a = randomInt(2, 6);
-      const b = randomInt(2, 6);
-      const contexto = escolher([
-        `${a} camisas e ${b} calças. Quantas combinações?`,
-        `${a} sabores e ${b} tamanhos. Quantas opções?`,
-        `${a} entradas e ${b} sobremesas. Quantos pratos?`
-      ]);
+      const a = randomInt(3, 8);
+      const b = randomInt(3, 8);
+      const c = sublivel === 'avancado' ? randomInt(2, 5) : 0;
+      const contexto = c > 0
+        ? `${a} camisas, ${b} calças e ${c} sapatos. Quantas combinações?`
+        : escolher([
+            `${a} camisas e ${b} calças. Quantas combinações?`,
+            `${a} sabores e ${b} tamanhos. Quantas opções?`,
+            `${a} entradas e ${b} sobremesas. Quantos pratos?`
+          ]);
       return {
         tipo: 'combinatoria',
         enunciado: contexto,
         enunciadoHTML: `<div class="questao-porcentagem">${contexto}</div>`,
-        resposta: a * b
+        resposta: c > 0 ? a * b * c : a * b
       };
     }
     case 'combinacao': {
       let n, k;
       switch (sublivel) {
-        case 'basico': n = randomInt(4, 6); k = 2; break;
-        case 'intermediario': n = randomInt(5, 8); k = randomInt(2, 3); break;
-        case 'avancado': n = randomInt(6, 10); k = randomInt(2, 4); break;
-        default: n = randomInt(4, 6); k = 2;
+        case 'basico': n = randomInt(5, 8); k = 2; break;
+        case 'intermediario': n = randomInt(6, 10); k = randomInt(2, 3); break;
+        case 'avancado': n = randomInt(8, 12); k = randomInt(2, 4); break;
+        default: n = randomInt(5, 8); k = 2;
       }
-      // C(n,k)
       let numFat = 1, denFat = 1;
       for (let i = 0; i < k; i++) {
         numFat *= (n - i);
@@ -1647,6 +1755,7 @@ function gerarCombinatoria(sublivel) {
 
 // ===================================================
 // GERADORES DE QUESTÕES — FASE 8 (GEOMETRIA)
+// Dificuldade AUMENTADA: dimensões maiores
 // ===================================================
 
 function gerarPerimetroArea(sublivel) {
@@ -1655,7 +1764,7 @@ function gerarPerimetroArea(sublivel) {
 
   switch (figura) {
     case 'quadrado': {
-      const l = randomInt(2, sublivel === 'avancado' ? 15 : 10);
+      const l = sublivel === 'avancado' ? randomInt(8, 25) : sublivel === 'intermediario' ? randomInt(5, 18) : randomInt(3, 12);
       const tipo = escolher(['perimetro', 'area']);
       if (tipo === 'perimetro') {
         return {
@@ -1674,8 +1783,8 @@ function gerarPerimetroArea(sublivel) {
       }
     }
     case 'retangulo': {
-      const b = randomInt(3, sublivel === 'avancado' ? 15 : 10);
-      const h = randomInt(2, sublivel === 'avancado' ? 12 : 8);
+      const b = sublivel === 'avancado' ? randomInt(10, 30) : sublivel === 'intermediario' ? randomInt(6, 20) : randomInt(3, 15);
+      const h = sublivel === 'avancado' ? randomInt(8, 25) : sublivel === 'intermediario' ? randomInt(4, 15) : randomInt(2, 10);
       const tipo = escolher(['perimetro', 'area']);
       if (tipo === 'perimetro') {
         return {
@@ -1694,9 +1803,8 @@ function gerarPerimetroArea(sublivel) {
       }
     }
     case 'triangulo': {
-      const b = randomInt(3, 12);
-      const h = randomInt(2, 10);
-      // Ensure even product for integer area
+      const b = sublivel === 'avancado' ? randomInt(8, 25) : randomInt(4, 15);
+      const h = sublivel === 'avancado' ? randomInt(6, 20) : randomInt(3, 12);
       const base = b % 2 === 0 ? b : b + 1;
       return {
         tipo: 'geometria',
@@ -1706,8 +1814,7 @@ function gerarPerimetroArea(sublivel) {
       };
     }
     case 'circulo': {
-      const r = randomInt(2, 7);
-      // Use pi ≈ 3.14, ask for approximate
+      const r = sublivel === 'avancado' ? randomInt(5, 15) : sublivel === 'intermediario' ? randomInt(3, 10) : randomInt(2, 7);
       const tipo = escolher(['circunferencia', 'area']);
       if (tipo === 'circunferencia') {
         const resp = Math.round(2 * 3.14 * r * 100) / 100;
@@ -1736,7 +1843,7 @@ function gerarVolume(sublivel) {
 
   switch (solido) {
     case 'cubo': {
-      const a = randomInt(2, sublivel === 'avancado' ? 10 : 6);
+      const a = sublivel === 'avancado' ? randomInt(5, 15) : sublivel === 'intermediario' ? randomInt(3, 10) : randomInt(2, 8);
       return {
         tipo: 'geometria',
         enunciado: `Volume do cubo de aresta ${a}`,
@@ -1745,9 +1852,9 @@ function gerarVolume(sublivel) {
       };
     }
     case 'paralelepipedo': {
-      const c = randomInt(2, 8);
-      const l = randomInt(2, 6);
-      const h = randomInt(2, 6);
+      const c = sublivel === 'avancado' ? randomInt(5, 15) : randomInt(3, 10);
+      const l = sublivel === 'avancado' ? randomInt(4, 12) : randomInt(2, 8);
+      const h = sublivel === 'avancado' ? randomInt(4, 12) : randomInt(2, 8);
       return {
         tipo: 'geometria',
         enunciado: `Volume do paralelepípedo ${c}×${l}×${h}`,
@@ -1756,8 +1863,8 @@ function gerarVolume(sublivel) {
       };
     }
     case 'cilindro': {
-      const r = randomInt(2, 5);
-      const h = randomInt(3, 8);
+      const r = sublivel === 'avancado' ? randomInt(4, 10) : randomInt(2, 7);
+      const h = sublivel === 'avancado' ? randomInt(5, 15) : randomInt(3, 10);
       const resp = Math.round(3.14 * r * r * h * 100) / 100;
       return {
         tipo: 'geometria',
@@ -1770,9 +1877,12 @@ function gerarVolume(sublivel) {
 }
 
 function gerarPitagorasTrig(sublivel) {
-  // Use known Pythagorean triples
-  const ternas = [[3,4,5],[5,12,13],[6,8,10],[8,15,17],[9,12,15],[7,24,25]];
-  const terna = escolher(ternas);
+  // Ternas pitagóricas (incluindo múltiplos para mais variedade)
+  const ternasBase = [[3,4,5],[5,12,13],[6,8,10],[8,15,17],[9,12,15],[7,24,25],[9,40,41],[11,60,61],[20,21,29],[12,35,37]];
+  const multiplicadores = sublivel === 'avancado' ? [1, 2, 3] : sublivel === 'intermediario' ? [1, 2] : [1];
+  const mult = escolher(multiplicadores);
+  const ternaBase = escolher(ternasBase);
+  const terna = ternaBase.map(v => v * mult);
 
   const tipo = escolher(['hipotenusa', 'cateto']);
 
