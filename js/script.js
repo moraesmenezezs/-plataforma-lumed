@@ -595,8 +595,8 @@ function atualizarProgressoTarefas() {
   const completadas = listaTarefas.querySelectorAll('.todo-item.completed').length;
   const porcentagem = total > 0 ? ((completadas / total) * 100).toFixed(0) : 0;
 
-  const progressFill = document.querySelector('.tarefas-diarias .progress-fill');
-  const progressText = document.querySelector('.tarefas-diarias .progress-text');
+  const progressFill = document.querySelector('.atividades-main .progress-fill');
+  const progressText = document.querySelector('.atividades-main .progress-text');
   const contadorTarefas = document.getElementById('contador-tarefas');
 
   if (progressFill) progressFill.style.width = porcentagem + '%';
@@ -900,59 +900,56 @@ function salvarEventos() {
 }
 
 function renderizarCalendario() {
-  const calendarDays = document.querySelector('.calendario-sidebar .calendar-days');
+  // Renderiza no calendário do planner (o único calendário na UI)
+  const calendarDays = document.getElementById('calendar-days-planner');
   if (!calendarDays) return;
 
   const hoje = new Date();
   const primeiroDia = new Date(calendarioAnoAtual, calendarioMesAtual, 1);
   const ultimoDia = new Date(calendarioAnoAtual, calendarioMesAtual + 1, 0);
 
-  // Dia da semana do primeiro dia (0 = Domingo)
   let diaInicio = primeiroDia.getDay();
-
-  // Total de dias no mês
   const totalDias = ultimoDia.getDate();
 
-  // Dias do mês anterior para preencher
-  const mesAnterior = new Date(calendarioAnoAtual, calendarioMesAtual, 0);
-  const diasMesAnterior = mesAnterior.getDate();
+  calendarDays.innerHTML = '';
 
-  let html = '';
-
-  // Dias do mês anterior
-  for (let i = diaInicio - 1; i >= 0; i--) {
-    const dia = diasMesAnterior - i;
-    html += `<span class="other-month">${dia}</span>`;
+  // Dias vazios do início
+  for (let i = 0; i < diaInicio; i++) {
+    const empty = document.createElement('span');
+    empty.className = 'day empty';
+    calendarDays.appendChild(empty);
   }
 
   // Dias do mês atual
   for (let dia = 1; dia <= totalDias; dia++) {
     const dataStr = formatarData(calendarioAnoAtual, calendarioMesAtual, dia);
-    const isHoje = (dia === hoje.getDate() &&
-                    calendarioMesAtual === hoje.getMonth() &&
-                    calendarioAnoAtual === hoje.getFullYear());
+    const dayEl = document.createElement('span');
+    dayEl.className = 'day';
+    dayEl.textContent = dia;
 
-    let classes = [];
-    if (isHoje) classes.push('today');
+    if (dia === hoje.getDate() && calendarioMesAtual === hoje.getMonth() && calendarioAnoAtual === hoje.getFullYear()) {
+      dayEl.classList.add('today');
+    }
 
     // Verificar se tem evento
     if (eventosCalendario[dataStr]) {
-      classes.push('has-event');
-      // Verificar tipo do evento
-      const tipoEvento = eventosCalendario[dataStr].tipo || 'evento';
-      classes.push(tipoEvento);
+      dayEl.classList.add('has-event');
+      dayEl.classList.add(eventosCalendario[dataStr].tipo || 'evento');
     }
 
-    html += `<span class="${classes.join(' ')}" data-dia="${dia}" data-data="${dataStr}" onclick="abrirModalEvento('${dataStr}', ${dia})">${dia}</span>`;
+    // Click para abrir modal de evento
+    dayEl.addEventListener('click', () => {
+      abrirModalEvento(dataStr, dia);
+    });
+
+    calendarDays.appendChild(dayEl);
   }
 
-  // Dias do próximo mês para completar
-  const diasRestantes = 42 - (diaInicio + totalDias); // 6 semanas * 7 dias = 42
-  for (let i = 1; i <= diasRestantes; i++) {
-    html += `<span class="other-month">${i}</span>`;
+  // Atualizar mês exibido
+  const mesAtualEl = document.getElementById('mes-atual-planner');
+  if (mesAtualEl) {
+    mesAtualEl.textContent = `${mesesAbrev[calendarioMesAtual]} ${calendarioAnoAtual}`;
   }
-
-  calendarDays.innerHTML = html;
 }
 
 function formatarData(ano, mes, dia) {
@@ -1353,12 +1350,30 @@ function inicializarNavbar() {
       }
     });
 
-    // Fechar ao clicar em item do menu
+    // Fechar ao clicar em item do menu e navegar para a seção correspondente
     expandedMenu.querySelectorAll('.nav-expanded-item').forEach(item => {
       item.addEventListener('click', () => {
         navbar.classList.remove('menu-open');
         const icon = toggleBtn.querySelector('i');
         if (icon) icon.className = 'bi bi-grid-3x3-gap-fill';
+
+        // Navegar para a seção correspondente via data-section
+        const section = item.getAttribute('data-section');
+        if (section) {
+          const navMap = {
+            'painel': 'nav-painel',
+            'planner': 'nav-planner',
+            'timer': 'nav-timer',
+            'aulas': 'nav-aulas',
+            'redacao': 'nav-redacao',
+            'config': 'nav-config'
+          };
+          const navId = navMap[section];
+          if (navId) {
+            const navItem = document.getElementById(navId);
+            if (navItem) navItem.click();
+          }
+        }
       });
     });
   }
@@ -1509,7 +1524,12 @@ function inicializarNavbar() {
 
   // Navegação entre Painel e Planner
   navPlanner.addEventListener('click', () => {
+    // Esconder todas as seções
     mainContent.style.display = 'none';
+    const timerSec = document.getElementById('timer-section');
+    const aulasSec = document.getElementById('aulas-section');
+    if (timerSec) timerSec.style.display = 'none';
+    if (aulasSec) aulasSec.style.display = 'none';
     plannerSection.style.display = 'block';
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1521,7 +1541,12 @@ function inicializarNavbar() {
 
   if (navPainel) {
     navPainel.addEventListener('click', () => {
+      // Esconder todas as seções
       plannerSection.style.display = 'none';
+      const timerSec = document.getElementById('timer-section');
+      const aulasSec = document.getElementById('aulas-section');
+      if (timerSec) timerSec.style.display = 'none';
+      if (aulasSec) aulasSec.style.display = 'none';
       mainContent.style.display = 'block';
 
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1529,44 +1554,10 @@ function inicializarNavbar() {
     });
   }
 
-  // Calendário do Planner
-  let currentMonth = new Date().getMonth();
-  let currentYear = new Date().getFullYear();
-
+  // Calendário do Planner - usa o sistema global de calendário com eventos
   function gerarCalendarioPlanner() {
-    const calendarDays = document.getElementById('calendar-days-planner');
-    const mesAtual = document.getElementById('mes-atual-planner');
-
-    if (!calendarDays) return;
-
-    const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    mesAtual.textContent = `${meses[currentMonth]} ${currentYear}`;
-
-    const primeiroDia = new Date(currentYear, currentMonth, 1).getDay();
-    const diasNoMes = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const hoje = new Date();
-
-    calendarDays.innerHTML = '';
-
-    // Dias vazios
-    for (let i = 0; i < primeiroDia; i++) {
-      const empty = document.createElement('span');
-      empty.className = 'day empty';
-      calendarDays.appendChild(empty);
-    }
-
-    // Dias do mês
-    for (let dia = 1; dia <= diasNoMes; dia++) {
-      const dayEl = document.createElement('span');
-      dayEl.className = 'day';
-      dayEl.textContent = dia;
-
-      if (dia === hoje.getDate() && currentMonth === hoje.getMonth() && currentYear === hoje.getFullYear()) {
-        dayEl.classList.add('today');
-      }
-
-      calendarDays.appendChild(dayEl);
-    }
+    // Sincronizar e renderizar usando o calendário global (que inclui eventos)
+    renderizarCalendario();
   }
 
   // Navegação do calendário
@@ -1575,23 +1566,23 @@ function inicializarNavbar() {
 
   if (prevMonth) {
     prevMonth.addEventListener('click', () => {
-      currentMonth--;
-      if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
+      calendarioMesAtual--;
+      if (calendarioMesAtual < 0) {
+        calendarioMesAtual = 11;
+        calendarioAnoAtual--;
       }
-      gerarCalendarioPlanner();
+      renderizarCalendario();
     });
   }
 
   if (nextMonth) {
     nextMonth.addEventListener('click', () => {
-      currentMonth++;
-      if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
+      calendarioMesAtual++;
+      if (calendarioMesAtual > 11) {
+        calendarioMesAtual = 0;
+        calendarioAnoAtual++;
       }
-      gerarCalendarioPlanner();
+      renderizarCalendario();
     });
   }
 
@@ -1674,10 +1665,26 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
   const btnSave = document.getElementById('btn-timer-save');
   const fraseElement = document.getElementById('frase-motivacional');
 
-  // Estado do timer
+  // Estado do timer - usa lumed_tempos_estudo[today] como fonte de verdade
   let timerInterval = null;
   let isRunning = false;
-  let seconds = parseInt(localStorage.getItem('timerSeconds')) || 0;
+
+  function obterTempoHojeTimer() {
+    const tempos = JSON.parse(localStorage.getItem('lumed_tempos_estudo')) || {};
+    const h = new Date();
+    const k = `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}`;
+    return tempos[k] || 0;
+  }
+
+  function salvarTempoHojeTimer(seg) {
+    const tempos = JSON.parse(localStorage.getItem('lumed_tempos_estudo')) || {};
+    const h = new Date();
+    const k = `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}`;
+    tempos[k] = seg;
+    localStorage.setItem('lumed_tempos_estudo', JSON.stringify(tempos));
+  }
+
+  let seconds = obterTempoHojeTimer();
 
   // Frases motivacionais
   const frases = [
@@ -1739,6 +1746,7 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
       // Pausar
       clearInterval(timerInterval);
       isRunning = false;
+      salvarTempoHojeTimer(seconds);
       btnToggle.innerHTML = '<i class="bi bi-play-fill"></i><span>Iniciar</span>';
       btnToggle.classList.remove('running');
       timerSection.classList.remove('running');
@@ -1747,7 +1755,10 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
       timerInterval = setInterval(() => {
         seconds++;
         atualizarDisplay();
-        localStorage.setItem('timerSeconds', seconds);
+        // Salvar a cada 10 segundos para não sobrecarregar
+        if (seconds % 10 === 0) {
+          salvarTempoHojeTimer(seconds);
+        }
       }, 1000);
       isRunning = true;
       btnToggle.innerHTML = '<i class="bi bi-pause-fill"></i><span>Pausar</span>';
@@ -1758,7 +1769,7 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
 
   // Salvar tempo
   function salvarTempo() {
-    localStorage.setItem('timerSeconds', seconds);
+    salvarTempoHojeTimer(seconds);
 
     // Feedback visual
     btnSave.innerHTML = '<i class="bi bi-check-lg"></i>';
@@ -1818,10 +1829,22 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
   navTimer.addEventListener('click', () => {
     mainContent.style.display = 'none';
     plannerSection.style.display = 'none';
+    const aulasSec = document.getElementById('aulas-section');
+    if (aulasSec) aulasSec.style.display = 'none';
     timerSection.style.display = 'block';
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     navTimer.classList.add('active');
+
+    // Pausar cronômetro do banner se estiver rodando para evitar conflito
+    if (typeof cronometroRodando !== 'undefined' && cronometroRodando) {
+      pausarCronometro();
+    }
+
+    // Recarregar tempo de hoje (pode ter mudado pelo cronômetro do banner)
+    if (!isRunning) {
+      seconds = obterTempoHojeTimer();
+    }
 
     mostrarFraseAleatoria();
     atualizarDisplay();
@@ -1882,11 +1905,11 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
     redacao: 'Redação'
   };
 
-  // Navegação para Aulas
+  // Navegação para Aulas - esconder todas as outras seções
   navAulas.addEventListener('click', () => {
     mainContent.style.display = 'none';
-    plannerSection.style.display = 'none';
-    timerSection.style.display = 'none';
+    if (plannerSection) plannerSection.style.display = 'none';
+    if (timerSection) timerSection.style.display = 'none';
     aulasSection.style.display = 'block';
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
