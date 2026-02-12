@@ -1,6 +1,6 @@
 /* ============================================
    Kumon Digital - Matemática Progressiva
-   Tema: Verde em Degradê
+   Tema: Azul e Violeta
    ============================================ */
 
 /* =========================
@@ -8,31 +8,31 @@
    ========================= */
 
 :root {
-  /* Paleta Verde */
-  --green-50: #f0fdf4;
-  --green-100: #dcfce7;
-  --green-200: #bbf7d0;
-  --green-300: #86efac;
-  --green-400: #4ade80;
-  --green-500: #22c55e;
-  --green-600: #16a34a;
-  --green-700: #15803d;
-  --green-800: #166534;
-  --green-900: #14532d;
+  /* Paleta Lilás */
+  --green-50: #faf5ff;
+  --green-100: #f3e8ff;
+  --green-200: #e9d5ff;
+  --green-300: #a78bfa;
+  --green-400: #c084fc;
+  --green-500: #64748b;
+  --green-600: #475569;
+  --green-700: #334155;
+  --green-800: #1e293b;
+  --green-900: #0f172a;
 
   /* Cores principais */
-  --bg-page: #f0fdf4;
-  --primary: #22c55e;
-  --primary-dark: #16a34a;
-  --primary-light: #dcfce7;
-  --accent: #10b981;
-  --accent-dark: #059669;
+  --bg-page: #faf5ff;
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --primary-light: #f3e8ff;
+  --accent: #8b5cf6;
+  --accent-dark: #7c3aed;
 
   /* Cores de texto */
   --text-white: #FFFFFF;
-  --text-dark: #14532d;
-  --text-muted: #166534;
-  --text-light: #15803d;
+  --text-dark: #0f172a;
+  --text-muted: #1e293b;
+  --text-light: #334155;
 
   /* Cores de status */
   --status-success: #22c55e;
@@ -42,9 +42,9 @@
 
   /* Componentes */
   --card-bg: #ffffff;
-  --navbar-bg: linear-gradient(135deg, #22c55e, #10b981, #059669);
-  --gradient: linear-gradient(135deg, #22c55e, #10b981, #059669);
-  --gradient-dark: linear-gradient(135deg, #16a34a, #059669, #047857);
+  --navbar-bg: linear-gradient(135deg, #2563eb, #3b82f6, #8b5cf6);
+  --gradient: linear-gradient(135deg, #2563eb, #3b82f6, #8b5cf6);
+  --gradient-dark: linear-gradient(135deg, #3b82f6, #60a5fa, #8b5cf6);
 
   /* Espaçamentos */
   --spacing-xs: 8px;
@@ -60,10 +60,10 @@
   --radius-full: 999px;
 
   /* Sombras */
-  --shadow-soft: 0 4px 20px rgba(22, 163, 74, 0.1);
-  --shadow-medium: 0 8px 30px rgba(22, 163, 74, 0.15);
-  --shadow-card: 0 2px 12px rgba(22, 163, 74, 0.08);
-  --shadow-btn: 0 4px 15px rgba(22, 163, 74, 0.3);
+  --shadow-soft: 0 4px 20px rgba(71, 85, 105, 0.1);
+  --shadow-medium: 0 8px 30px rgba(71, 85, 105, 0.15);
+  --shadow-card: 0 2px 12px rgba(71, 85, 105, 0.08);
+  --shadow-btn: 0 4px 15px rgba(71, 85, 105, 0.3);
 }
 
 /* =========================
@@ -115,8 +115,8 @@ button {
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(22, 163, 74, 0.1);
-  box-shadow: 0 2px 12px rgba(22, 163, 74, 0.08);
+  border-bottom: 1px solid rgba(71, 85, 105, 0.1);
+  box-shadow: 0 2px 12px rgba(71, 85, 105, 0.08);
 }
 
 .navbar-container {
@@ -269,7 +269,7 @@ button {
   border-radius: var(--radius);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-card);
-  border: 1px solid rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(71, 85, 105, 0.08);
 }
 
 .card-header {
@@ -434,7 +434,7 @@ button {
 
 .level-card.current {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.1);
 }
 
 .level-card.locked {
@@ -498,7 +498,7 @@ button {
 }
 
 .level-status.locked {
-  background: #f1f5f9;
+  background: #f3e8ff;
   color: #64748b;
 }
 
@@ -584,11 +584,11 @@ button {
 
 .btn-practice:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+  box-shadow: 0 6px 20px rgba(71, 85, 105, 0.4);
 }
 
 .level-card.locked .btn-practice {
-  background: #94a3b8;
+  background: #c084fc;
   box-shadow: none;
 }
 
@@ -644,7 +644,7 @@ button {
 .achievement-card.unlocked .achievement-icon {
   background: var(--gradient);
   color: white;
-  box-shadow: 0 4px 20px rgba(22, 163, 74, 0.3);
+  box-shadow: 0 4px 20px rgba(71, 85, 105, 0.3);
 }
 
 .achievement-name {
@@ -703,7 +703,7 @@ button {
 }
 
 .stat-icon.purple {
-  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
 }
 
 .stat-info h3 {
@@ -768,7 +768,7 @@ button {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+  box-shadow: 0 6px 20px rgba(71, 85, 105, 0.4);
 }
 
 .btn-secondary {
@@ -829,7 +829,7 @@ button {
 .form-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.1);
 }
 
 /* =========================
@@ -963,7 +963,7 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(22, 163, 74, 0.95), rgba(16, 185, 129, 0.95));
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(139, 92, 246, 0.95));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1046,7 +1046,7 @@ button {
 .auth-field input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.1);
 }
 
 .auth-msg {
@@ -1087,7 +1087,7 @@ button {
 
 .auth-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+  box-shadow: 0 6px 20px rgba(71, 85, 105, 0.4);
 }
 
 .auth-btn:disabled {
@@ -1232,7 +1232,7 @@ button {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  background: linear-gradient(135deg, #2563eb, #3b82f6, #8b5cf6);
   color: white;
   border-radius: var(--radius-full);
   font-size: 13px;
@@ -1244,7 +1244,7 @@ button {
 
 .btn-back-lumed:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
 }
 
 .btn-back-lumed i {
@@ -1261,7 +1261,7 @@ button {
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  background: linear-gradient(135deg, #2563eb, #3b82f6, #8b5cf6);
   color: white;
   border: none;
   border-radius: var(--radius-full);
@@ -1270,13 +1270,13 @@ button {
   font-family: inherit;
   cursor: pointer;
   text-decoration: none;
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
   transition: all 0.2s ease;
 }
 
 .btn-back-lumed-float:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
 }
 
 .btn-back-lumed-float i {
@@ -1325,7 +1325,7 @@ button {
     flex-direction: column;
     padding: 12px 16px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-    border-top: 1px solid rgba(22, 163, 74, 0.1);
+    border-top: 1px solid rgba(71, 85, 105, 0.1);
     z-index: 999;
   }
 

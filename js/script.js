@@ -582,11 +582,164 @@ function adicionarQuestoesDesempenho(quantidade, materia) {
 // Atualizar banner com total de questões
 function atualizarBannerQuestoes() {
   const questoesData = JSON.parse(localStorage.getItem('lumed_questoes')) || { total: 0, historico: [] };
-  const bannerQuestoes = document.querySelector('.welcome-stats .stat-item:first-child .stat-value');
+  const bannerQuestoes = document.getElementById('stat-questoes');
 
-  if (bannerQuestoes) {
+  if (bannerQuestoes && !bannerQuestoes.classList.contains('editing')) {
     bannerQuestoes.textContent = questoesData.total;
   }
+}
+
+// Atualizar banner com total de simulados
+function atualizarBannerSimulados() {
+  const simuladosData = JSON.parse(localStorage.getItem('lumed_simulados')) || { total: 0 };
+  const bannerSimulados = document.getElementById('stat-simulados');
+
+  if (bannerSimulados && !bannerSimulados.classList.contains('editing')) {
+    bannerSimulados.textContent = simuladosData.total;
+  }
+}
+
+// Stats editáveis (questões e simulados)
+function inicializarStatsEditaveis() {
+  const statQuestoes = document.getElementById('stat-questoes');
+  const statSimulados = document.getElementById('stat-simulados');
+
+  function criarInputEditar(el, storageKey) {
+    el.addEventListener('click', function() {
+      if (el.classList.contains('editing')) return;
+      el.classList.add('editing');
+
+      const valorAtual = parseInt(el.textContent) || 0;
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.className = 'stat-edit-input';
+      input.value = valorAtual;
+      input.min = 0;
+
+      el.textContent = '';
+      el.appendChild(input);
+      input.focus();
+      input.select();
+
+      function salvar() {
+        const novoValor = Math.max(0, parseInt(input.value) || 0);
+        el.classList.remove('editing');
+        el.textContent = novoValor;
+
+        if (storageKey === 'lumed_questoes') {
+          const data = JSON.parse(localStorage.getItem(storageKey)) || { total: 0, historico: [] };
+          data.total = novoValor;
+          localStorage.setItem(storageKey, JSON.stringify(data));
+        } else {
+          localStorage.setItem(storageKey, JSON.stringify({ total: novoValor }));
+        }
+      }
+
+      input.addEventListener('blur', salvar);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { input.blur(); }
+        if (e.key === 'Escape') {
+          el.classList.remove('editing');
+          el.textContent = valorAtual;
+        }
+      });
+    });
+  }
+
+  if (statQuestoes) criarInputEditar(statQuestoes, 'lumed_questoes');
+  if (statSimulados) criarInputEditar(statSimulados, 'lumed_simulados');
+}
+
+// ============================================
+// MINI CRONOGRAMA (card alternável)
+// ============================================
+function inicializarMiniCronograma() {
+  const tabAtividades = document.getElementById('tab-atividades');
+  const tabCrono = document.getElementById('tab-crono-mini');
+  const cardAtividades = document.getElementById('card-atividades');
+  const cardCrono = document.getElementById('card-crono-mini');
+
+  if (!tabAtividades || !tabCrono || !cardAtividades || !cardCrono) return;
+
+  tabAtividades.addEventListener('click', () => {
+    tabAtividades.classList.add('active');
+    tabCrono.classList.remove('active');
+    cardAtividades.style.display = '';
+    cardCrono.style.display = 'none';
+  });
+
+  tabCrono.addEventListener('click', () => {
+    tabCrono.classList.add('active');
+    tabAtividades.classList.remove('active');
+    cardCrono.style.display = '';
+    cardAtividades.style.display = 'none';
+    gerarMiniCronograma();
+  });
+}
+
+function gerarMiniCronograma() {
+  const container = document.getElementById('crono-mini-grid');
+  if (!container) return;
+
+  const dias = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  const tipoConfig = {
+    teoria:       { label: 'Teoria',    cls: 'tipo-teoria' },
+    questoes:     { label: 'Questões',  cls: 'tipo-questoes' },
+    anki:         { label: 'Anki',      cls: 'tipo-anki' },
+    descanso:     { label: 'Descanso',  cls: 'tipo-descanso' },
+    casa:         { label: 'Casa',      cls: 'tipo-casa' },
+    academia:     { label: 'Academia',  cls: 'tipo-academia' },
+    'cafe-manha': { label: 'Café',      cls: 'tipo-cafe-manha' },
+    almoco:       { label: 'Almoço',    cls: 'tipo-almoco' },
+    'cafe-tarde': { label: 'Lanche',    cls: 'tipo-cafe-tarde' }
+  };
+
+  let cronoData;
+  try {
+    const raw = localStorage.getItem('cronogramaData');
+    cronoData = raw ? JSON.parse(raw) : null;
+  } catch(e) { cronoData = null; }
+
+  if (!cronoData || !cronoData.cells || Object.keys(cronoData.cells).length === 0) {
+    container.innerHTML = `
+      <div class="crono-mini-vazio">
+        <i class="bi bi-calendar-x"></i>
+        <p>Cronograma vazio</p>
+        <span>Preencha na aba Cronograma</span>
+      </div>`;
+    return;
+  }
+
+  let html = '<table class="crono-mini-table"><thead><tr><th>Horário</th>';
+  dias.forEach(d => html += `<th>${d}</th>`);
+  html += '</tr></thead><tbody>';
+
+  cronoData.horarios.forEach((horario, ri) => {
+    // Verificar se a linha tem pelo menos uma célula preenchida
+    let temConteudo = false;
+    for (let di = 0; di < 7; di++) {
+      if (cronoData.cells[`${di}-${horario}`]) { temConteudo = true; break; }
+    }
+    if (!temConteudo) return;
+
+    html += `<tr><td class="crono-mini-hora">${horario}</td>`;
+    for (let di = 0; di < 7; di++) {
+      const cell = cronoData.cells[`${di}-${horario}`];
+      if (cell && cell.tipo) {
+        const cfg = tipoConfig[cell.tipo] || { label: cell.tipo, cls: '' };
+        html += `<td class="crono-mini-cell crono-mini-filled">`;
+        html += `<span class="crono-mini-badge ${cfg.cls}">${cfg.label}</span>`;
+        if (cell.materia) html += `<span class="crono-mini-materia">${cell.materia}</span>`;
+        html += `</td>`;
+      } else {
+        html += `<td class="crono-mini-cell"></td>`;
+      }
+    }
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
 }
 
 // Atualizar barra de progresso
@@ -699,7 +852,11 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializarCronometro();
   atualizarContadorENEM();
   atualizarRadarVestibulares();
+  registrarLoginDia();
   atualizarBannerQuestoes();
+  atualizarBannerSimulados();
+  inicializarStatsEditaveis();
+  inicializarMiniCronograma();
   verificarPaginaInicial();
 });
 
@@ -728,14 +885,8 @@ function verificarPaginaInicial() {
       case 'timer':
         navElement = document.getElementById('nav-timer');
         break;
-      case 'aulas':
-        navElement = document.getElementById('nav-aulas');
-        break;
       case 'redacao':
         navElement = document.getElementById('nav-redacao');
-        break;
-      case 'config':
-        navElement = document.getElementById('nav-config');
         break;
     }
 
@@ -1081,7 +1232,6 @@ function configurarModalEventos() {
 // ============================================
 
 let cronometroInterval = null;
-let cronometroSegundos = 0;
 let cronometroRodando = false;
 
 function inicializarCronometro() {
@@ -1090,8 +1240,16 @@ function inicializarCronometro() {
 
   if (!btnEstudar) return;
 
-  // Carregar tempo de hoje
-  carregarTempoEstudo();
+  // Verificar se o cronômetro estava rodando antes do refresh
+  const estado = JSON.parse(localStorage.getItem('lumed_crono_estado') || '{}');
+  if (estado.rodando && estado.inicio) {
+    // Resumir cronômetro automaticamente
+    cronometroRodando = true;
+    atualizarBotaoCronometro(true);
+    cronometroInterval = setInterval(() => {
+      atualizarExibicaoTempo();
+    }, 1000);
+  }
 
   // Botão Estudar (play/pause)
   btnEstudar.addEventListener('click', toggleCronometro);
@@ -1101,8 +1259,32 @@ function inicializarCronometro() {
     btnZerarDia.addEventListener('click', zerarTempoDia);
   }
 
+  // Salvar ao sair/minimizar
+  window.addEventListener('beforeunload', () => {
+    if (cronometroRodando) salvarTempoEstudoAtual();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && cronometroRodando) salvarTempoEstudoAtual();
+  });
+
   // Atualizar exibição
   atualizarExibicaoTempo();
+}
+
+function atualizarBotaoCronometro(rodando) {
+  const btnEstudar = document.getElementById('btn-estudar');
+  const icone = document.getElementById('icone-estudar');
+  const texto = document.getElementById('texto-estudar');
+
+  if (rodando) {
+    if (btnEstudar) btnEstudar.classList.add('estudando');
+    if (icone) icone.className = 'bi bi-pause-fill';
+    if (texto) texto.textContent = 'Pausar';
+  } else {
+    if (btnEstudar) btnEstudar.classList.remove('estudando');
+    if (icone) icone.className = 'bi bi-play-fill';
+    if (texto) texto.textContent = 'Continuar estudando';
+  }
 }
 
 function toggleCronometro() {
@@ -1117,27 +1299,15 @@ function iniciarCronometro() {
   if (cronometroRodando) return;
 
   cronometroRodando = true;
+  atualizarBotaoCronometro(true);
 
-  // Atualizar botão
-  const btnEstudar = document.getElementById('btn-estudar');
-  const icone = document.getElementById('icone-estudar');
-  const texto = document.getElementById('texto-estudar');
+  // Salvar timestamp de início no localStorage
+  const estado = { rodando: true, inicio: Date.now() };
+  localStorage.setItem('lumed_crono_estado', JSON.stringify(estado));
 
-  if (btnEstudar) btnEstudar.classList.add('estudando');
-  if (icone) icone.className = 'bi bi-pause-fill';
-  if (texto) texto.textContent = 'Pausar';
-
-  // Iniciar contagem
+  // Atualizar display a cada segundo
   cronometroInterval = setInterval(() => {
-    cronometroSegundos++;
-
-    // Atualizar exibição a cada segundo
     atualizarExibicaoTempo();
-
-    // Salvar a cada 30 segundos
-    if (cronometroSegundos % 30 === 0) {
-      salvarTempoEstudoSemResetar();
-    }
   }, 1000);
 }
 
@@ -1145,21 +1315,31 @@ function pausarCronometro() {
   if (!cronometroRodando) return;
 
   cronometroRodando = false;
-
-  // Atualizar botão
-  const btnEstudar = document.getElementById('btn-estudar');
-  const icone = document.getElementById('icone-estudar');
-  const texto = document.getElementById('texto-estudar');
-
-  if (btnEstudar) btnEstudar.classList.remove('estudando');
-  if (icone) icone.className = 'bi bi-play-fill';
-  if (texto) texto.textContent = 'Continuar estudando';
-
-  // Parar contagem
+  atualizarBotaoCronometro(false);
   clearInterval(cronometroInterval);
 
-  // Salvar tempo
-  salvarTempoEstudoSemResetar();
+  // Calcular tempo decorrido e salvar
+  salvarTempoEstudoAtual();
+
+  // Limpar estado
+  localStorage.setItem('lumed_crono_estado', JSON.stringify({ rodando: false }));
+}
+
+function salvarTempoEstudoAtual() {
+  const estado = JSON.parse(localStorage.getItem('lumed_crono_estado') || '{}');
+  if (!estado.inicio) return;
+
+  const elapsed = Math.floor((Date.now() - estado.inicio) / 1000);
+  if (elapsed <= 0) return;
+
+  const hoje = obterDataHoje();
+  const tempos = obterTemposEstudo();
+  tempos[hoje] = (tempos[hoje] || 0) + elapsed;
+  localStorage.setItem('lumed_tempos_estudo', JSON.stringify(tempos));
+
+  // Resetar início para agora (evita contar tempo duplicado)
+  estado.inicio = Date.now();
+  localStorage.setItem('lumed_crono_estado', JSON.stringify(estado));
 }
 
 function zerarTempoDia() {
@@ -1169,14 +1349,14 @@ function zerarTempoDia() {
       pausarCronometro();
     }
 
-    // Zerar sessão atual
-    cronometroSegundos = 0;
-
     // Zerar tempo de hoje no localStorage
     const hoje = obterDataHoje();
     const tempos = obterTemposEstudo();
     tempos[hoje] = 0;
     localStorage.setItem('lumed_tempos_estudo', JSON.stringify(tempos));
+
+    // Limpar estado
+    localStorage.setItem('lumed_crono_estado', JSON.stringify({ rodando: false }));
 
     // Atualizar exibição
     atualizarExibicaoTempo();
@@ -1205,32 +1385,21 @@ function obterTemposEstudo() {
   return dados ? JSON.parse(dados) : {};
 }
 
-function salvarTempoEstudoSemResetar() {
-  const hoje = obterDataHoje();
-  const tempos = obterTemposEstudo();
-
-  // Salvar tempo total (salvo anteriormente + sessão atual)
-  const tempoAnterior = tempos[hoje] || 0;
-  tempos[hoje] = tempoAnterior + cronometroSegundos;
-
-  localStorage.setItem('lumed_tempos_estudo', JSON.stringify(tempos));
-
-  // Resetar contador da sessão (já foi salvo)
-  cronometroSegundos = 0;
-}
-
-function carregarTempoEstudo() {
-  // Sessão começa do zero, apenas atualiza exibição dos totais
-  atualizarExibicaoTempo();
-}
-
 function atualizarExibicaoTempo() {
   const tempos = obterTemposEstudo();
   const hoje = obterDataHoje();
-
-  // Tempo de hoje = salvo + sessão atual
   const tempoSalvo = tempos[hoje] || 0;
-  const tempoTotal = tempoSalvo + cronometroSegundos;
+
+  // Se está rodando, somar o tempo desde o último início
+  let tempoAtual = 0;
+  if (cronometroRodando) {
+    const estado = JSON.parse(localStorage.getItem('lumed_crono_estado') || '{}');
+    if (estado.inicio) {
+      tempoAtual = Math.floor((Date.now() - estado.inicio) / 1000);
+    }
+  }
+
+  const tempoTotal = tempoSalvo + tempoAtual;
 
   const displayHoje = document.getElementById('tempo-hoje');
   if (displayHoje) {
@@ -1245,6 +1414,7 @@ function atualizarExibicaoTempo() {
 // Datas dos vestibulares 2026
 const datasVestibulares = {
   enem: { data: new Date(2026, 10, 1), nome: 'ENEM 2026', ajustarDomingo: true }, // 1º domingo de novembro
+  ufrr: { data: new Date(2026, 10, 29), nome: 'UFRR 2026', ajustarDomingo: false }, // 29 de novembro
   uea: { data: new Date(2026, 9, 26), nome: 'MACRO 2026', ajustarDomingo: false }, // 26 de outubro
   psi: { data: new Date(2026, 9, 13), nome: 'PSI 2026', ajustarDomingo: false } // 13 de outubro
 };
@@ -1268,52 +1438,88 @@ function calcularDiasRestantes(dataAlvo, ajustarDomingo = false) {
   return diffDays;
 }
 
+function formatarSemanasEDias(totalDias) {
+  const semanas = Math.floor(totalDias / 7);
+  const dias = totalDias % 7;
+  if (semanas === 0) return `${dias} dia${dias !== 1 ? 's' : ''}`;
+  if (dias === 0) return `${semanas} semana${semanas !== 1 ? 's' : ''}`;
+  return `${semanas} semana${semanas !== 1 ? 's' : ''} e ${dias} dia${dias !== 1 ? 's' : ''}`;
+}
+
 function atualizarContadorENEM() {
   const elementoDias = document.getElementById('dias-enem');
   if (!elementoDias) return;
 
   const dias = calcularDiasRestantes(datasVestibulares.enem.data, datasVestibulares.enem.ajustarDomingo);
-  elementoDias.textContent = dias;
+  elementoDias.textContent = formatarSemanasEDias(dias);
+}
+
+function registrarLoginDia() {
+  const hoje = new Date();
+  const hojeStr = hoje.toISOString().split('T')[0];
+
+  let dias = JSON.parse(localStorage.getItem('lumed_logins') || '[]');
+
+  // Registrar hoje se ainda não registrou
+  if (!dias.includes(hojeStr)) {
+    dias.push(hojeStr);
+  }
+
+  localStorage.setItem('lumed_logins', JSON.stringify(dias));
+
+  // Atualizar UI
+  const el = document.getElementById('dias-semana-login');
+  const labelEl = document.getElementById('dias-semana-label');
+  if (el) el.textContent = dias.length;
+  if (labelEl) labelEl.textContent = dias.length === 1 ? 'dia' : 'dias';
+
+  // Atualizar foguinho na navbar
+  atualizarStreakFire(dias.length);
+}
+
+function atualizarStreakFire(totalDias) {
+  const fire = document.getElementById('streak-fire');
+  const count = document.getElementById('streak-fire-count');
+  if (!fire) return;
+
+  if (count) count.textContent = totalDias;
+
+  // Determinar nível do fogo
+  let nivel;
+  if (totalDias <= 5) nivel = 1;
+  else if (totalDias <= 15) nivel = 2;
+  else if (totalDias <= 30) nivel = 3;
+  else if (totalDias <= 60) nivel = 4;
+  else nivel = 5;
+
+  // Remover níveis anteriores e aplicar novo
+  fire.className = `streak-fire fire-level-${nivel}`;
+  fire.title = `${totalDias} dia${totalDias !== 1 ? 's' : ''} na plataforma`;
 }
 
 function atualizarRadarVestibulares() {
   const listaVestibulares = document.getElementById('lista-vestibulares');
   if (!listaVestibulares) return;
 
-  // Calcula os dias para cada vestibular
-  const diasEnem = calcularDiasRestantes(datasVestibulares.enem.data, datasVestibulares.enem.ajustarDomingo);
-  const diasUea = calcularDiasRestantes(datasVestibulares.uea.data, datasVestibulares.uea.ajustarDomingo);
-  const diasPsi = calcularDiasRestantes(datasVestibulares.psi.data, datasVestibulares.psi.ajustarDomingo);
+  // Calcula os dias e ordena do mais perto ao mais distante
+  const logoClasses = { enem: 'enem', ufrr: 'ufrr', uea: 'uea', psi: 'psi' };
+  const logoTexts = { enem: 'ENEM', ufrr: 'UFRR', uea: 'UEA', psi: 'PSI' };
 
-  // Atualiza o HTML do radar
-  listaVestibulares.innerHTML = `
-    <!-- ENEM -->
+  const lista = Object.entries(datasVestibulares).map(([key, v]) => ({
+    key,
+    nome: v.nome,
+    dias: calcularDiasRestantes(v.data, v.ajustarDomingo)
+  })).sort((a, b) => a.dias - b.dias);
+
+  listaVestibulares.innerHTML = lista.map(v => `
     <div class="vestibular-mini">
-      <div class="vestibular-logo-mini enem">ENEM</div>
+      <div class="vestibular-logo-mini ${logoClasses[v.key]}">${logoTexts[v.key]}</div>
       <div class="vestibular-info-mini">
-        <span class="vestibular-nome-mini">${datasVestibulares.enem.nome}</span>
-        <span class="vestibular-dias"><strong>${diasEnem}</strong> dias</span>
+        <span class="vestibular-nome-mini">${v.nome}</span>
+        <span class="vestibular-dias">${formatarSemanasEDias(v.dias)}</span>
       </div>
     </div>
-
-    <!-- MACRO UEA -->
-    <div class="vestibular-mini">
-      <div class="vestibular-logo-mini uea">UEA</div>
-      <div class="vestibular-info-mini">
-        <span class="vestibular-nome-mini">${datasVestibulares.uea.nome}</span>
-        <span class="vestibular-dias"><strong>${diasUea}</strong> dias</span>
-      </div>
-    </div>
-
-    <!-- PSI -->
-    <div class="vestibular-mini">
-      <div class="vestibular-logo-mini psi">PSI</div>
-      <div class="vestibular-info-mini">
-        <span class="vestibular-nome-mini">${datasVestibulares.psi.nome}</span>
-        <span class="vestibular-dias"><strong>${diasPsi}</strong> dias</span>
-      </div>
-    </div>
-  `;
+  `).join('');
 }
 
 // ============================================
@@ -1364,9 +1570,7 @@ function inicializarNavbar() {
             'painel': 'nav-painel',
             'planner': 'nav-planner',
             'timer': 'nav-timer',
-            'aulas': 'nav-aulas',
-            'redacao': 'nav-redacao',
-            'config': 'nav-config'
+            'redacao': 'nav-redacao'
           };
           const navId = navMap[section];
           if (navId) {
@@ -1384,6 +1588,7 @@ function inicializarNavbar() {
 // PLANNER DE ESTUDOS
 // ============================================
 
+// ========== CRONOGRAMA SEMANAL ==========
 (function() {
   const plannerSection = document.getElementById('planner-section');
   const mainContent = document.querySelector('.main-content');
@@ -1393,74 +1598,117 @@ function inicializarNavbar() {
 
   if (!plannerSection || !navPlanner) return;
 
-  // Horários do dia
-  const horarios = [
-    '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
-    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
-    '18:00', '19:00', '20:00', '21:00'
-  ];
+  // Dados do cronograma
+  const STORAGE_KEY = 'cronogramaData';
+  const defaultHorarios = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'];
 
-  // Cores das matérias
-  const coresMateria = {
-    portugues: '#ef4444',
-    matematica: '#3b82f6',
-    historia: '#f59e0b',
-    geografia: '#10b981',
-    biologia: '#22c55e',
-    fisica: '#8b5cf6',
-    quimica: '#ec4899',
-    redacao: '#6366f1',
-    ingles: '#14b8a6',
-    revisao: '#64748b'
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return { horarios: [...defaultHorarios], cells: {} };
+  }
+
+  function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cronoData));
+  }
+
+  let cronoData = loadData();
+
+  // Tipos
+  const tipoConfig = {
+    teoria:       { label: 'Teoria',         cls: 'tipo-teoria' },
+    questoes:     { label: 'Questões',       cls: 'tipo-questoes' },
+    anki:         { label: 'Anki',           cls: 'tipo-anki' },
+    descanso:     { label: 'Descanso',       cls: 'tipo-descanso' },
+    casa:         { label: 'Casa',           cls: 'tipo-casa' },
+    academia:     { label: 'Academia',       cls: 'tipo-academia' },
+    'cafe-manha': { label: 'Café da manhã',  cls: 'tipo-cafe-manha' },
+    almoco:       { label: 'Almoço',         cls: 'tipo-almoco' },
+    'cafe-tarde': { label: 'Café da tarde',  cls: 'tipo-cafe-tarde' }
   };
-
-  const nomesMateria = {
-    portugues: 'Português',
-    matematica: 'Matemática',
-    historia: 'História',
-    geografia: 'Geografia',
-    biologia: 'Biologia',
-    fisica: 'Física',
-    quimica: 'Química',
-    redacao: 'Redação',
-    ingles: 'Inglês',
-    revisao: 'Revisão'
-  };
-
-  let materiaSelecionada = null;
-  let gradeData = JSON.parse(localStorage.getItem('plannerGrade')) || {};
 
   // Gerar grid
   function gerarGrid() {
     if (!gridBody) return;
     gridBody.innerHTML = '';
 
-    horarios.forEach(horario => {
+    cronoData.horarios.forEach((horario, ri) => {
       const row = document.createElement('div');
       row.className = 'grid-row';
 
-      // Célula de horário
+      // Horario editavel
       const timeCell = document.createElement('div');
       timeCell.className = 'grid-time';
-      timeCell.textContent = horario;
+
+      const input = document.createElement('input');
+      input.value = horario;
+      input.addEventListener('change', () => {
+        cronoData.horarios[ri] = input.value;
+        saveData();
+      });
+      timeCell.appendChild(input);
+
+      // Botao deletar linha
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-del-row';
+      delBtn.innerHTML = '<i class="bi bi-x"></i>';
+      delBtn.title = 'Apagar linha';
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (confirm('Apagar este horário?')) {
+          // Remover celulas deste horario
+          for (let d = 0; d < 7; d++) {
+            delete cronoData.cells[`${d}-${horario}`];
+          }
+          cronoData.horarios.splice(ri, 1);
+          saveData();
+          gerarGrid();
+        }
+      });
+      timeCell.appendChild(delBtn);
       row.appendChild(timeCell);
 
-      // 7 células para os dias
+      // 7 dias (Seg=0 a Dom=6)
       for (let dia = 0; dia < 7; dia++) {
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
-        cell.dataset.horario = horario;
-        cell.dataset.dia = dia;
-
-        // Carregar dados salvos
         const key = `${dia}-${horario}`;
-        if (gradeData[key]) {
+        const data = cronoData.cells[key];
+
+        if (data && data.tipo) {
           cell.classList.add('filled');
-          cell.style.setProperty('--cor', coresMateria[gradeData[key]]);
-          cell.textContent = nomesMateria[gradeData[key]];
+          const tc = tipoConfig[data.tipo] || tipoConfig.teoria;
+
+          const badge = document.createElement('span');
+          badge.className = 'cell-tipo ' + tc.cls;
+          badge.textContent = tc.label;
+          cell.appendChild(badge);
+
+          if (data.materia) {
+            const mat = document.createElement('span');
+            mat.className = 'cell-materia';
+            mat.textContent = data.materia;
+            mat.title = data.materia;
+            cell.appendChild(mat);
+          }
+
+          if (data.topico) {
+            const top = document.createElement('span');
+            top.className = 'cell-topico';
+            top.textContent = data.topico;
+            top.title = data.topico;
+            cell.appendChild(top);
+          }
+        } else {
+          const ph = document.createElement('span');
+          ph.className = 'cell-placeholder';
+          ph.textContent = '+';
+          cell.appendChild(ph);
         }
 
-        cell.addEventListener('click', () => handleCellClick(cell, key));
+        cell.addEventListener('click', () => abrirModal(key, data));
         row.appendChild(cell);
       }
 
@@ -1468,121 +1716,155 @@ function inicializarNavbar() {
     });
   }
 
-  // Clique na célula
-  function handleCellClick(cell, key) {
-    if (materiaSelecionada) {
-      // Preencher célula
-      cell.classList.add('filled');
-      cell.style.setProperty('--cor', coresMateria[materiaSelecionada]);
-      cell.textContent = nomesMateria[materiaSelecionada];
-      gradeData[key] = materiaSelecionada;
-      salvarGrade();
-    } else if (gradeData[key]) {
-      // Limpar célula se já tiver algo
-      cell.classList.remove('filled');
-      cell.style.removeProperty('--cor');
-      cell.textContent = '';
-      delete gradeData[key];
-      salvarGrade();
-    }
+  // ===== Modal editar =====
+  const modal = document.getElementById('crono-modal');
+  const modalTitle = document.getElementById('crono-modal-title');
+  const inputMateria = document.getElementById('crono-materia');
+  const inputTopico = document.getElementById('crono-topico');
+  const tiposBtns = document.querySelectorAll('#crono-tipos .crono-tipo-btn');
+  const btnSalvar = document.getElementById('crono-btn-salvar');
+  const btnLimparCell = document.getElementById('crono-btn-limpar');
+  const btnClose = document.getElementById('crono-modal-close');
+
+  let currentKey = null;
+  let currentTipo = 'teoria';
+
+  function abrirModal(key, data) {
+    currentKey = key;
+    currentTipo = (data && data.tipo) || 'teoria';
+    inputMateria.value = (data && data.materia) || '';
+    inputTopico.value = (data && data.topico) || '';
+
+    // Highlight tipo selecionado
+    tiposBtns.forEach(b => {
+      b.classList.toggle('selected', b.dataset.tipo === currentTipo);
+    });
+
+    const dias = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+    const parts = key.split('-');
+    modalTitle.textContent = dias[parseInt(parts[0])] + ' ' + parts[1];
+
+    modal.style.display = 'flex';
+    inputMateria.focus();
   }
 
-  // Salvar grade
-  function salvarGrade() {
-    localStorage.setItem('plannerGrade', JSON.stringify(gradeData));
+  function fecharModal() {
+    modal.style.display = 'none';
+    currentKey = null;
   }
 
-  // Botões de matéria
-  document.querySelectorAll('.materia-planner').forEach(btn => {
+  tiposBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      const materia = btn.dataset.materia;
-
-      if (materiaSelecionada === materia) {
-        // Desselecionar
-        materiaSelecionada = null;
-        btn.classList.remove('selected');
-      } else {
-        // Selecionar nova
-        document.querySelectorAll('.materia-planner').forEach(b => b.classList.remove('selected'));
-        materiaSelecionada = materia;
-        btn.classList.add('selected');
-      }
+      currentTipo = btn.dataset.tipo;
+      tiposBtns.forEach(b => b.classList.toggle('selected', b === btn));
     });
   });
 
-  // Limpar grade
+  btnSalvar.addEventListener('click', () => {
+    if (currentKey) {
+      cronoData.cells[currentKey] = {
+        tipo: currentTipo,
+        materia: inputMateria.value.trim(),
+        topico: inputTopico.value.trim()
+      };
+      saveData();
+      gerarGrid();
+    }
+    fecharModal();
+  });
+
+  btnLimparCell.addEventListener('click', () => {
+    if (currentKey) {
+      delete cronoData.cells[currentKey];
+      saveData();
+      gerarGrid();
+    }
+    fecharModal();
+  });
+
+  btnClose.addEventListener('click', fecharModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) fecharModal();
+  });
+
+  // Enter para salvar
+  inputTopico.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') btnSalvar.click();
+  });
+
+  // ===== Modal adicionar horario =====
+  const modalHora = document.getElementById('crono-modal-hora');
+  const inputHora = document.getElementById('crono-novo-horario');
+  const btnHoraSalvar = document.getElementById('crono-hora-salvar');
+  const btnHoraCancelar = document.getElementById('crono-hora-cancelar');
+  const btnHoraClose = document.getElementById('crono-modal-hora-close');
+  const btnAddHorario = document.getElementById('btn-add-horario');
+
+  if (btnAddHorario) {
+    btnAddHorario.addEventListener('click', () => {
+      inputHora.value = '';
+      modalHora.style.display = 'flex';
+      inputHora.focus();
+    });
+  }
+
+  function fecharModalHora() { modalHora.style.display = 'none'; }
+
+  btnHoraSalvar.addEventListener('click', () => {
+    const v = inputHora.value.trim();
+    if (v) {
+      cronoData.horarios.push(v);
+      saveData();
+      gerarGrid();
+    }
+    fecharModalHora();
+  });
+
+  btnHoraCancelar.addEventListener('click', fecharModalHora);
+  btnHoraClose.addEventListener('click', fecharModalHora);
+  modalHora.addEventListener('click', (e) => {
+    if (e.target === modalHora) fecharModalHora();
+  });
+  inputHora.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') btnHoraSalvar.click();
+  });
+
+  // ===== Limpar tudo =====
   const btnLimpar = document.getElementById('btn-limpar-grade');
   if (btnLimpar) {
     btnLimpar.addEventListener('click', () => {
-      mostrarConfirmacao('Limpar grade', 'Deseja limpar toda a grade de estudos?', () => {
-        gradeData = {};
-        salvarGrade();
+      mostrarConfirmacao('Limpar cronograma', 'Deseja limpar todo o cronograma?', () => {
+        cronoData = { horarios: [...defaultHorarios], cells: {} };
+        saveData();
         gerarGrid();
       });
     });
   }
 
-  // Navegação entre Painel e Planner
+  // ===== Navegacao =====
   navPlanner.addEventListener('click', () => {
-    // Esconder todas as seções
     mainContent.style.display = 'none';
     const timerSec = document.getElementById('timer-section');
-    const aulasSec = document.getElementById('aulas-section');
     if (timerSec) timerSec.style.display = 'none';
-    if (aulasSec) aulasSec.style.display = 'none';
+    const redSec = document.getElementById('redacao-section');
+    if (redSec) redSec.style.display = 'none';
     plannerSection.style.display = 'block';
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     navPlanner.classList.add('active');
 
     gerarGrid();
-    gerarCalendarioPlanner();
   });
 
   if (navPainel) {
     navPainel.addEventListener('click', () => {
-      // Esconder todas as seções
       plannerSection.style.display = 'none';
       const timerSec = document.getElementById('timer-section');
-      const aulasSec = document.getElementById('aulas-section');
       if (timerSec) timerSec.style.display = 'none';
-      if (aulasSec) aulasSec.style.display = 'none';
       mainContent.style.display = 'block';
 
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       navPainel.classList.add('active');
-    });
-  }
-
-  // Calendário do Planner - usa o sistema global de calendário com eventos
-  function gerarCalendarioPlanner() {
-    // Sincronizar e renderizar usando o calendário global (que inclui eventos)
-    renderizarCalendario();
-  }
-
-  // Navegação do calendário
-  const prevMonth = document.getElementById('prev-month');
-  const nextMonth = document.getElementById('next-month');
-
-  if (prevMonth) {
-    prevMonth.addEventListener('click', () => {
-      calendarioMesAtual--;
-      if (calendarioMesAtual < 0) {
-        calendarioMesAtual = 11;
-        calendarioAnoAtual--;
-      }
-      renderizarCalendario();
-    });
-  }
-
-  if (nextMonth) {
-    nextMonth.addEventListener('click', () => {
-      calendarioMesAtual++;
-      if (calendarioMesAtual > 11) {
-        calendarioMesAtual = 0;
-        calendarioAnoAtual++;
-      }
-      renderizarCalendario();
     });
   }
 
@@ -1829,8 +2111,6 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
   navTimer.addEventListener('click', () => {
     mainContent.style.display = 'none';
     plannerSection.style.display = 'none';
-    const aulasSec = document.getElementById('aulas-section');
-    if (aulasSec) aulasSec.style.display = 'none';
     timerSection.style.display = 'block';
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1871,341 +2151,3 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
   mostrarFraseAleatoria();
 })();
 
-// ============================================
-// SEÇÃO DE AULAS GRAVADAS
-// ============================================
-
-(function() {
-  const aulasSection = document.getElementById('aulas-section');
-  const mainContent = document.querySelector('.main-content');
-  const plannerSection = document.getElementById('planner-section');
-  const timerSection = document.getElementById('timer-section');
-  const navAulas = document.getElementById('nav-aulas');
-  const navPainel = document.getElementById('nav-painel');
-
-  if (!aulasSection || !navAulas) return;
-
-  // Estado
-  let todasAulas = [];
-  let aulaAoVivo = null;
-  let aulasCarregadas = false;
-
-  // Nomes das matérias
-  const nomesMateriasAulas = {
-    biologia: 'Biologia',
-    quimica: 'Química',
-    fisica: 'Física',
-    matematica: 'Matemática',
-    portugues: 'Português',
-    historia: 'História',
-    geografia: 'Geografia',
-    filosofia: 'Filosofia',
-    sociologia: 'Sociologia',
-    ingles: 'Inglês',
-    redacao: 'Redação'
-  };
-
-  // Navegação para Aulas - esconder todas as outras seções
-  navAulas.addEventListener('click', () => {
-    mainContent.style.display = 'none';
-    if (plannerSection) plannerSection.style.display = 'none';
-    if (timerSection) timerSection.style.display = 'none';
-    aulasSection.style.display = 'block';
-
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    navAulas.classList.add('active');
-
-    // Carregar aulas apenas uma vez
-    if (!aulasCarregadas) {
-      carregarAulasFirebase();
-      verificarAulaAoVivoFirebase();
-      aulasCarregadas = true;
-    }
-  });
-
-  // Esconder seção de aulas ao clicar em outras abas
-  if (navPainel) {
-    navPainel.addEventListener('click', () => {
-      aulasSection.style.display = 'none';
-    });
-  }
-
-  const navPlanner = document.getElementById('nav-planner');
-  if (navPlanner) {
-    navPlanner.addEventListener('click', () => {
-      aulasSection.style.display = 'none';
-    });
-  }
-
-  const navTimer = document.getElementById('nav-timer');
-  if (navTimer) {
-    navTimer.addEventListener('click', () => {
-      aulasSection.style.display = 'none';
-    });
-  }
-
-  // Carregar aulas do Firebase
-  async function carregarAulasFirebase() {
-    const aulasGrid = document.getElementById('aulas-grid');
-    const loading = document.getElementById('loading-aulas');
-
-    try {
-      // Verificar se Firebase está disponível
-      if (typeof aulasRef === 'undefined') {
-        throw new Error('Firebase não configurado');
-      }
-
-      // Buscar aulas
-      const snapshotAoVivo = await aulasRef.where('status', '==', 'ao-vivo').get();
-      const snapshotFinalizada = await aulasRef.where('status', '==', 'finalizada').get();
-      const snapshotAguardando = await aulasRef.where('status', '==', 'aguardando-video').get();
-
-      todasAulas = [];
-
-      snapshotAoVivo.forEach(doc => {
-        todasAulas.push({ id: doc.id, ...doc.data() });
-      });
-
-      snapshotFinalizada.forEach(doc => {
-        todasAulas.push({ id: doc.id, ...doc.data() });
-      });
-
-      snapshotAguardando.forEach(doc => {
-        todasAulas.push({ id: doc.id, ...doc.data() });
-      });
-
-      // Ordenar
-      todasAulas.sort((a, b) => {
-        if (a.status === 'ao-vivo' && b.status !== 'ao-vivo') return -1;
-        if (b.status === 'ao-vivo' && a.status !== 'ao-vivo') return 1;
-        const dataA = a.dataInicio?.toDate ? a.dataInicio.toDate() : new Date(a.dataInicio);
-        const dataB = b.dataInicio?.toDate ? b.dataInicio.toDate() : new Date(b.dataInicio);
-        return dataB - dataA;
-      });
-
-      renderizarAulasGrid(todasAulas);
-
-    } catch (error) {
-      console.error('Erro ao carregar aulas:', error);
-      if (loading) loading.style.display = 'none';
-      aulasGrid.innerHTML = `
-        <div class="aulas-vazio">
-          <i class="bi bi-exclamation-triangle"></i>
-          <h3>Erro ao carregar aulas</h3>
-          <p>Verifique a configuração do Firebase</p>
-        </div>
-      `;
-    }
-  }
-
-  // Renderizar aulas
-  function renderizarAulasGrid(aulas) {
-    const aulasGrid = document.getElementById('aulas-grid');
-    const loading = document.getElementById('loading-aulas');
-
-    if (loading) loading.style.display = 'none';
-
-    if (aulas.length === 0) {
-      aulasGrid.innerHTML = `
-        <div class="aulas-vazio">
-          <i class="bi bi-collection-play"></i>
-          <h3>Nenhuma aula encontrada</h3>
-          <p>As aulas gravadas aparecerão aqui</p>
-        </div>
-      `;
-      return;
-    }
-
-    aulasGrid.innerHTML = '';
-
-    aulas.forEach(aula => {
-      const card = criarCardAulaElement(aula);
-      aulasGrid.appendChild(card);
-    });
-  }
-
-  // Criar card de aula
-  function criarCardAulaElement(aula) {
-    const div = document.createElement('div');
-    div.className = 'aula-card';
-
-    const nomeMateria = nomesMateriasAulas[aula.materia] || aula.materia;
-    const data = formatarDataAula(aula.dataInicio);
-    const duracao = aula.duracao ? formatarDuracaoAula(aula.duracao) : '';
-    const aguardandoVideo = aula.status === 'aguardando-video';
-    const aoVivo = aula.status === 'ao-vivo';
-
-    let thumbnailClass = '';
-    let icone = 'bi-play-circle';
-    let btnTexto = 'Assistir Aula';
-    let btnClass = '';
-    let badgeExtra = '';
-
-    if (aoVivo) {
-      thumbnailClass = 'ao-vivo';
-      icone = 'bi-broadcast';
-      btnTexto = 'Entrar ao Vivo';
-      btnClass = 'btn-ao-vivo';
-      badgeExtra = '<span class="aula-ao-vivo-badge"><span class="dot-ao-vivo"></span> AO VIVO</span>';
-    } else if (aguardandoVideo) {
-      thumbnailClass = 'processando';
-      icone = 'bi-hourglass-split';
-      btnTexto = 'Processando...';
-      btnClass = 'btn-aguardando';
-      badgeExtra = '<span class="aula-processando">Processando vídeo...</span>';
-    }
-
-    div.innerHTML = `
-      <div class="aula-thumbnail ${thumbnailClass}">
-        <i class="bi ${icone} aula-thumbnail-icon"></i>
-        <span class="aula-materia-badge materia-${aula.materia}">${nomeMateria}</span>
-        ${duracao ? `<span class="aula-duracao">${duracao}</span>` : ''}
-        ${badgeExtra}
-      </div>
-      <div class="aula-card-body">
-        <div class="aula-card-materia">
-          <i class="bi bi-bookmark-fill"></i>
-          ${nomeMateria}
-        </div>
-        <div class="aula-card-tema">${aula.tema}</div>
-        <div class="aula-card-meta">
-          <span><i class="bi bi-calendar3"></i> ${data}</span>
-          ${duracao ? `<span><i class="bi bi-clock"></i> ${duracao}</span>` : ''}
-          ${aoVivo ? '<span class="meta-ao-vivo"><i class="bi bi-broadcast"></i> Ao Vivo</span>' : ''}
-        </div>
-        <button class="btn-assistir ${btnClass}" ${aguardandoVideo ? 'disabled' : ''}>
-          <i class="bi ${aoVivo ? 'bi-broadcast' : (aguardandoVideo ? 'bi-hourglass-split' : 'bi-play-fill')}"></i>
-          ${btnTexto}
-        </button>
-      </div>
-    `;
-
-    // Evento do botão
-    const btn = div.querySelector('.btn-assistir');
-    if (aoVivo) {
-      btn.addEventListener('click', () => {
-        if (aula.meetLink) window.open(aula.meetLink, '_blank');
-      });
-    } else if (!aguardandoVideo) {
-      btn.addEventListener('click', () => {
-        if (aula.videoUrl) window.open(aula.videoUrl, '_blank');
-      });
-    }
-
-    return div;
-  }
-
-  // Verificar aula ao vivo
-  async function verificarAulaAoVivoFirebase() {
-    try {
-      if (typeof aulasRef === 'undefined') return;
-
-      const snapshot = await aulasRef.where('status', '==', 'ao-vivo').limit(1).get();
-
-      if (!snapshot.empty) {
-        const doc = snapshot.docs[0];
-        aulaAoVivo = { id: doc.id, ...doc.data() };
-        mostrarBannerAoVivoElement();
-      }
-    } catch (error) {
-      console.error('Erro ao verificar aula ao vivo:', error);
-    }
-
-    setTimeout(verificarAulaAoVivoFirebase, 30000);
-  }
-
-  // Mostrar banner ao vivo
-  function mostrarBannerAoVivoElement() {
-    if (!aulaAoVivo) return;
-
-    const bannerAoVivo = document.getElementById('banner-ao-vivo');
-    const aoVivoMateria = document.getElementById('ao-vivo-materia');
-    const btnAoVivo = document.getElementById('btn-ao-vivo');
-
-    if (!bannerAoVivo) return;
-
-    const nomeMateria = nomesMateriasAulas[aulaAoVivo.materia] || aulaAoVivo.materia;
-    aoVivoMateria.textContent = `${nomeMateria} - ${aulaAoVivo.tema}`;
-    bannerAoVivo.style.display = 'flex';
-
-    btnAoVivo.onclick = () => {
-      if (aulaAoVivo.meetLink) window.open(aulaAoVivo.meetLink, '_blank');
-    };
-  }
-
-  // Formatar data
-  function formatarDataAula(timestamp) {
-    if (!timestamp) return '';
-    const data = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  }
-
-  // Formatar duração
-  function formatarDuracaoAula(minutos) {
-    if (!minutos) return '';
-    const horas = Math.floor(minutos / 60);
-    const mins = minutos % 60;
-    return horas > 0 ? `${horas}h ${mins}min` : `${mins}min`;
-  }
-
-  // Filtros
-  const filtroMateria = document.getElementById('filtro-materia');
-  const filtroMes = document.getElementById('filtro-mes');
-  const buscaAulas = document.getElementById('busca-aulas');
-
-  function filtrarAulasGrid() {
-    const materia = filtroMateria?.value || '';
-    const mes = filtroMes?.value || '';
-    const busca = buscaAulas?.value.toLowerCase().trim() || '';
-
-    let aulasFiltradas = todasAulas;
-
-    if (materia) {
-      aulasFiltradas = aulasFiltradas.filter(a => a.materia === materia);
-    }
-
-    if (mes) {
-      aulasFiltradas = aulasFiltradas.filter(a => {
-        const dataAula = a.dataInicio?.toDate ? a.dataInicio.toDate() : new Date(a.dataInicio);
-        const mesAula = String(dataAula.getMonth() + 1).padStart(2, '0');
-        return mesAula === mes;
-      });
-    }
-
-    if (busca) {
-      aulasFiltradas = aulasFiltradas.filter(a =>
-        a.tema.toLowerCase().includes(busca) ||
-        (nomesMateriasAulas[a.materia] || a.materia).toLowerCase().includes(busca)
-      );
-    }
-
-    renderizarAulasGrid(aulasFiltradas);
-  }
-
-  if (filtroMateria) filtroMateria.addEventListener('change', filtrarAulasGrid);
-  if (filtroMes) filtroMes.addEventListener('change', filtrarAulasGrid);
-  if (buscaAulas) buscaAulas.addEventListener('input', filtrarAulasGrid);
-
-  // Modal de vídeo
-  const modalVideo = document.getElementById('modal-video');
-  const fecharVideoBtn = document.getElementById('fechar-video');
-
-  if (fecharVideoBtn) {
-    fecharVideoBtn.addEventListener('click', () => {
-      modalVideo.classList.remove('show');
-      const videoPlayer = document.getElementById('video-player');
-      if (videoPlayer) videoPlayer.src = '';
-    });
-  }
-
-  if (modalVideo) {
-    modalVideo.addEventListener('click', (e) => {
-      if (e.target === modalVideo) {
-        modalVideo.classList.remove('show');
-        const videoPlayer = document.getElementById('video-player');
-        if (videoPlayer) videoPlayer.src = '';
-      }
-    });
-  }
-
-})();

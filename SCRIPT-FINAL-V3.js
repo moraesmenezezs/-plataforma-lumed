@@ -1,12 +1,14 @@
 // =============================================
-// LuMED - SCRIPT FINAL V3 - COPIE TODO ESTE CÓDIGO
-// Busca vídeos em DOIS lugares:
-// 1. Arquivos com "tpq" no nome
-// 2. Subpastas do "Meet Recordings"
+// LuMED - SCRIPT FINAL V4 - COPIE TODO ESTE CÓDIGO
+// Matching por TIMESTAMP: vincula vídeo à aula
+// cuja dataFim é mais próxima da data de criação do vídeo
 // =============================================
 
 var FIREBASE_URL = 'https://firestore.googleapis.com/v1/projects/lumed-aulas/databases/(default)/documents';
-var ARQUIVO_CTRL = 'lumed_ctrl_v3.json';
+var ARQUIVO_CTRL = 'lumed_ctrl_v4.json';
+
+// Janela máxima: só vincula vídeo criado até 3h após o fim da aula
+var JANELA_MAX_MS = 3 * 60 * 60 * 1000;
 
 // Função chamada pelo Web App
 function doGet(e) {
@@ -16,7 +18,7 @@ function doGet(e) {
 
 // FUNÇÃO PRINCIPAL
 function sincronizar() {
-  Logger.log('=== INICIANDO SINCRONIZAÇÃO V3 ===');
+  Logger.log('=== INICIANDO SINCRONIZAÇÃO V4 (TIMESTAMP MATCH) ===');
 
   var resultado = { videos: 0, aulas: 0 };
   var processados = getProcessados();
@@ -30,13 +32,15 @@ function sincronizar() {
       var video = videos.next();
       var id = video.getId();
       if (!processados[id]) {
+        var dataCriacao = video.getDateCreated();
         videosNovos.push({
           id: id,
           nome: video.getName(),
           url: 'https://drive.google.com/file/d/' + id + '/view',
+          dataCriacao: dataCriacao,
           fonte: 'busca-tpq'
         });
-        Logger.log('  Encontrado (tpq): ' + video.getName());
+        Logger.log('  Encontrado (tpq): ' + video.getName() + ' | Criado: ' + dataCriacao.toISOString());
       }
     }
   } catch (e) {
@@ -62,14 +66,16 @@ function sincronizar() {
             var videoId = video.getId();
 
             if (!processados[videoId]) {
+              var dataCriacao = video.getDateCreated();
               videosNovos.push({
                 id: videoId,
                 pastaId: idPasta,
                 nome: video.getName(),
                 url: 'https://drive.google.com/file/d/' + videoId + '/view',
+                dataCriacao: dataCriacao,
                 fonte: 'meet-recordings'
               });
-              Logger.log('  Encontrado (Meet): ' + video.getName());
+              Logger.log('  Encontrado (Meet): ' + video.getName() + ' | Criado: ' + dataCriacao.toISOString());
             }
           }
         }
@@ -79,7 +85,18 @@ function sincronizar() {
     Logger.log('Erro Meet Recordings: ' + e.message);
   }
 
-  Logger.log('Total vídeos novos: ' + videosNovos.length);
+  // Deduplicar (mesmo vídeo pode aparecer nos 2 métodos)
+  var idsVistos = {};
+  var videosDedup = [];
+  for (var k = 0; k < videosNovos.length; k++) {
+    if (!idsVistos[videosNovos[k].id]) {
+      idsVistos[videosNovos[k].id] = true;
+      videosDedup.push(videosNovos[k]);
+    }
+  }
+  videosNovos = videosDedup;
+
+  Logger.log('Total vídeos novos (sem duplicatas): ' + videosNovos.length);
 
   if (videosNovos.length === 0) {
     Logger.log('Nenhum vídeo novo para processar');
@@ -92,28 +109,53 @@ function sincronizar() {
   var aulasAguardando = buscarAulasAguardando();
   Logger.log('Aulas aguardando: ' + aulasAguardando.length);
 
-  // ========== Vincular vídeos às aulas ==========
-  for (var i = 0; i < aulasAguardando.length && i < videosNovos.length; i++) {
+  // ========== Vincular vídeos às aulas POR TIMESTAMP ==========
+  // Para cada aula, encontrar o vídeo cuja dataCriacao é mais próxima do dataFim da aula
+  var videosUsados = {};
+
+  for (var i = 0; i < aulasAguardando.length; i++) {
     var aula = aulasAguardando[i];
-    var video = videosNovos[i];
+    var aulaFim = aula.dataFim ? new Date(aula.dataFim) : new Date(aula.dataInicio);
 
-    Logger.log('Vinculando: ' + video.nome + ' -> ' + aula.tema);
+    var melhorVideo = null;
+    var menorDif = Infinity;
 
-    if (atualizarAula(aula.path, video.url)) {
-      processados[video.id] = { nome: video.nome, data: new Date().toISOString() };
-      if (video.pastaId) {
-        processados['pasta_' + video.pastaId] = true;
+    for (var j = 0; j < videosNovos.length; j++) {
+      var video = videosNovos[j];
+      if (videosUsados[video.id]) continue;
+
+      var dif = Math.abs(video.dataCriacao.getTime() - aulaFim.getTime());
+
+      // Só aceita vídeos dentro da janela de 3h
+      if (dif < JANELA_MAX_MS && dif < menorDif) {
+        melhorVideo = video;
+        menorDif = dif;
       }
-      resultado.aulas++;
+    }
+
+    if (melhorVideo) {
+      var difMin = Math.round(menorDif / 60000);
+      Logger.log('MATCH: "' + melhorVideo.nome + '" -> "' + aula.tema + '" (diferença: ' + difMin + ' min)');
+
+      if (atualizarAula(aula.path, melhorVideo.url)) {
+        videosUsados[melhorVideo.id] = true;
+        processados[melhorVideo.id] = { nome: melhorVideo.nome, data: new Date().toISOString(), aula: aula.tema };
+        if (melhorVideo.pastaId) {
+          processados['pasta_' + melhorVideo.pastaId] = true;
+        }
+        resultado.aulas++;
+      }
+    } else {
+      Logger.log('SEM MATCH para aula: "' + aula.tema + '" (dataFim: ' + aulaFim.toISOString() + ')');
     }
   }
 
   salvarProcessados(processados);
-  Logger.log('=== SINCRONIZAÇÃO CONCLUÍDA: ' + resultado.aulas + ' aula(s) ===');
+  Logger.log('=== SINCRONIZAÇÃO CONCLUÍDA: ' + resultado.aulas + ' aula(s) vinculada(s) ===');
   return resultado;
 }
 
-// Buscar aulas com status aguardando-video
+// Buscar aulas com status aguardando-video (inclui dataFim para matching)
 function buscarAulasAguardando() {
   var url = FIREBASE_URL + '/aulas';
 
@@ -133,14 +175,19 @@ function buscarAulasAguardando() {
           path: doc.name,
           tema: fields.tema ? fields.tema.stringValue : 'Sem tema',
           materia: fields.materia ? fields.materia.stringValue : '',
-          dataInicio: fields.dataInicio ? fields.dataInicio.timestampValue : ''
+          dataInicio: fields.dataInicio ? fields.dataInicio.timestampValue : '',
+          dataFim: fields.dataFim ? fields.dataFim.timestampValue : ''
         });
+        Logger.log('  Aula aguardando: "' + (fields.tema ? fields.tema.stringValue : '?') +
+          '" | Fim: ' + (fields.dataFim ? fields.dataFim.timestampValue : 'sem dataFim'));
       }
     }
 
-    // Ordenar por data (mais recente primeiro)
+    // Ordenar por dataFim (mais recente primeiro) - melhor para matching
     aulas.sort(function(a, b) {
-      return b.dataInicio.localeCompare(a.dataInicio);
+      var dateA = a.dataFim || a.dataInicio;
+      var dateB = b.dataFim || b.dataInicio;
+      return dateB.localeCompare(dateA);
     });
 
     return aulas;
@@ -237,9 +284,10 @@ function desativarTrigger() {
   Logger.log('Trigger desativado');
 }
 
-// Teste: mostra vídeos e aulas encontrados
+// Teste: mostra vídeos com datas e aulas com dataFim
 function testar() {
-  Logger.log('=== TESTE V3 ===');
+  Logger.log('=== TESTE V4 (TIMESTAMP MATCH) ===');
+  var processados = getProcessados();
 
   // Vídeos com tpq
   Logger.log('\n--- Vídeos com "tpq" ---');
@@ -248,7 +296,8 @@ function testar() {
     var videos = DriveApp.searchFiles('title contains "tpq" and mimeType = "video/mp4"');
     while (videos.hasNext()) {
       var v = videos.next();
-      Logger.log('  ' + v.getName());
+      var jaProc = processados[v.getId()] ? ' [JÁ PROCESSADO]' : ' [NOVO]';
+      Logger.log('  ' + v.getName() + ' | Criado: ' + v.getDateCreated().toISOString() + jaProc);
       count1++;
     }
   } catch(e) {}
@@ -267,7 +316,8 @@ function testar() {
         var arqs = sub.getFilesByType('video/mp4');
         while (arqs.hasNext()) {
           var a = arqs.next();
-          Logger.log('  ' + sub.getName() + '/' + a.getName());
+          var jaProc = processados[a.getId()] ? ' [JÁ PROCESSADO]' : ' [NOVO]';
+          Logger.log('  ' + sub.getName() + '/' + a.getName() + ' | Criado: ' + a.getDateCreated().toISOString() + jaProc);
           count2++;
         }
       }
@@ -279,7 +329,39 @@ function testar() {
   Logger.log('\n--- Aulas aguardando vídeo ---');
   var aulas = buscarAulasAguardando();
   for (var i = 0; i < aulas.length; i++) {
-    Logger.log('  ' + aulas[i].materia + ': ' + aulas[i].tema);
+    Logger.log('  ' + aulas[i].materia + ': ' + aulas[i].tema + ' | Fim: ' + (aulas[i].dataFim || 'sem dataFim'));
   }
   Logger.log('Total: ' + aulas.length);
+
+  // Simular matching
+  Logger.log('\n--- SIMULAÇÃO DE MATCHING ---');
+  var videosNovos = [];
+  try {
+    var allVids = DriveApp.searchFiles('title contains "tpq" and mimeType = "video/mp4"');
+    while (allVids.hasNext()) {
+      var vid = allVids.next();
+      if (!processados[vid.getId()]) {
+        videosNovos.push({ id: vid.getId(), nome: vid.getName(), dataCriacao: vid.getDateCreated() });
+      }
+    }
+  } catch(e) {}
+
+  for (var i = 0; i < aulas.length; i++) {
+    var aula = aulas[i];
+    var aulaFim = aula.dataFim ? new Date(aula.dataFim) : new Date(aula.dataInicio);
+    var melhor = null;
+    var menorDif = Infinity;
+    for (var j = 0; j < videosNovos.length; j++) {
+      var dif = Math.abs(videosNovos[j].dataCriacao.getTime() - aulaFim.getTime());
+      if (dif < JANELA_MAX_MS && dif < menorDif) {
+        melhor = videosNovos[j];
+        menorDif = dif;
+      }
+    }
+    if (melhor) {
+      Logger.log('  MATCH: "' + aula.tema + '" <-> "' + melhor.nome + '" (dif: ' + Math.round(menorDif/60000) + ' min)');
+    } else {
+      Logger.log('  SEM MATCH: "' + aula.tema + '" (nenhum vídeo dentro de 3h)');
+    }
+  }
 }

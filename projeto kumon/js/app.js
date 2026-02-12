@@ -229,11 +229,11 @@ function atualizarGrafico(estatisticas) {
       datasets: [{
         label: 'Acertos',
         data: dados,
-        borderColor: '#22c55e',
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: '#22c55e',
+        pointBackgroundColor: '#8b5cf6',
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointRadius: 6

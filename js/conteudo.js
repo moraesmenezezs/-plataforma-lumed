@@ -648,7 +648,7 @@ function dispararConfete() {
   const container = document.getElementById('confetti-container');
   if (!container) return;
 
-  const cores = ['#8b5cf6', '#a855f7', '#ec4899', '#f472b6', '#10b981', '#34d399', '#fbbf24', '#f59e0b'];
+  const cores = ['#3b82f6', '#60a5fa', '#8b5cf6', '#a78bfa', '#c084fc', '#a78bfa', '#fbbf24', '#f59e0b'];
   const formas = ['circle', 'square', 'ribbon'];
 
   for (let i = 0; i < 50; i++) {

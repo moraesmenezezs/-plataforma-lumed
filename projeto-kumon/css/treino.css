@@ -290,7 +290,7 @@
 .resposta-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+  box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.15);
 }
 
 .resposta-input.correct {
@@ -331,7 +331,7 @@
 .fracao-campo:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+  box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.15);
 }
 
 .resposta-container .fracao-barra {
@@ -385,7 +385,7 @@
 
 .btn-confirmar:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+  box-shadow: 0 6px 20px rgba(71, 85, 105, 0.4);
 }
 
 .btn-confirmar:disabled {

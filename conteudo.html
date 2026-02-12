@@ -51,17 +51,9 @@
           <i class="bi bi-stopwatch"></i>
           <span>Timer</span>
         </a>
-        <a href="index.html#aulas" class="nav-item" id="nav-aulas">
-          <i class="bi bi-play-circle"></i>
-          <span>Aulas</span>
-        </a>
         <a href="conteudo.html" class="nav-item active" id="nav-edital">
           <i class="bi bi-journal-bookmark"></i>
           <span>Edital</span>
-        </a>
-        <a href="desempenho.html" class="nav-item" id="nav-desempenho">
-          <i class="bi bi-graph-up"></i>
-          <span>Desempenho</span>
         </a>
         <a href="projeto-kumon/index.html" class="nav-item" id="nav-kumon">
           <i class="bi bi-calculator"></i>
@@ -70,10 +62,6 @@
         <a href="index.html#redacao" class="nav-item" id="nav-redacao">
           <i class="bi bi-pencil-square"></i>
           <span>Redação</span>
-        </a>
-        <a href="index.html#config" class="nav-item" id="nav-config">
-          <i class="bi bi-gear"></i>
-          <span>Configurações</span>
         </a>
       </div>
 
@@ -94,12 +82,9 @@
         <a href="index.html" class="nav-expanded-item"><i class="bi bi-grid-fill"></i><span>Painel</span></a>
         <a href="index.html#planner" class="nav-expanded-item"><i class="bi bi-calendar-week"></i><span>Planner</span></a>
         <a href="index.html#timer" class="nav-expanded-item"><i class="bi bi-stopwatch"></i><span>Timer</span></a>
-        <a href="aulas.html" class="nav-expanded-item"><i class="bi bi-play-circle"></i><span>Aulas</span></a>
         <a href="conteudo.html" class="nav-expanded-item active"><i class="bi bi-journal-bookmark"></i><span>Edital</span></a>
-        <a href="desempenho.html" class="nav-expanded-item"><i class="bi bi-graph-up"></i><span>Desempenho</span></a>
         <a href="projeto-kumon/index.html" class="nav-expanded-item"><i class="bi bi-calculator"></i><span>Kumon</span></a>
         <a href="index.html#redacao" class="nav-expanded-item"><i class="bi bi-pencil-square"></i><span>Redação</span></a>
-        <a href="index.html#config" class="nav-expanded-item"><i class="bi bi-gear"></i><span>Configurações</span></a>
       </div>
     </div>
   </nav>
@@ -147,12 +132,12 @@
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#7c3aed"/>
-                  <stop offset="50%" stop-color="#a855f7"/>
-                  <stop offset="100%" stop-color="#c084fc"/>
+                  <stop offset="0%" stop-color="#3b82f6"/>
+                  <stop offset="50%" stop-color="#3b82f6"/>
+                  <stop offset="100%" stop-color="#8b5cf6"/>
                 </linearGradient>
               </defs>
-              <circle class="ring-bg" cx="50" cy="50" r="40" stroke-width="10" fill="none" stroke="#e2e8f0"/>
+              <circle class="ring-bg" cx="50" cy="50" r="40" stroke-width="10" fill="none" stroke="#e9d5ff"/>
               <circle class="ring-fill" id="progresso-ring-fill" cx="50" cy="50" r="40" stroke-width="10" fill="none" stroke="url(#progressGradient)" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
             </svg>
             <div class="ring-valor">
@@ -291,6 +276,14 @@
 
   <!-- Container de Confete para Animação -->
   <div class="confetti-container" id="confetti-container"></div>
+
+  <!-- Footer Logo -->
+  <footer class="lumed-footer">
+    <span class="lumed-footer-text">
+      <i class="bi bi-mortarboard-fill"></i>
+      Plataforma LuMED
+    </span>
+  </footer>
 
   <!-- Supabase Auth -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>

@@ -56,7 +56,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="css/style.css?v=10">
-  <link rel="stylesheet" href="css/aulas.css">
 </head>
 
 <body>
@@ -78,23 +77,15 @@
         </div>
         <div class="nav-item" id="nav-planner">
           <i class="bi bi-calendar-week"></i>
-          <span>Planner</span>
+          <span>Cronograma</span>
         </div>
         <div class="nav-item" id="nav-timer">
           <i class="bi bi-stopwatch"></i>
           <span>Timer</span>
         </div>
-        <div class="nav-item" id="nav-aulas">
-          <i class="bi bi-play-circle"></i>
-          <span>Aulas</span>
-        </div>
         <a href="conteudo.html" class="nav-item" id="nav-edital">
           <i class="bi bi-journal-bookmark"></i>
           <span>Edital</span>
-        </a>
-        <a href="desempenho.html" class="nav-item" id="nav-desempenho">
-          <i class="bi bi-graph-up"></i>
-          <span>Desempenho</span>
         </a>
         <a href="projeto-kumon/index.html" class="nav-item" id="nav-kumon">
           <i class="bi bi-calculator"></i>
@@ -104,21 +95,17 @@
           <i class="bi bi-pencil-square"></i>
           <span>Redação</span>
         </div>
-        <div class="nav-item" id="nav-config">
-          <i class="bi bi-gear"></i>
-          <span>Configurações</span>
-        </div>
       </div>
 
       <!-- Ações direita -->
       <div class="navbar-actions">
-        <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
-          <i class="bi bi-grid-3x3-gap-fill"></i>
-        </button>
+        <span class="streak-fire" id="streak-fire" title="Dias na plataforma">
+          <i class="bi bi-fire"></i>
+          <span class="streak-fire-count" id="streak-fire-count">0</span>
+        </span>
         <div class="profile" id="btn-perfil">
-          <span class="avatar"></span>
+          <span class="avatar">ML</span>
           <span class="name">Maria Luisa</span>
-          <i class="bi bi-chevron-down"></i>
         </div>
       </div>
     </div>
@@ -132,23 +119,15 @@
         </div>
         <div class="nav-expanded-item" data-section="planner">
           <i class="bi bi-calendar-week"></i>
-          <span>Planner</span>
+          <span>Cronograma</span>
         </div>
         <div class="nav-expanded-item" data-section="timer">
           <i class="bi bi-stopwatch"></i>
           <span>Timer</span>
         </div>
-        <div class="nav-expanded-item" data-section="aulas">
-          <i class="bi bi-play-circle"></i>
-          <span>Aulas</span>
-        </div>
         <a href="conteudo.html" class="nav-expanded-item">
           <i class="bi bi-journal-bookmark"></i>
           <span>Edital</span>
-        </a>
-        <a href="desempenho.html" class="nav-expanded-item">
-          <i class="bi bi-graph-up"></i>
-          <span>Desempenho</span>
         </a>
         <a href="projeto-kumon/index.html" class="nav-expanded-item">
           <i class="bi bi-calculator"></i>
@@ -157,10 +136,6 @@
         <div class="nav-expanded-item" data-section="redacao">
           <i class="bi bi-pencil-square"></i>
           <span>Redação</span>
-        </div>
-        <div class="nav-expanded-item" data-section="config">
-          <i class="bi bi-gear"></i>
-          <span>Configurações</span>
         </div>
       </div>
     </div>
@@ -183,7 +158,7 @@
               type="text"
               class="search-input"
               id="input-pesquisa"
-              placeholder="Pesquisar aulas, simulados..."
+              placeholder="Pesquisar simulados, matérias..."
             >
           </div>
         </header>
@@ -194,13 +169,17 @@
             <span class="welcome-badge"><i class="bi bi-lightning-charge-fill"></i> Foco total!</span>
             <h1>Olá, Maria Luisa</h1>
             <p>
-              Faltam <strong id="dias-enem">285</strong> dias para o ENEM. Você completou <strong>68%</strong> das atividades desta semana.
+              Faltam <strong id="dias-enem"></strong> para o ENEM. Você entrou <strong id="dias-semana-login">0</strong> <span id="dias-semana-label">dias</span> na plataforma.
             </p>
             <div class="welcome-actions">
               <button class="welcome-link" id="btn-estudar">
                 <i class="bi bi-play-fill" id="icone-estudar"></i>
                 <span id="texto-estudar">Continuar estudando</span>
               </button>
+              <a href="projeto-kumon/index.html" class="welcome-link" style="background: rgba(255,255,255,0.15); color: white; text-decoration: none; backdrop-filter: blur(10px);">
+                <i class="bi bi-calculator-fill"></i>
+                <span>Kumon Digital</span>
+              </a>
               <button class="btn-lixeira" id="btn-zerar-dia" title="Zerar tempo de hoje">
                 <i class="bi bi-trash"></i>
               </button>
@@ -209,7 +188,7 @@
 
           <div class="welcome-stats">
             <div class="stat-item">
-              <span class="stat-value">847</span>
+              <span class="stat-value stat-editable" id="stat-questoes" title="Clique para editar">0</span>
               <span class="stat-label">Questões resolvidas</span>
             </div>
             <div class="stat-item">
@@ -217,7 +196,7 @@
               <span class="stat-label">Tempo de estudo</span>
             </div>
             <div class="stat-item">
-              <span class="stat-value">12</span>
+              <span class="stat-value stat-editable" id="stat-simulados" title="Clique para editar">0</span>
               <span class="stat-label">Simulados feitos</span>
             </div>
           </div>
@@ -225,15 +204,26 @@
 
         <!-- SEÇÃO ATIVIDADES + RADAR -->
         <div class="atividades-radar-row">
-          <!-- ATIVIDADES DA SEMANA -->
-          <section class="card atividades-main">
-            <div class="card-header">
-              <div class="card-title-group">
-                <i class="bi bi-list-check card-icon"></i>
-                <h2>Atividades da Semana</h2>
-              </div>
-              <span class="atividades-counter" id="contador-tarefas">0/0</span>
+          <!-- TABS ATIVIDADES / CRONOGRAMA -->
+          <div class="atividades-tabs-wrapper">
+            <div class="atividades-tabs">
+              <button class="atividades-tab active" id="tab-atividades" data-tab="atividades">
+                <i class="bi bi-list-check"></i> Atividades
+              </button>
+              <button class="atividades-tab" id="tab-crono-mini" data-tab="crono-mini">
+                <i class="bi bi-calendar3"></i> Cronograma
+              </button>
             </div>
+
+            <!-- CARD ATIVIDADES DA SEMANA -->
+            <section class="card atividades-main" id="card-atividades">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i class="bi bi-list-check card-icon"></i>
+                  <h2>Atividades da Semana</h2>
+                </div>
+                <span class="atividades-counter" id="contador-tarefas">0/0</span>
+              </div>
 
             <!-- Barra de progresso -->
             <div class="progress-bar-container">
@@ -256,6 +246,24 @@
               <i class="bi bi-plus"></i> Adicionar tarefa
             </button>
           </section>
+
+            <!-- CARD MINI CRONOGRAMA (read-only) -->
+            <section class="card atividades-main crono-mini-card" id="card-crono-mini" style="display:none;">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <i class="bi bi-calendar3 card-icon"></i>
+                  <h2>Cronograma Semanal</h2>
+                </div>
+              </div>
+              <div class="crono-mini-grid" id="crono-mini-grid">
+                <div class="crono-mini-vazio">
+                  <i class="bi bi-calendar-x"></i>
+                  <p>Cronograma vazio</p>
+                  <span>Preencha na aba Cronograma</span>
+                </div>
+              </div>
+            </section>
+          </div>
 
           <!-- RADAR DOS VESTIBULARES -->
           <div class="card radar-inline">
@@ -293,40 +301,6 @@
             </div>
           </div>
 
-          <!-- CARD KUMON DIGITAL -->
-          <a href="projeto-kumon/index.html" class="card kumon-card-lumed" style="
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 20px 24px;
-            background: linear-gradient(135deg, #22c55e, #10b981, #059669);
-            border-radius: 16px;
-            color: white;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
-            margin-top: 16px;
-          ">
-            <div style="
-              width: 48px;
-              height: 48px;
-              background: rgba(255,255,255,0.2);
-              border-radius: 12px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 24px;
-              flex-shrink: 0;
-            ">
-              <i class="bi bi-calculator-fill"></i>
-            </div>
-            <div style="flex: 1;">
-              <div style="font-size: 16px; font-weight: 700;">Kumon Digital</div>
-              <div style="font-size: 13px; opacity: 0.9;">Pratique matemática progressiva</div>
-            </div>
-            <i class="bi bi-arrow-right" style="font-size: 20px; opacity: 0.8;"></i>
-          </a>
         </div>
 
       </div>
@@ -337,126 +311,83 @@
     <!-- ========================= -->
     <section class="planner-section" id="planner-section" style="display: none;">
       <div class="planner-container">
-        <!-- Header do Planner -->
+        <!-- Header -->
         <div class="planner-header">
-          <h1><i class="bi bi-calendar-week"></i> Meu Planner de Estudos</h1>
-          <p>Organize sua semana de estudos</p>
+          <h1><i class="bi bi-calendar-week"></i> Cronograma Semanal</h1>
+          <div class="planner-header-actions">
+            <button class="btn-add-horario" id="btn-add-horario" title="Adicionar horário">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+            <button class="btn-lixeira-mini" id="btn-limpar-grade" title="Limpar tudo">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
         </div>
 
-        <div class="planner-content">
-          <!-- Grade Semanal -->
-          <div class="planner-grid-wrapper">
-            <div class="planner-grid-header">
-              <h2><i class="bi bi-table"></i> Grade Semanal</h2>
-              <button class="btn-lixeira-mini" id="btn-limpar-grade" title="Limpar grade">
-                <i class="bi bi-trash"></i>
-              </button>
+        <!-- Grade -->
+        <div class="planner-grid-wrapper">
+          <div class="planner-grid" id="planner-grid">
+            <div class="grid-header">
+              <div class="grid-time-header">Horário</div>
+              <div class="grid-day-header">Seg</div>
+              <div class="grid-day-header">Ter</div>
+              <div class="grid-day-header">Qua</div>
+              <div class="grid-day-header">Qui</div>
+              <div class="grid-day-header">Sex</div>
+              <div class="grid-day-header">Sáb</div>
+              <div class="grid-day-header">Dom</div>
             </div>
-
-            <div class="planner-grid" id="planner-grid">
-              <!-- Cabeçalho dos dias -->
-              <div class="grid-header">
-                <div class="grid-time-header">Horário</div>
-                <div class="grid-day-header">Dom</div>
-                <div class="grid-day-header">Seg</div>
-                <div class="grid-day-header">Ter</div>
-                <div class="grid-day-header">Qua</div>
-                <div class="grid-day-header">Qui</div>
-                <div class="grid-day-header">Sex</div>
-                <div class="grid-day-header">Sáb</div>
-              </div>
-
-              <!-- Linhas de horário (geradas via JS) -->
-              <div class="grid-body" id="grid-body">
-                <!-- Preenchido via JavaScript -->
-              </div>
-            </div>
+            <div class="grid-body" id="grid-body"></div>
           </div>
+        </div>
+      </div>
 
-          <!-- Sidebar do Planner -->
-          <div class="planner-sidebar">
-            <!-- Calendário -->
-            <div class="planner-calendar card">
-              <div class="section-header">
-                <h2><i class="bi bi-calendar3"></i> Calendário</h2>
-                <span class="mes-atual-mini" id="mes-atual-planner">Jan 2026</span>
-              </div>
-
-              <div class="calendar-nav">
-                <button class="calendar-nav-btn" id="prev-month"><i class="bi bi-chevron-left"></i></button>
-                <button class="calendar-nav-btn" id="next-month"><i class="bi bi-chevron-right"></i></button>
-              </div>
-
-              <div class="mini-calendar">
-                <div class="calendar-weekdays">
-                  <span>D</span>
-                  <span>S</span>
-                  <span>T</span>
-                  <span>Q</span>
-                  <span>Q</span>
-                  <span>S</span>
-                  <span>S</span>
-                </div>
-                <div class="calendar-days" id="calendar-days-planner">
-                  <!-- Preenchido via JavaScript -->
-                </div>
-              </div>
-
-              <div class="calendar-legend">
-                <div class="legend-item">
-                  <span class="legend-dot simulado"></span>
-                  <span>Simulado</span>
-                </div>
-                <div class="legend-item">
-                  <span class="legend-dot prova"></span>
-                  <span>Prova</span>
-                </div>
-                <div class="legend-item">
-                  <span class="legend-dot evento"></span>
-                  <span>Evento</span>
-                </div>
-              </div>
+      <!-- Modal editar célula -->
+      <div class="crono-modal-overlay" id="crono-modal" style="display:none;">
+        <div class="crono-modal">
+          <div class="crono-modal-header">
+            <h3 id="crono-modal-title">Editar bloco</h3>
+            <button class="crono-modal-close" id="crono-modal-close"><i class="bi bi-x-lg"></i></button>
+          </div>
+          <div class="crono-modal-body">
+            <label>Tipo</label>
+            <div class="crono-tipos" id="crono-tipos">
+              <button data-tipo="teoria" class="crono-tipo-btn tipo-teoria"><i class="bi bi-book"></i> Teoria</button>
+              <button data-tipo="questoes" class="crono-tipo-btn tipo-questoes"><i class="bi bi-pencil"></i> Questões</button>
+              <button data-tipo="anki" class="crono-tipo-btn tipo-anki"><i class="bi bi-arrow-repeat"></i> Anki</button>
+              <button data-tipo="descanso" class="crono-tipo-btn tipo-descanso"><i class="bi bi-cup-hot"></i> Descanso</button>
+              <button data-tipo="casa" class="crono-tipo-btn tipo-casa"><i class="bi bi-house"></i> Casa</button>
+              <button data-tipo="academia" class="crono-tipo-btn tipo-academia"><i class="bi bi-heart-pulse"></i> Academia</button>
+              <button data-tipo="cafe-manha" class="crono-tipo-btn tipo-cafe-manha"><i class="bi bi-sunrise"></i> Café da manhã</button>
+              <button data-tipo="almoco" class="crono-tipo-btn tipo-almoco"><i class="bi bi-egg-fried"></i> Almoço</button>
+              <button data-tipo="cafe-tarde" class="crono-tipo-btn tipo-cafe-tarde"><i class="bi bi-cup-straw"></i> Café da tarde</button>
             </div>
+            <label>Matéria</label>
+            <input type="text" id="crono-materia" placeholder="Ex: Matemática" autocomplete="off">
+            <label>Tópico</label>
+            <input type="text" id="crono-topico" placeholder="Ex: Frações" autocomplete="off">
+          </div>
+          <div class="crono-modal-footer">
+            <button class="crono-btn-limpar" id="crono-btn-limpar">Limpar</button>
+            <button class="crono-btn-salvar" id="crono-btn-salvar">Salvar</button>
+          </div>
+        </div>
+      </div>
 
-            <!-- Matérias para arrastar -->
-            <div class="materias-disponiveis card">
-              <div class="section-header">
-                <h2><i class="bi bi-palette"></i> Matérias</h2>
-              </div>
-              <p class="materias-dica">Clique em uma célula e selecione a matéria</p>
-              <div class="materias-lista" id="materias-planner">
-                <button class="materia-planner" data-materia="portugues" style="--cor: #ef4444;">
-                  <i class="bi bi-book"></i> Português
-                </button>
-                <button class="materia-planner" data-materia="matematica" style="--cor: #3b82f6;">
-                  <i class="bi bi-calculator"></i> Matemática
-                </button>
-                <button class="materia-planner" data-materia="historia" style="--cor: #f59e0b;">
-                  <i class="bi bi-hourglass-split"></i> História
-                </button>
-                <button class="materia-planner" data-materia="geografia" style="--cor: #10b981;">
-                  <i class="bi bi-globe"></i> Geografia
-                </button>
-                <button class="materia-planner" data-materia="biologia" style="--cor: #22c55e;">
-                  <i class="bi bi-tree"></i> Biologia
-                </button>
-                <button class="materia-planner" data-materia="fisica" style="--cor: #8b5cf6;">
-                  <i class="bi bi-lightning"></i> Física
-                </button>
-                <button class="materia-planner" data-materia="quimica" style="--cor: #ec4899;">
-                  <i class="bi bi-droplet-fill"></i> Química
-                </button>
-                <button class="materia-planner" data-materia="redacao" style="--cor: #6366f1;">
-                  <i class="bi bi-pencil-square"></i> Redação
-                </button>
-                <button class="materia-planner" data-materia="ingles" style="--cor: #14b8a6;">
-                  <i class="bi bi-translate"></i> Inglês
-                </button>
-                <button class="materia-planner" data-materia="revisao" style="--cor: #64748b;">
-                  <i class="bi bi-arrow-repeat"></i> Revisão
-                </button>
-              </div>
-            </div>
+      <!-- Modal adicionar horário -->
+      <div class="crono-modal-overlay" id="crono-modal-hora" style="display:none;">
+        <div class="crono-modal">
+          <div class="crono-modal-header">
+            <h3>Novo horário</h3>
+            <button class="crono-modal-close" id="crono-modal-hora-close"><i class="bi bi-x-lg"></i></button>
+          </div>
+          <div class="crono-modal-body">
+            <label>Horário</label>
+            <input type="text" id="crono-novo-horario" placeholder="Ex: 16:00" autocomplete="off">
+          </div>
+          <div class="crono-modal-footer">
+            <button class="crono-btn-limpar" id="crono-hora-cancelar">Cancelar</button>
+            <button class="crono-btn-salvar" id="crono-hora-salvar">Adicionar</button>
           </div>
         </div>
       </div>
@@ -498,97 +429,6 @@
       </div>
     </section>
 
-    <!-- ========================= -->
-    <!-- SEÇÃO AULAS               -->
-    <!-- ========================= -->
-    <section class="aulas-section" id="aulas-section" style="display: none;">
-      <div class="aulas-container-inner">
-        <div class="aulas-content">
-          <!-- Header -->
-          <div class="aulas-header">
-            <h1><i class="bi bi-collection-play"></i> Aulas Gravadas</h1>
-            <p>Revise todas as aulas e não perca nenhum conteúdo</p>
-          </div>
-
-          <!-- Banner Aula ao Vivo (aparece quando tem aula) -->
-          <div class="aula-ao-vivo-banner" id="banner-ao-vivo" style="display: none;">
-            <div class="ao-vivo-info">
-              <div class="ao-vivo-dot"></div>
-              <div class="ao-vivo-texto">
-                <h3>AO VIVO AGORA</h3>
-                <span id="ao-vivo-materia">Biologia - Sistema Nervoso</span>
-              </div>
-            </div>
-            <button class="btn-assistir-ao-vivo" id="btn-ao-vivo">
-              <i class="bi bi-broadcast"></i>
-              Assistir Agora
-            </button>
-          </div>
-
-          <!-- Filtros -->
-          <div class="aulas-filtros">
-            <select class="filtro-select" id="filtro-materia">
-              <option value="">Todas as matérias</option>
-              <option value="biologia">Biologia</option>
-              <option value="quimica">Química</option>
-              <option value="fisica">Física</option>
-              <option value="matematica">Matemática</option>
-              <option value="portugues">Português</option>
-              <option value="historia">História</option>
-              <option value="geografia">Geografia</option>
-              <option value="filosofia">Filosofia</option>
-              <option value="sociologia">Sociologia</option>
-              <option value="ingles">Inglês</option>
-              <option value="redacao">Redação</option>
-            </select>
-
-            <select class="filtro-select" id="filtro-mes">
-              <option value="">Todos os meses</option>
-              <option value="01">Janeiro</option>
-              <option value="02">Fevereiro</option>
-              <option value="03">Março</option>
-              <option value="04">Abril</option>
-              <option value="05">Maio</option>
-              <option value="06">Junho</option>
-              <option value="07">Julho</option>
-              <option value="08">Agosto</option>
-              <option value="09">Setembro</option>
-              <option value="10">Outubro</option>
-              <option value="11">Novembro</option>
-              <option value="12">Dezembro</option>
-            </select>
-
-            <div class="busca-aulas">
-              <i class="bi bi-search"></i>
-              <input type="text" id="busca-aulas" placeholder="Buscar por tema...">
-            </div>
-          </div>
-
-          <!-- Grid de Aulas -->
-          <div class="aulas-grid" id="aulas-grid">
-            <!-- Loading -->
-            <div class="loading-spinner" id="loading-aulas">
-              <div class="spinner"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- Modal de Vídeo -->
-  <div class="modal-video" id="modal-video">
-    <div class="modal-video-content">
-      <button class="modal-video-close" id="fechar-video">
-        <i class="bi bi-x-lg"></i>
-      </button>
-      <iframe class="video-player" id="video-player" src="" frameborder="0" allowfullscreen></iframe>
-      <div class="modal-video-info">
-        <h3 id="video-titulo">Título da Aula</h3>
-        <p id="video-info">Matéria • Data</p>
-      </div>
-    </div>
   </div>
 
   <!-- MODAL ADICIONAR TAREFA -->
@@ -756,6 +596,14 @@
       </div>
     </div>
   </div>
+
+  <!-- Footer Logo -->
+  <footer class="lumed-footer">
+    <span class="lumed-footer-text">
+      <i class="bi bi-mortarboard-fill"></i>
+      Plataforma LuMED
+    </span>
+  </footer>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>

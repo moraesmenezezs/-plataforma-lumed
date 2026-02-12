@@ -5,6 +5,9 @@
 const SUPABASE_URL = 'https://scbzgbpuhiecadphajkd.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYnpnYnB1aGllY2FkcGhhamtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5NjUzOTMsImV4cCI6MjA4NTU0MTM5M30.O0hRv63aXYwdcUNIyVw8K58h8ATpWEu8-K9ZL_CFcBo';
 
+// Código secreto para criar conta (mude aqui quando quiser)
+const CODIGO_ACESSO = 'LUMEDMARIAMENEZEZS';
+
 const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Tradução de erros Supabase para PT-BR
@@ -18,6 +21,7 @@ function traduzirErro(msg) {
     'Email rate limit exceeded': 'Muitas tentativas. Aguarde alguns minutos.',
     'For security purposes, you can only request this after': 'Aguarde alguns segundos antes de tentar novamente.',
     'Signup requires a valid password': 'Digite uma senha válida.',
+    'Código de acesso inválido.': 'Código de acesso inválido.',
   };
   for (const [en, pt] of Object.entries(erros)) {
     if (msg && msg.includes(en)) return pt;
@@ -44,6 +48,10 @@ function criarOverlayLogin() {
         <div class="auth-field" id="auth-nome-group" style="display:none;">
           <label for="auth-nome"><i class="bi bi-person"></i> Seu nome</label>
           <input type="text" id="auth-nome" placeholder="Ex: Maria Luisa" autocomplete="name">
+        </div>
+        <div class="auth-field" id="auth-codigo-group" style="display:none;">
+          <label for="auth-codigo"><i class="bi bi-key"></i> Código de acesso</label>
+          <input type="text" id="auth-codigo" placeholder="Digite o código fornecido" autocomplete="off">
         </div>
         <div class="auth-field">
           <label for="auth-email"><i class="bi bi-envelope"></i> Email</label>
@@ -80,6 +88,7 @@ function criarOverlayLogin() {
   const toggleBtn = document.getElementById('auth-toggle-btn');
   const toggleText = document.getElementById('auth-toggle-text');
   const nomeGroup = document.getElementById('auth-nome-group');
+  const codigoGroup = document.getElementById('auth-codigo-group');
   const titulo = document.getElementById('auth-title');
   const subtitulo = document.getElementById('auth-subtitle');
 
@@ -89,6 +98,7 @@ function criarOverlayLogin() {
     msg.className = 'auth-msg';
     if (isRegistro) {
       nomeGroup.style.display = 'block';
+      codigoGroup.style.display = 'block';
       titulo.textContent = 'Criar sua conta';
       subtitulo.textContent = 'Preencha os dados para começar';
       btnText.textContent = 'Criar conta';
@@ -97,6 +107,7 @@ function criarOverlayLogin() {
       document.getElementById('auth-senha').autocomplete = 'new-password';
     } else {
       nomeGroup.style.display = 'none';
+      codigoGroup.style.display = 'none';
       titulo.textContent = 'Entrar na plataforma';
       subtitulo.textContent = 'Acesse sua conta para continuar';
       btnText.textContent = 'Entrar';
@@ -120,6 +131,10 @@ function criarOverlayLogin() {
 
     try {
       if (isRegistro) {
+        const codigo = document.getElementById('auth-codigo').value.trim();
+        if (codigo.toUpperCase() !== CODIGO_ACESSO) {
+          throw { message: 'Código de acesso inválido.' };
+        }
         const { data, error } = await _supabase.auth.signUp({
           email,
           password: senha,
