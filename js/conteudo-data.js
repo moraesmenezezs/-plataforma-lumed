@@ -910,6 +910,113 @@ function gerarTodosEditais() {
   if (tabENEM) tabENEM.innerHTML = gerarTabConteudo(ENEM_DATA);
 }
 
+// ============================================
+// EQUIVALENCIAS ENTRE PROVAS
+// Cada array = grupo de topicos equivalentes
+// Quando um e marcado, os outros tambem sao
+// ============================================
+const TOPIC_SYNC_GROUPS = [
+  // === BIOLOGIA ===
+  ['bio-niv-1', 'mc-bio-niv-2'],                         // Citologia
+  ['bio-niv-2'],                                          // Divisao Celular (so PSI)
+  ['bio-niv-3'],                                          // Metabolismo (so PSI)
+  ['bio-b1-1', 'mc-bio-b2-1', 'en-nat-c-4'],             // DNA/RNA/Biotecnologia
+  ['bio-b1-2', 'mc-bio-b1-3', 'en-nat-b1-4'],            // Genetica/Mendel
+  ['bio-b2-1', 'mc-bio-c-1'],                             // Biotecnologia
+  ['bio-b2-2', 'mc-bio-b1-4', 'en-nat-b2-2'],            // Evolucao
+  ['bio-b2-4', 'mc-bio-b1-1', 'en-nat-b1-2'],            // Ecologia
+  ['bio-c-1', 'mc-bio-b2-4', 'en-nat-a-3'],              // Ciclos Biogeoquimicos
+  ['bio-c-2', 'mc-bio-b2-3'],                             // Impactos Ambientais
+  ['bio-c-3', 'mc-bio-b1-2'],                             // Corpo Humano
+  ['bio-c-4', 'mc-bio-b2-2', 'en-nat-b2-4'],             // ISTs/Saude
+  ['bio-a-1', 'mc-bio-a-1'],                              // Vacinas
+  ['bio-a-2', 'mc-bio-c-3'],                              // Biodiversidade
+  ['bio-a-3', 'mc-bio-a-2'],                              // Dinamica de Populacoes
+
+  // === MATEMATICA ===
+  ['mat-niv-1', 'mc-mat-niv-1', 'en-mat-niv-2'],         // Razao/Proporcao/Porcentagem
+  ['mat-niv-2', 'mc-mat-niv-2', 'en-mat-niv-3'],         // Juros
+  ['mat-niv-3', 'mat-niv-4', 'mc-mat-b1-1', 'en-mat-b2-1'], // Funcoes 1o e 2o grau
+  ['mat-b1-1', 'mc-mat-b1-2', 'en-mat-b2-2'],            // Exponencial/Logaritmica
+  ['mat-b1-2', 'mc-mat-b1-3', 'en-mat-b1-3'],            // Trigonometria
+  ['mat-b1-3', 'mc-mat-b1-4', 'en-mat-b2-3'],            // PA/PG
+  ['mat-b1-4', 'mc-mat-b2-1'],                            // Matrizes/Determinantes
+  ['mat-b2-1', 'mc-mat-b2-1'],                            // Sistemas Lineares (incluso em Matrizes Macro)
+  ['mat-b2-4', 'mc-mat-c-3', 'en-mat-c-2'],              // Analise Combinatoria/Probabilidade
+  ['mat-c-1', 'en-mat-b1-1'],                             // Geometria Plana
+  ['mat-c-2', 'mc-mat-c-1', 'en-mat-a-2'],               // Geometria Espacial
+  ['mat-c-3', 'en-mat-a-1'],                              // Geometria Analitica
+  ['mat-a-1', 'mc-mat-b2-3', 'en-mat-c-1'],              // Estatistica
+  ['mat-a-2', 'mc-mat-c-4', 'en-mat-c-2'],               // Probabilidade
+
+  // === FISICA ===
+  ['fis-niv-1', 'mc-fis-niv-1', 'en-nat-niv-1'],         // Cinematica
+  ['fis-niv-2', 'mc-fis-niv-2'],                          // Leis de Newton
+  ['fis-niv-3', 'mc-fis-niv-3', 'en-nat-b1-1'],          // Trabalho/Energia
+  ['fis-b1-3', 'fis-b1-4', 'mc-fis-b1-1', 'en-nat-b2-1'], // Termologia/Calorimetria
+  ['fis-b2-1', 'mc-fis-c-2'],                             // Termodinamica
+  ['fis-b2-2', 'mc-fis-b1-3', 'en-nat-c-2'],             // Optica
+  ['fis-b2-3', 'mc-fis-b1-2'],                            // Ondas
+  ['fis-b2-4', 'mc-fis-b2-1'],                            // Eletrostatica
+  ['fis-c-1', 'mc-fis-b2-2', 'en-nat-c-1'],              // Eletrodinamica/Circuitos
+  ['fis-a-2', 'mc-fis-c-1', 'en-nat-a-2'],               // Fisica Moderna/Radioatividade
+
+  // === QUIMICA ===
+  ['qui-niv-1', 'mc-qui-niv-1', 'en-nat-niv-3'],         // Materia/Misturas
+  ['qui-niv-2', 'mc-qui-niv-2'],                          // Modelos Atomicos
+  ['qui-niv-3', 'mc-qui-niv-3'],                          // Tabela Periodica
+  ['qui-b1-1', 'mc-qui-b1-1', 'en-nat-b1-3'],            // Ligacoes Quimicas
+  ['qui-b1-3', 'mc-qui-b1-2', 'en-nat-b2-3'],            // Reacoes/Estequiometria
+  ['qui-b2-2', 'mc-qui-b2-1'],                            // Termoquimica
+  ['qui-b2-3', 'mc-qui-b1-3'],                            // Cinetica Quimica
+  ['qui-c-1', 'mc-qui-b2-2'],                             // Eletroquimica
+  ['qui-c-2', 'mc-qui-a-1'],                              // Radioatividade
+  ['qui-c-3', 'mc-qui-b2-3', 'en-nat-c-3'],              // Quimica Organica
+  ['qui-a-1', 'mc-qui-b2-4'],                             // Polimeros
+  ['qui-a-2', 'mc-qui-c-3'],                              // Bioquimica
+
+  // === PORTUGUES/LINGUAGENS ===
+  ['port-niv-3', 'mc-port-niv-2', 'en-ling-niv-3'],      // Interpretacao de Textos
+  ['port-b1-1', 'mc-port-b1-1'],                          // Sintaxe
+  ['port-b1-3', 'mc-port-b2-3'],                          // Regencia/Concordancia
+  ['port-b2-2', 'mc-port-b1-2'],                          // Coesao/Coerencia
+  ['port-b2-3', 'mc-port-b2-2'],                          // Quinhentismo ao Arcadismo
+  ['port-c-1', 'mc-port-c-1'],                            // Romantismo
+  ['port-a-1', 'mc-port-c-2'],                            // Modernismo
+
+  // === HISTORIA/HUMANAS ===
+  ['hist-niv-1', 'hist-niv-2', 'mc-hist-niv-1'],         // Antiguidade Classica
+  ['hist-niv-4', 'mc-hist-niv-4'],                        // Reformas/Renascimento
+  ['hist-b1-1', 'mc-hist-b1-3'],                          // Expansao/Colonizacao
+  ['hist-b1-2', 'mc-hist-b1-2'],                          // Brasil Colonial
+  ['hist-b1-4', 'mc-hist-b1-1', 'en-hum-b1-3'],          // Iluminismo/Rev.Francesa
+  ['hist-b2-4', 'mc-hist-b2-1'],                          // Imperialismo/1a Guerra
+  ['hist-c-2', 'mc-hist-b2-2'],                           // Era Vargas
+  ['hist-c-3', 'mc-hist-b2-3'],                           // 2a Guerra/Totalitarismo
+  ['hist-c-4', 'mc-hist-c-1', 'en-hum-c-2'],             // Guerra Fria
+  ['hist-c-5', 'mc-hist-c-2'],                            // Ditadura Militar
+  ['hist-c-6', 'mc-hist-c-4'],                            // Borracha/Zona Franca
+  ['hist-a-1', 'mc-hist-c-2'],                            // Redemocratizacao
+  ['hist-a-2', 'en-hum-c-2'],                             // Globalizacao
+
+  // === GEOGRAFIA/HUMANAS ===
+  ['geo-niv-1', 'mc-geo-niv-1', 'en-hum-niv-2'],         // Cartografia
+  ['geo-b1-1', 'mc-geo-niv-2', 'en-hum-c-3'],            // Dinamica Populacional
+  ['geo-b1-2', 'en-hum-b2-1'],                            // Urbanizacao
+  ['geo-b1-3', 'mc-geo-b1-2'],                            // Globalizacao
+  ['geo-a-2', 'mc-geo-b2-1', 'en-hum-b2-4'],             // Impactos Ambientais
+  ['geo-c-4', 'mc-geo-a-4']                               // Zona Franca de Manaus
+];
+
+// Mapa rapido: topicoId -> array de equivalentes
+const TOPIC_SYNC_MAP = {};
+TOPIC_SYNC_GROUPS.forEach(group => {
+  if (group.length < 2) return; // pular grupos com 1 so
+  group.forEach(id => {
+    TOPIC_SYNC_MAP[id] = group.filter(x => x !== id);
+  });
+});
+
 // Executar antes do conteudo.js carregar o progresso
 document.addEventListener('DOMContentLoaded', () => {
   gerarTodosEditais();

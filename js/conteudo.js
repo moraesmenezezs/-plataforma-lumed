@@ -47,8 +47,9 @@ function toggleTopico(checkbox) {
   const card = checkbox.closest('.topico-card');
   const topicoId = card.getAttribute('data-topico-id');
   const wasCompleted = card.classList.contains('completed');
+  const isChecked = checkbox.checked;
 
-  if (checkbox.checked) {
+  if (isChecked) {
     card.classList.add('completed');
     card.classList.add('just-completed');
 
@@ -69,14 +70,52 @@ function toggleTopico(checkbox) {
   if (!progressoData.topicos) progressoData.topicos = {};
   progressoData.topicos[topicoId] = {
     ...progressoData.topicos[topicoId],
-    concluido: checkbox.checked
+    concluido: isChecked
   };
 
   atualizarStatusBadge(card);
   atualizarProgressoMini(card);
   atualizarProgressoNivel(card);
+
+  // Sincronizar topicos equivalentes em outras provas
+  sincronizarEquivalentes(topicoId, isChecked);
+
   atualizarProgressoGeral();
   salvarProgresso();
+}
+
+// Sincronizar topicos equivalentes entre provas
+function sincronizarEquivalentes(topicoId, isChecked) {
+  if (typeof TOPIC_SYNC_MAP === 'undefined' || !TOPIC_SYNC_MAP[topicoId]) return;
+
+  const equivalentes = TOPIC_SYNC_MAP[topicoId];
+  equivalentes.forEach(eqId => {
+    const eqCard = document.querySelector(`[data-topico-id="${eqId}"]`);
+    if (!eqCard) return;
+
+    const eqCheckbox = eqCard.querySelector('.topico-checkbox input[type="checkbox"]');
+    if (!eqCheckbox || eqCheckbox.checked === isChecked) return;
+
+    // Atualizar checkbox e visual
+    eqCheckbox.checked = isChecked;
+    if (isChecked) {
+      eqCard.classList.add('completed');
+    } else {
+      eqCard.classList.remove('completed');
+    }
+
+    // Salvar no progresso
+    if (!progressoData.topicos) progressoData.topicos = {};
+    progressoData.topicos[eqId] = {
+      ...progressoData.topicos[eqId],
+      concluido: isChecked
+    };
+
+    // Atualizar UI do card equivalente
+    atualizarStatusBadge(eqCard);
+    atualizarProgressoMini(eqCard);
+    atualizarProgressoNivel(eqCard);
+  });
 }
 
 // ============================================
