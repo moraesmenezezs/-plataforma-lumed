@@ -12,20 +12,25 @@
   const SYNC_KEYS = [
     // LuMED - Conteúdo Programático
     'lumed_conteudo_v2',
-    // LuMED - Painel (tarefas, eventos, planner)
+    // LuMED - Painel (tarefas, eventos, cronograma)
     'lumed_tarefas',
     'lumed_eventos',
-    'plannerGrade',
+    'cronogramaData',
     // LuMED - Timer / Desempenho
     'lumed_tempos_estudo',
     'lumed_meta_horas',
     'lumed_semana_atual',
     'lumed_trofeus',
     'lumed_questoes',
+    'lumed_simulados',
+    'lumed_crono_estado',
+    'lumed_logins',
     // LuMED - Preferências
     'lumed_modo_foco',
     'lumed_modo_compacto',
     'widget_minimizado',
+    // LuMED - Professor
+    'lumed_aula_atual',
     // Kumon - Progresso
     'kumon_usuario',
     'kumon_historico',
@@ -208,20 +213,22 @@
       } catch (e) {}
     }
 
-    // Evitar loop infinito de reload
+    // Evitar loop infinito de reload (bloqueia por 30s após último reload)
     const reloadFlag = sessionStorage.getItem('lumed_sync_reloaded');
-    if (reloadFlag === userId) {
-      _loaded = true;
-      sessionStorage.removeItem('lumed_sync_reloaded');
-      console.log('[Sync] Dados ja sincronizados nesta sessao');
-      return;
+    if (reloadFlag) {
+      const lastReload = parseInt(reloadFlag) || 0;
+      if (Date.now() - lastReload < 30000) {
+        _loaded = true;
+        console.log('[Sync] Reload recente — usando dados locais');
+        return;
+      }
     }
 
     const changed = await carregarDaNuvem(userId);
     _loaded = true;
 
     if (changed) {
-      sessionStorage.setItem('lumed_sync_reloaded', userId);
+      sessionStorage.setItem('lumed_sync_reloaded', String(Date.now()));
       window.location.reload();
     }
   }

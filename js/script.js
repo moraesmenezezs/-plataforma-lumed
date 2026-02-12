@@ -685,7 +685,8 @@ function gerarMiniCronograma() {
   const tipoConfig = {
     teoria:       { label: 'Teoria',    cls: 'tipo-teoria' },
     questoes:     { label: 'Questões',  cls: 'tipo-questoes' },
-    anki:         { label: 'Anki',      cls: 'tipo-anki' },
+    'anki-t':     { label: 'Anki T',    cls: 'tipo-anki-t' },
+    'anki-r':     { label: 'Anki R',    cls: 'tipo-anki-r' },
     descanso:     { label: 'Descanso',  cls: 'tipo-descanso' },
     casa:         { label: 'Casa',      cls: 'tipo-casa' },
     academia:     { label: 'Academia',  cls: 'tipo-academia' },
@@ -718,18 +719,24 @@ function gerarMiniCronograma() {
     // Verificar se a linha tem pelo menos uma célula preenchida
     let temConteudo = false;
     for (let di = 0; di < 7; di++) {
-      if (cronoData.cells[`${di}-${horario}`]) { temConteudo = true; break; }
+      const c = cronoData.cells[`${di}-${horario}`];
+      if (c && ((Array.isArray(c) && c.length > 0) || c.tipo)) { temConteudo = true; break; }
     }
     if (!temConteudo) return;
 
     html += `<tr><td class="crono-mini-hora">${horario}</td>`;
     for (let di = 0; di < 7; di++) {
-      const cell = cronoData.cells[`${di}-${horario}`];
-      if (cell && cell.tipo) {
-        const cfg = tipoConfig[cell.tipo] || { label: cell.tipo, cls: '' };
+      let items = cronoData.cells[`${di}-${horario}`];
+      // Suportar formato antigo (objeto) e novo (array)
+      if (items && !Array.isArray(items)) items = [items];
+
+      if (items && items.length > 0) {
         html += `<td class="crono-mini-cell crono-mini-filled">`;
-        html += `<span class="crono-mini-badge ${cfg.cls}">${cfg.label}</span>`;
-        if (cell.materia) html += `<span class="crono-mini-materia">${cell.materia}</span>`;
+        items.forEach(item => {
+          const cfg = tipoConfig[item.tipo] || { label: item.tipo, cls: '' };
+          html += `<span class="crono-mini-badge ${cfg.cls}">${cfg.label}</span>`;
+          if (item.materia) html += `<span class="crono-mini-materia">${item.materia}</span>`;
+        });
         html += `</td>`;
       } else {
         html += `<td class="crono-mini-cell"></td>`;
@@ -1620,7 +1627,8 @@ function inicializarNavbar() {
   const tipoConfig = {
     teoria:       { label: 'Teoria',         cls: 'tipo-teoria' },
     questoes:     { label: 'Questões',       cls: 'tipo-questoes' },
-    anki:         { label: 'Anki',           cls: 'tipo-anki' },
+    'anki-t':     { label: 'Anki T',         cls: 'tipo-anki-t' },
+    'anki-r':     { label: 'Anki R',         cls: 'tipo-anki-r' },
     descanso:     { label: 'Descanso',       cls: 'tipo-descanso' },
     casa:         { label: 'Casa',           cls: 'tipo-casa' },
     academia:     { label: 'Academia',       cls: 'tipo-academia' },
@@ -1628,6 +1636,21 @@ function inicializarNavbar() {
     almoco:       { label: 'Almoço',         cls: 'tipo-almoco' },
     'cafe-tarde': { label: 'Café da tarde',  cls: 'tipo-cafe-tarde' }
   };
+
+  // Migrar dados antigos (objeto único → array)
+  function migrarCells() {
+    let changed = false;
+    for (const key in cronoData.cells) {
+      const val = cronoData.cells[key];
+      if (val && !Array.isArray(val)) {
+        // Migrar 'anki' antigo para 'anki-t'
+        if (val.tipo === 'anki') val.tipo = 'anki-t';
+        cronoData.cells[key] = [val];
+        changed = true;
+      }
+    }
+    if (changed) saveData();
+  }
 
   // Gerar grid
   function gerarGrid() {
@@ -1675,32 +1698,31 @@ function inicializarNavbar() {
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
         const key = `${dia}-${horario}`;
-        const data = cronoData.cells[key];
+        const items = cronoData.cells[key]; // array de itens
 
-        if (data && data.tipo) {
+        if (items && Array.isArray(items) && items.length > 0) {
           cell.classList.add('filled');
-          const tc = tipoConfig[data.tipo] || tipoConfig.teoria;
 
-          const badge = document.createElement('span');
-          badge.className = 'cell-tipo ' + tc.cls;
-          badge.textContent = tc.label;
-          cell.appendChild(badge);
+          items.forEach(data => {
+            const tc = tipoConfig[data.tipo] || tipoConfig.teoria;
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'cell-item';
 
-          if (data.materia) {
-            const mat = document.createElement('span');
-            mat.className = 'cell-materia';
-            mat.textContent = data.materia;
-            mat.title = data.materia;
-            cell.appendChild(mat);
-          }
+            const badge = document.createElement('span');
+            badge.className = 'cell-tipo ' + tc.cls;
+            badge.textContent = tc.label;
+            itemDiv.appendChild(badge);
 
-          if (data.topico) {
-            const top = document.createElement('span');
-            top.className = 'cell-topico';
-            top.textContent = data.topico;
-            top.title = data.topico;
-            cell.appendChild(top);
-          }
+            if (data.materia) {
+              const mat = document.createElement('span');
+              mat.className = 'cell-materia';
+              mat.textContent = data.materia;
+              mat.title = data.materia;
+              itemDiv.appendChild(mat);
+            }
+
+            cell.appendChild(itemDiv);
+          });
         } else {
           const ph = document.createElement('span');
           ph.className = 'cell-placeholder';
@@ -1708,7 +1730,7 @@ function inicializarNavbar() {
           cell.appendChild(ph);
         }
 
-        cell.addEventListener('click', () => abrirModal(key, data));
+        cell.addEventListener('click', () => abrirModal(key, items));
         row.appendChild(cell);
       }
 
@@ -1729,16 +1751,15 @@ function inicializarNavbar() {
   let currentKey = null;
   let currentTipo = 'teoria';
 
-  function abrirModal(key, data) {
+  function abrirModal(key, items) {
     currentKey = key;
-    currentTipo = (data && data.tipo) || 'teoria';
-    inputMateria.value = (data && data.materia) || '';
-    inputTopico.value = (data && data.topico) || '';
+    currentTipo = 'teoria';
+    inputMateria.value = '';
+    inputTopico.value = '';
 
-    // Highlight tipo selecionado
-    tiposBtns.forEach(b => {
-      b.classList.toggle('selected', b.dataset.tipo === currentTipo);
-    });
+    // Reset tipos
+    tiposBtns.forEach(b => b.classList.remove('selected'));
+    tiposBtns[0].classList.add('selected');
 
     const dias = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
     const parts = key.split('-');
@@ -1762,11 +1783,14 @@ function inicializarNavbar() {
 
   btnSalvar.addEventListener('click', () => {
     if (currentKey) {
-      cronoData.cells[currentKey] = {
+      if (!cronoData.cells[currentKey] || !Array.isArray(cronoData.cells[currentKey])) {
+        cronoData.cells[currentKey] = [];
+      }
+      cronoData.cells[currentKey].push({
         tipo: currentTipo,
         materia: inputMateria.value.trim(),
         topico: inputTopico.value.trim()
-      };
+      });
       saveData();
       gerarGrid();
     }
@@ -1774,8 +1798,13 @@ function inicializarNavbar() {
   });
 
   btnLimparCell.addEventListener('click', () => {
-    if (currentKey) {
-      delete cronoData.cells[currentKey];
+    if (currentKey && cronoData.cells[currentKey]) {
+      // Se tem múltiplos, remove o último; se tem 1, apaga tudo
+      if (Array.isArray(cronoData.cells[currentKey]) && cronoData.cells[currentKey].length > 1) {
+        cronoData.cells[currentKey].pop();
+      } else {
+        delete cronoData.cells[currentKey];
+      }
       saveData();
       gerarGrid();
     }
@@ -1853,6 +1882,7 @@ function inicializarNavbar() {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     navPlanner.classList.add('active');
 
+    migrarCells();
     gerarGrid();
   });
 

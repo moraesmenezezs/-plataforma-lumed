@@ -220,7 +220,11 @@ function configurarDropdownPerfil(user, nome) {
       </div>
     </div>
     <div class="auth-dropdown-divider"></div>
-    <button class="auth-dropdown-btn" id="btn-logout">
+    <button class="auth-dropdown-btn" id="btn-trocar-conta">
+      <i class="bi bi-arrow-left-right"></i>
+      <span>Trocar de conta</span>
+    </button>
+    <button class="auth-dropdown-btn auth-dropdown-btn-sair" id="btn-logout">
       <i class="bi bi-box-arrow-right"></i>
       <span>Sair da conta</span>
     </button>
@@ -243,6 +247,13 @@ function configurarDropdownPerfil(user, nome) {
 
   document.addEventListener('click', () => {
     dropdown.classList.remove('auth-dropdown-open');
+  });
+
+  document.getElementById('btn-trocar-conta').addEventListener('click', async (e) => {
+    e.stopPropagation();
+    dropdown.classList.remove('auth-dropdown-open');
+    await _supabase.auth.signOut();
+    criarOverlayLogin();
   });
 
   document.getElementById('btn-logout').addEventListener('click', async (e) => {

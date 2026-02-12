@@ -84,6 +84,11 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: contain;
+}
+
+html {
+  overscroll-behavior-y: contain;
 }
 
 h1, h2, h3, h4 {

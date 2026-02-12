@@ -208,7 +208,7 @@
           <div class="atividades-tabs-wrapper">
             <div class="atividades-tabs">
               <button class="atividades-tab active" id="tab-atividades" data-tab="atividades">
-                <i class="bi bi-list-check"></i> Atividades
+                <i class="bi bi-list-check"></i> Atividades <span class="tab-counter" id="contador-tarefas">0/0</span>
               </button>
               <button class="atividades-tab" id="tab-crono-mini" data-tab="crono-mini">
                 <i class="bi bi-calendar3"></i> Cronograma
@@ -217,13 +217,6 @@
 
             <!-- CARD ATIVIDADES DA SEMANA -->
             <section class="card atividades-main" id="card-atividades">
-              <div class="card-header">
-                <div class="card-title-group">
-                  <i class="bi bi-list-check card-icon"></i>
-                  <h2>Atividades da Semana</h2>
-                </div>
-                <span class="atividades-counter" id="contador-tarefas">0/0</span>
-              </div>
 
             <!-- Barra de progresso -->
             <div class="progress-bar-container">
@@ -249,12 +242,6 @@
 
             <!-- CARD MINI CRONOGRAMA (read-only) -->
             <section class="card atividades-main crono-mini-card" id="card-crono-mini" style="display:none;">
-              <div class="card-header">
-                <div class="card-title-group">
-                  <i class="bi bi-calendar3 card-icon"></i>
-                  <h2>Cronograma Semanal</h2>
-                </div>
-              </div>
               <div class="crono-mini-grid" id="crono-mini-grid">
                 <div class="crono-mini-vazio">
                   <i class="bi bi-calendar-x"></i>
@@ -354,7 +341,8 @@
             <div class="crono-tipos" id="crono-tipos">
               <button data-tipo="teoria" class="crono-tipo-btn tipo-teoria"><i class="bi bi-book"></i> Teoria</button>
               <button data-tipo="questoes" class="crono-tipo-btn tipo-questoes"><i class="bi bi-pencil"></i> Questões</button>
-              <button data-tipo="anki" class="crono-tipo-btn tipo-anki"><i class="bi bi-arrow-repeat"></i> Anki</button>
+              <button data-tipo="anki-t" class="crono-tipo-btn tipo-anki-t"><i class="bi bi-arrow-repeat"></i> Anki T</button>
+              <button data-tipo="anki-r" class="crono-tipo-btn tipo-anki-r"><i class="bi bi-arrow-repeat"></i> Anki R</button>
               <button data-tipo="descanso" class="crono-tipo-btn tipo-descanso"><i class="bi bi-cup-hot"></i> Descanso</button>
               <button data-tipo="casa" class="crono-tipo-btn tipo-casa"><i class="bi bi-house"></i> Casa</button>
               <button data-tipo="academia" class="crono-tipo-btn tipo-academia"><i class="bi bi-heart-pulse"></i> Academia</button>
