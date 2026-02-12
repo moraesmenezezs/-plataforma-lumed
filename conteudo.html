@@ -45,7 +45,7 @@
         </a>
         <a href="index.html#planner" class="nav-item" id="nav-planner">
           <i class="bi bi-calendar-week"></i>
-          <span>Planner</span>
+          <span>Cronograma</span>
         </a>
         <a href="index.html#timer" class="nav-item" id="nav-timer">
           <i class="bi bi-stopwatch"></i>
@@ -67,20 +67,20 @@
 
       <!-- Ações direita -->
       <div class="navbar-actions">
-        <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
-          <i class="bi bi-grid-3x3-gap-fill"></i>
-        </button>
+        <span class="streak-fire" id="streak-fire" title="Dias na plataforma">
+          <i class="bi bi-fire"></i>
+          <span class="streak-fire-count" id="streak-fire-count">0</span>
+        </span>
         <div class="profile" id="btn-perfil">
-          <span class="avatar"></span>
+          <span class="avatar">ML</span>
           <span class="name">Maria Luisa</span>
-          <i class="bi bi-chevron-down"></i>
         </div>
       </div>
     </div>
     <div class="navbar-expanded" id="navbar-expanded">
       <div class="navbar-expanded-content">
         <a href="index.html" class="nav-expanded-item"><i class="bi bi-grid-fill"></i><span>Painel</span></a>
-        <a href="index.html#planner" class="nav-expanded-item"><i class="bi bi-calendar-week"></i><span>Planner</span></a>
+        <a href="index.html#planner" class="nav-expanded-item"><i class="bi bi-calendar-week"></i><span>Cronograma</span></a>
         <a href="index.html#timer" class="nav-expanded-item"><i class="bi bi-stopwatch"></i><span>Timer</span></a>
         <a href="conteudo.html" class="nav-expanded-item active"><i class="bi bi-journal-bookmark"></i><span>Edital</span></a>
         <a href="projeto-kumon/index.html" class="nav-expanded-item"><i class="bi bi-calculator"></i><span>Kumon</span></a>
@@ -294,21 +294,14 @@
   <script src="js/conteudo.js"></script>
   <script>
     (function(){
-      const navbar = document.querySelector('.navbar-top');
-      const toggleBtn = document.getElementById('navbar-toggle');
-      const expanded = document.getElementById('navbar-expanded');
-      if (!toggleBtn || !expanded) return;
-      toggleBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        navbar.classList.toggle('menu-open');
-        toggleBtn.querySelector('i').className = navbar.classList.contains('menu-open') ? 'bi bi-x-lg' : 'bi bi-grid-3x3-gap-fill';
-      });
-      document.addEventListener('click', function(e) {
-        if (!expanded.contains(e.target) && !toggleBtn.contains(e.target)) {
-          navbar.classList.remove('menu-open');
-          toggleBtn.querySelector('i').className = 'bi bi-grid-3x3-gap-fill';
-        }
-      });
+      // Atualizar foguinho com dias de login
+      const dias = JSON.parse(localStorage.getItem('lumed_logins') || '[]');
+      const fire = document.getElementById('streak-fire');
+      const count = document.getElementById('streak-fire-count');
+      if (fire && count) {
+        count.textContent = dias.length;
+        fire.title = dias.length + ' dia' + (dias.length !== 1 ? 's' : '') + ' na plataforma';
+      }
     })();
   </script>
 </body>
