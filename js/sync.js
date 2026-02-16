@@ -16,6 +16,7 @@
     'lumed_tarefas',
     'lumed_eventos',
     'cronogramaData',
+    'lumed_crono_check',
     // LuMED - Timer / Desempenho
     'lumed_tempos_estudo',
     'lumed_meta_horas',
@@ -31,6 +32,8 @@
     'widget_minimizado',
     // LuMED - Professor
     'lumed_aula_atual',
+    // LuMED - Flashcards
+    'lumed_flashcards',
     // Kumon - Progresso
     'kumon_usuario',
     'kumon_historico',

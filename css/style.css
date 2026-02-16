@@ -426,14 +426,16 @@ h1, h2, h3 {
 
 /* Layout com navbar no topo */
 .layout-top-nav {
-  padding-top: 70px;
+  padding-top: 90px !important;
   display: block !important;
+  min-height: auto;
 }
 
 .layout-top-nav .main-content {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
+  min-height: calc(100vh - 120px);
 }
 
 .page-header {
@@ -498,7 +500,7 @@ h1, h2, h3 {
     padding: 12px 20px;
   }
   .layout-top-nav {
-    padding-top: 90px;
+    padding-top: 100px;
   }
   .layout-top-nav .main-content {
     padding: 0 16px;
@@ -548,7 +550,7 @@ h1, h2, h3 {
     );
   }
   .layout-top-nav {
-    padding-top: 85px;
+    padding-top: 95px;
   }
   .page-header {
     padding: 16px 0 12px;
@@ -841,11 +843,13 @@ h1, h2, h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-md);
   background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #8b5cf6 100%);
   box-shadow: var(--shadow-medium);
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
+  min-height: 0;
 }
 
 .welcome-banner:hover {
@@ -862,15 +866,30 @@ h1, h2, h3 {
   height: 300px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
+  pointer-events: none;
 }
 
 .welcome-text {
   position: relative;
   z-index: 1;
+  flex: 1;
+  min-width: 0;
+}
+
+.welcome-right {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 320px;
 }
 
 .welcome-badge {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   gap: 6px;
   background-color: rgba(255, 255, 255, 0.2);
@@ -922,17 +941,17 @@ h1, h2, h3 {
 
 .welcome-stats {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: 8px;
   position: relative;
   z-index: 1;
 }
 
 .stat-item {
   text-align: center;
-  padding: var(--spacing-sm);
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-sm);
-  min-width: 80px;
+  min-width: 70px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -947,9 +966,657 @@ h1, h2, h3 {
 
 .stat-value {
   display: block;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-white);
+}
+
+/* ============================================ */
+/* MINHA SEMANA - Tracker Semanal               */
+/* ============================================ */
+.minha-semana-section {
+  margin-bottom: 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  padding: 16px 20px 14px;
+}
+
+.minha-semana-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.minha-semana-header h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.minha-semana-header h2 i {
+  color: var(--primary);
+}
+
+.minha-semana-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #f1f5f9;
+  border-radius: 20px;
+  padding: 4px 10px;
+}
+
+.semana-meta-label {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.semana-meta-valor {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Grid 7 colunas — dentro do card unificado */
+.minha-semana-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+}
+
+/* Cada dia é uma coluna compacta */
+.semana-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px 8px;
+  border-radius: 12px;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.semana-card:hover {
+  background: #f8fafc;
+}
+
+/* Card HOJE */
+.semana-card-hoje {
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.06) 0%, rgba(139, 92, 246, 0.02) 100%);
+  border-radius: 12px;
+}
+
+.semana-card-hoje::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 2.5px;
+  background: var(--primary);
+  border-radius: 0 0 4px 4px;
+}
+
+/* Card COMPLETO (rotina + meta) */
+.semana-card-completo {
+  background: linear-gradient(180deg, #ede9fe 0%, #f5f3ff 100%) !important;
+}
+
+.semana-card-completo .semana-card-dia {
+  color: var(--primary) !important;
+}
+
+.semana-card-completo .semana-card-valor {
+  color: #22c55e !important;
+}
+
+.semana-card-completo .semana-rotina-text {
+  color: var(--primary) !important;
+}
+
+.semana-card-completo .circle-bg {
+  stroke: #ddd6fe !important;
+}
+
+.semana-card-completo .circle-fill {
+  stroke: #22c55e !important;
+}
+
+.semana-card-completo .semana-rotina-bar {
+  background: #ddd6fe !important;
+}
+
+.semana-card-completo .semana-rotina-fill {
+  background: var(--primary) !important;
+}
+
+.semana-card-completo .semana-status-icon.completo {
+  color: #22c55e !important;
+}
+
+/* Card FUTURO */
+.semana-card-futuro {
+  opacity: 0.35;
+}
+
+.semana-card-futuro:hover {
+  background: transparent;
+}
+
+/* Topo do card */
+.semana-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  min-height: 16px;
+}
+
+.semana-card-dia {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.semana-card-hoje .semana-card-dia {
+  color: var(--primary);
+}
+
+.semana-badge-hoje {
+  font-size: 7px;
+  font-weight: 800;
+  background: var(--primary);
+  color: white;
+  padding: 1px 4px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.semana-status-icon {
+  font-size: 10px;
+}
+
+.semana-status-icon.completo {
+  color: #22c55e;
+}
+
+.semana-status-icon.parcial {
+  color: #f59e0b;
+}
+
+.semana-status-icon.futuro {
+  color: #cbd5e1;
+  font-size: 8px;
+}
+
+/* Circulo SVG do tempo */
+.semana-card-circle {
+  position: relative;
+  width: 42px;
+  height: 42px;
+}
+
+.semana-card-circle svg {
+  width: 42px;
+  height: 42px;
+  transform: rotate(-90deg);
+}
+
+.semana-card-circle .circle-bg {
+  fill: none;
+  stroke: #f1f5f9;
+  stroke-width: 3.5;
+}
+
+.semana-card-circle .circle-fill {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease;
+}
+
+.semana-card-circle .circle-fill.meta-atingida {
+  stroke: #22c55e;
+}
+
+.semana-card-valor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.semana-card-valor.meta-atingida {
+  color: #22c55e;
+}
+
+/* Barra de progresso da rotina */
+.semana-rotina {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.semana-rotina-bar {
+  width: 70%;
+  height: 3px;
+  background: #f1f5f9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.semana-rotina-fill {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.semana-rotina-text {
+  font-size: 9px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.semana-rotina-text.sem-rotina {
+  font-style: italic;
+  color: #cbd5e1;
+  font-size: 8px;
+}
+
+/* ============================================ */
+/* CRONOGRAMA PANEL - Day-by-day view           */
+/* ============================================ */
+.cronograma-panel {
+  padding: 0 !important;
+}
+
+.cronograma-panel-header {
+  padding: 16px 20px 8px;
+}
+
+.cronograma-panel-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.cronograma-panel-header h3 i {
+  color: #3b82f6;
+  font-size: 17px;
+}
+
+/* Day navigation pills */
+.cronograma-dias-nav {
+  display: flex;
+  gap: 6px;
+  padding: 0 20px 14px;
+  justify-content: center;
+}
+
+.crono-dia-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  position: relative;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.crono-dia-btn:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.crono-dia-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.crono-dia-btn.hoje {
+  border-color: #8b5cf6;
+}
+
+.crono-dia-btn.active.hoje {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+}
+
+.crono-dia-btn.completo:not(.active) {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+.crono-dia-btn.active.completo {
+  background: #22c55e;
+  border-color: #22c55e;
+}
+
+.crono-dia-letra {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.crono-dia-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  position: absolute;
+  bottom: 3px;
+}
+
+.crono-dia-btn.active .crono-dia-dot {
+  background: rgba(255,255,255,0.8);
+}
+
+.crono-dia-check {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: white;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* Lista de itens */
+.cronograma-lista-scroll {
+  padding: 0 16px 16px;
+}
+
+.cronograma-lista-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cronograma-lista-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cronograma-lista-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Item list */
+.cronograma-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.crono-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.crono-item:hover {
+  border-color: #8b5cf6;
+  background: #faf5ff;
+}
+
+.crono-item.checked {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.crono-item.nao-estudo {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.crono-item.nao-estudo:hover {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}
+
+.crono-item-hora {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  min-width: 42px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.crono-item-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.crono-item-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.crono-item-badge i {
+  font-size: 10px;
+}
+
+.crono-item-materia {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crono-item.checked .crono-item-badge {
+  opacity: 0.6;
+}
+
+.crono-item.checked .crono-item-materia {
+  text-decoration: line-through;
+  opacity: 0.5;
+  color: #64748b;
+}
+
+.crono-item-check {
+  font-size: 20px;
+  color: #cbd5e1;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.crono-item.checked .crono-item-check {
+  color: #22c55e;
+}
+
+/* Empty state */
+.crono-lista-vazio {
+  text-align: center;
+  padding: 40px 20px;
+  color: #94a3b8;
+}
+
+.crono-lista-vazio i {
+  font-size: 32px;
+  margin-bottom: 8px;
+  display: block;
+  color: #cbd5e1;
+}
+
+.crono-lista-vazio p {
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.crono-lista-vazio span {
+  font-size: 12px;
+}
+
+/* Responsive - Minha Semana */
+@media (max-width: 768px) {
+  .minha-semana-section {
+    padding: 12px 14px 10px;
+  }
+  .semana-card {
+    padding: 8px 2px 6px;
+    gap: 4px;
+  }
+  .semana-card-circle {
+    width: 36px;
+    height: 36px;
+  }
+  .semana-card-circle svg {
+    width: 36px;
+    height: 36px;
+  }
+  .semana-card-valor {
+    font-size: 9px;
+  }
+  .semana-card-dia {
+    font-size: 10px;
+  }
+  .semana-badge-hoje {
+    font-size: 6px;
+    padding: 1px 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .minha-semana-section {
+    padding: 10px 8px 8px;
+    border-radius: 12px;
+  }
+  .minha-semana-header h2 {
+    font-size: 13px;
+  }
+  .semana-card {
+    padding: 6px 1px 5px;
+    gap: 3px;
+  }
+  .semana-card-circle {
+    width: 30px;
+    height: 30px;
+  }
+  .semana-card-circle svg {
+    width: 30px;
+    height: 30px;
+  }
+  .semana-card-valor {
+    font-size: 8px;
+  }
+  .semana-card-dia {
+    font-size: 9px;
+  }
+  .semana-badge-hoje {
+    font-size: 5px;
+  }
+  .semana-status-icon {
+    font-size: 7px;
+  }
+  .semana-rotina-text {
+    font-size: 7px;
+  }
+  .cronograma-dias-nav {
+    gap: 4px;
+    padding: 0 12px 10px;
+  }
+  .crono-dia-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .crono-dia-letra {
+    font-size: 11px;
+  }
+  .cronograma-lista-scroll {
+    padding: 0 12px 12px;
+  }
+  .crono-item {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .crono-item-materia {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .minha-semana-section {
+    padding: 8px 6px 6px;
+  }
+  .minha-semana-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .semana-card-circle {
+    width: 26px;
+    height: 26px;
+  }
+  .semana-card-circle svg {
+    width: 26px;
+    height: 26px;
+  }
+  .semana-card-valor {
+    font-size: 7px;
+  }
+  .semana-card-dia {
+    font-size: 8px;
+  }
+  .semana-badge-hoje {
+    display: none;
+  }
+  .semana-rotina-text {
+    font-size: 6px;
+  }
 }
 
 .stat-editable {
@@ -1765,205 +2432,7 @@ h1, h2, h3 {
   min-width: 0;
 }
 
-.atividades-tabs {
-  display: flex;
-  gap: 2px;
-  margin-bottom: 0;
-  background: #f1f5f9;
-  border-radius: var(--radius) var(--radius) 0 0;
-  padding: 4px 4px 0;
-}
-
-.atividades-tab {
-  flex: 1;
-  padding: 10px 14px;
-  border: none;
-  background: transparent;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #94a3b8;
-  cursor: pointer;
-  border-radius: 12px 12px 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-.atividades-tab:hover {
-  color: #3b82f6;
-}
-
-.atividades-tab.active {
-  background: var(--card-bg);
-  color: #0f172a;
-}
-
-.atividades-tab i {
-  font-size: 15px;
-}
-
-.tab-counter {
-  font-size: 10px;
-  font-weight: 700;
-  background: rgba(59,130,246,0.1);
-  color: #3b82f6;
-  padding: 1px 7px;
-  border-radius: 999px;
-  margin-left: 2px;
-}
-
-.atividades-tabs-wrapper .atividades-main {
-  border-radius: 0 0 var(--radius) var(--radius);
-  margin-top: 0;
-  border-top: none;
-}
-
-/* Mini cronograma dentro do card */
-.crono-mini-grid {
-  overflow-x: auto;
-  max-height: 260px;
-  overflow-y: auto;
-}
-
-.crono-mini-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 2px;
-  font-size: 10px;
-}
-
-.crono-mini-table th {
-  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #8b5cf6 100%);
-  color: white;
-  padding: 6px 4px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  -webkit-font-smoothing: antialiased;
-}
-
-.crono-mini-table th:first-child {
-  border-radius: 6px 0 0 0;
-}
-
-.crono-mini-table th:last-child {
-  border-radius: 0 6px 0 0;
-}
-
-.crono-mini-table td {
-  padding: 4px 3px;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 4px;
-}
-
-.crono-mini-table td.crono-mini-hora {
-  background: #f8fafc;
-  color: #64748b;
-  font-weight: 600;
-  font-size: 10px;
-  white-space: nowrap;
-  min-width: 50px;
-}
-
-.crono-mini-table td.crono-mini-cell {
-  background: #faf5ff;
-  min-height: 28px;
-}
-
-.crono-mini-table td.crono-mini-filled {
-  padding: 3px;
-}
-
-.crono-mini-badge {
-  display: inline-block;
-  font-size: 8px;
-  font-weight: 600;
-  padding: 2px 5px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-.crono-mini-materia {
-  display: block;
-  font-size: 9px;
-  font-weight: 600;
-  color: #0f172a;
-  line-height: 1.2;
-  margin-top: 1px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 80px;
-  -webkit-font-smoothing: antialiased;
-}
-
-.crono-mini-vazio {
-  text-align: center;
-  padding: 28px 16px;
-  color: #94a3b8;
-}
-
-.crono-mini-vazio i {
-  font-size: 28px;
-  color: #cbd5e1;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.crono-mini-vazio p {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-  margin-bottom: 4px;
-}
-
-.crono-mini-vazio span {
-  font-size: 11px;
-  color: #94a3b8;
-}
-
-.atividades-main {
-  margin-top: 0;
-}
-
-.atividades-main .todo-list {
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.btn-adicionar-main {
-  width: 100%;
-  padding: 10px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s;
-  margin-top: var(--spacing-sm);
-}
-
-.btn-adicionar-main:hover {
-  transform: translateY(-2px);
-  background: #2563eb;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-}
+/* (Old tab + table cronograma styles removed - replaced by cronograma-panel above) */
 
 /* =========================
    RADAR NA SIDEBAR
@@ -3805,7 +4274,7 @@ h1, h2, h3 {
   /* Conteúdo principal */
   .main-content {
     padding: var(--spacing-xs);
-    padding-top: 70px;
+    padding-top: 80px;
   }
 
   .content-wrapper {
@@ -3888,6 +4357,11 @@ h1, h2, h3 {
   .welcome-link {
     padding: 10px 20px;
     font-size: 13px;
+  }
+
+  .welcome-right {
+    width: 100%;
+    align-items: stretch;
   }
 
   .welcome-stats {
@@ -6024,7 +6498,7 @@ h1, h2, h3 {
 
 .lumed-footer {
   text-align: center;
-  padding: 32px 16px 24px;
+  padding: 8px 16px 6px;
   font-size: 12px;
   color: #a78bfa;
   font-weight: 700;

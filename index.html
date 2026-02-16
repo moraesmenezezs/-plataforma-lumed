@@ -55,7 +55,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="css/style.css?v=10">
+  <link rel="stylesheet" href="css/style.css?v=11">
 </head>
 
 <body>
@@ -79,13 +79,13 @@
           <i class="bi bi-calendar-week"></i>
           <span>Cronograma</span>
         </div>
-        <div class="nav-item" id="nav-timer">
-          <i class="bi bi-stopwatch"></i>
-          <span>Timer</span>
-        </div>
         <a href="conteudo.html" class="nav-item" id="nav-edital">
           <i class="bi bi-journal-bookmark"></i>
           <span>Edital</span>
+        </a>
+        <a href="flashcards.html" class="nav-item" id="nav-flashcards">
+          <i class="bi bi-stack"></i>
+          <span>Flashcards</span>
         </a>
         <a href="projeto-kumon/index.html" class="nav-item" id="nav-kumon">
           <i class="bi bi-calculator"></i>
@@ -121,13 +121,13 @@
           <i class="bi bi-calendar-week"></i>
           <span>Cronograma</span>
         </div>
-        <div class="nav-expanded-item" data-section="timer">
-          <i class="bi bi-stopwatch"></i>
-          <span>Timer</span>
-        </div>
         <a href="conteudo.html" class="nav-expanded-item">
           <i class="bi bi-journal-bookmark"></i>
           <span>Edital</span>
+        </a>
+        <a href="flashcards.html" class="nav-expanded-item">
+          <i class="bi bi-stack"></i>
+          <span>Flashcards</span>
         </a>
         <a href="projeto-kumon/index.html" class="nav-expanded-item">
           <i class="bi bi-calculator"></i>
@@ -149,19 +149,6 @@
     <!-- ========================= -->
     <main class="main-content">
       <div class="content-wrapper">
-
-        <!-- HEADER DA PÁGINA -->
-        <header class="page-header-search">
-          <div class="search-box">
-            <i class="bi bi-search search-icon"></i>
-            <input
-              type="text"
-              class="search-input"
-              id="input-pesquisa"
-              placeholder="Pesquisar simulados, matérias..."
-            >
-          </div>
-        </header>
 
         <!-- BANNER DE BOAS-VINDAS -->
         <section class="welcome-banner">
@@ -186,70 +173,57 @@
             </div>
           </div>
 
-          <div class="welcome-stats">
-            <div class="stat-item">
-              <span class="stat-value stat-editable" id="stat-questoes" title="Clique para editar">0</span>
-              <span class="stat-label">Questões resolvidas</span>
+          <div class="welcome-right">
+            <div class="welcome-stats">
+              <div class="stat-item">
+                <span class="stat-value stat-editable" id="stat-questoes" title="Clique para editar">0</span>
+                <span class="stat-label">Questões resolvidas</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value" id="tempo-hoje">0s</span>
+                <span class="stat-label">Tempo de estudo</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value stat-editable" id="stat-simulados" title="Clique para editar">0</span>
+                <span class="stat-label">Simulados feitos</span>
+              </div>
             </div>
-            <div class="stat-item">
-              <span class="stat-value" id="tempo-hoje">0h</span>
-              <span class="stat-label">Tempo de estudo</span>
+          </div>
+        </section>
+
+        <!-- MINHA SEMANA - Tracker Semanal -->
+        <section class="minha-semana-section" id="minha-semana">
+          <div class="minha-semana-header">
+            <h2><i class="bi bi-calendar-check"></i> Minha Semana</h2>
+            <div class="minha-semana-meta">
+              <span class="semana-meta-label">Meta diária:</span>
+              <span class="semana-meta-valor" id="meta-diaria-display">5h</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-value stat-editable" id="stat-simulados" title="Clique para editar">0</span>
-              <span class="stat-label">Simulados feitos</span>
-            </div>
+          </div>
+          <div class="minha-semana-grid" id="minha-semana-grid">
+            <!-- 7 cards renderizados por JS -->
           </div>
         </section>
 
         <!-- SEÇÃO ATIVIDADES + RADAR -->
         <div class="atividades-radar-row">
-          <!-- TABS ATIVIDADES / CRONOGRAMA -->
-          <div class="atividades-tabs-wrapper">
-            <div class="atividades-tabs">
-              <button class="atividades-tab active" id="tab-atividades" data-tab="atividades">
-                <i class="bi bi-list-check"></i> Atividades <span class="tab-counter" id="contador-tarefas">0/0</span>
-              </button>
-              <button class="atividades-tab" id="tab-crono-mini" data-tab="crono-mini">
-                <i class="bi bi-calendar3"></i> Cronograma
-              </button>
+          <!-- CRONOGRAMA SEMANAL -->
+          <div class="cronograma-panel card">
+            <div class="cronograma-panel-header">
+              <h3><i class="bi bi-calendar3"></i> Cronograma</h3>
             </div>
-
-            <!-- CARD ATIVIDADES DA SEMANA -->
-            <section class="card atividades-main" id="card-atividades">
-
-            <!-- Barra de progresso -->
-            <div class="progress-bar-container">
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0%</span>
+            <div class="cronograma-dias-nav" id="cronograma-dias-nav">
+              <!-- 7 botões de dia renderizados por JS -->
             </div>
-
-            <!-- Lista de tarefas -->
-            <div class="todo-list" id="lista-tarefas">
-              <div class="todo-vazio" id="todo-vazio">
-                <i class="bi bi-clipboard-check"></i>
-                <p>Nenhuma tarefa ainda</p>
-                <span>Clique em "Adicionar tarefa" para começar</span>
-              </div>
-            </div>
-
-            <button class="btn-adicionar-main" id="btn-adicionar-tarefa">
-              <i class="bi bi-plus"></i> Adicionar tarefa
-            </button>
-          </section>
-
-            <!-- CARD MINI CRONOGRAMA (read-only) -->
-            <section class="card atividades-main crono-mini-card" id="card-crono-mini" style="display:none;">
-              <div class="crono-mini-grid" id="crono-mini-grid">
-                <div class="crono-mini-vazio">
+            <div class="cronograma-lista-scroll">
+              <div class="cronograma-lista" id="cronograma-lista">
+                <div class="crono-lista-vazio">
                   <i class="bi bi-calendar-x"></i>
                   <p>Cronograma vazio</p>
                   <span>Preencha na aba Cronograma</span>
                 </div>
               </div>
-            </section>
+            </div>
           </div>
 
           <!-- RADAR DOS VESTIBULARES -->
@@ -602,6 +576,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/sync.js"></script>
+  <script src="js/mini-timer.js"></script>
 
   <!-- JAVASCRIPT -->
   <script src="js/script.js?v=5"></script>

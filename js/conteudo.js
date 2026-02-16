@@ -441,51 +441,6 @@ function inicializarAbas() {
   });
 }
 
-// ============================================
-// BUSCA DE TÓPICOS
-// ============================================
-function inicializarBusca() {
-  // Busca na sidebar (nova)
-  const sidebarBuscaInput = document.getElementById('sidebar-busca-input');
-  // Busca na toolbar (mobile/fallback)
-  const buscaInput = document.getElementById('busca-topicos');
-  const buscaLimpar = document.getElementById('busca-limpar');
-
-  // Sidebar busca
-  if (sidebarBuscaInput) {
-    sidebarBuscaInput.addEventListener('input', (e) => {
-      // Sincronizar com toolbar se existir
-      if (buscaInput) buscaInput.value = e.target.value;
-      filtrarTopicos();
-    });
-  }
-
-  // Toolbar busca (mobile)
-  if (buscaInput) {
-    buscaInput.addEventListener('input', (e) => {
-      const termo = e.target.value.toLowerCase().trim();
-
-      // Mostrar/ocultar botão limpar
-      if (buscaLimpar) {
-        buscaLimpar.classList.toggle('visible', termo.length > 0);
-      }
-
-      // Sincronizar com sidebar se existir
-      if (sidebarBuscaInput) sidebarBuscaInput.value = e.target.value;
-
-      filtrarTopicos();
-    });
-
-    if (buscaLimpar) {
-      buscaLimpar.addEventListener('click', () => {
-        buscaInput.value = '';
-        if (sidebarBuscaInput) sidebarBuscaInput.value = '';
-        buscaLimpar.classList.remove('visible');
-        filtrarTopicos();
-      });
-    }
-  }
-}
 
 // ============================================
 // FILTROS
@@ -536,12 +491,6 @@ function inicializarFiltros() {
 }
 
 function filtrarTopicos() {
-  // Buscar termo em ambos os inputs
-  const sidebarBuscaInput = document.getElementById('sidebar-busca-input');
-  const buscaInput = document.getElementById('busca-topicos');
-  const termo = (sidebarBuscaInput?.value || buscaInput?.value || '').toLowerCase().trim();
-
-  // Buscar filtro ativo em ambos
   const sidebarFiltroAtivo = document.querySelector('.sidebar-filtro-btn.active');
   const filtroAtivo = document.querySelector('.filtro-btn.active');
   const filtro = (sidebarFiltroAtivo || filtroAtivo)?.getAttribute('data-filtro') || 'todos';
@@ -549,7 +498,6 @@ function filtrarTopicos() {
   const cards = document.querySelectorAll('.topico-card');
 
   cards.forEach(card => {
-    const nome = card.querySelector('.topico-nome').textContent.toLowerCase();
     const checkbox = card.querySelector('.topico-checkbox input');
     const btnTeoria = card.querySelector('.btn-teoria');
     const questoesSpan = card.querySelector('.questoes-counter span');
@@ -561,10 +509,6 @@ function filtrarTopicos() {
     const emProgresso = (teoriaEstudada || questoesFeitas) && !concluido;
     const favorito = btnFavorito && btnFavorito.classList.contains('active');
 
-    // Verificar busca
-    const matchBusca = termo === '' || nome.includes(termo);
-
-    // Verificar filtro
     let matchFiltro = true;
     switch (filtro) {
       case 'pendentes':
@@ -583,28 +527,15 @@ function filtrarTopicos() {
         matchFiltro = true;
     }
 
-    // Aplicar visibilidade
-    if (!matchBusca) {
-      card.classList.add('busca-oculto');
-    } else {
-      card.classList.remove('busca-oculto');
-    }
+    card.classList.remove('busca-oculto', 'busca-destaque');
 
     if (!matchFiltro) {
       card.classList.add('filtro-oculto');
     } else {
       card.classList.remove('filtro-oculto');
     }
-
-    // Highlight na busca
-    if (termo && matchBusca) {
-      card.classList.add('busca-destaque');
-    } else {
-      card.classList.remove('busca-destaque');
-    }
   });
 
-  // Verificar se há resultados
   verificarResultadosVazios();
 }
 
@@ -868,7 +799,6 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializarNavbar();
   inicializarAbas();
   inicializarNiveis();
-  inicializarBusca();
   inicializarFiltros();
   inicializarModoFoco();
   inicializarModoCompacto();

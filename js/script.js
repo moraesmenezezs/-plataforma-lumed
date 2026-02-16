@@ -238,17 +238,17 @@ const listaTarefas = document.getElementById('lista-tarefas');
 const todoVazio = document.getElementById('todo-vazio');
 
 // Abrir modal
-btnAdicionar.addEventListener('click', () => {
+if (btnAdicionar) btnAdicionar.addEventListener('click', () => {
   modal.classList.add('ativo');
   resetarModal();
 });
 
 // Fechar modal
-btnFechar.addEventListener('click', fecharModal);
-btnCancelar.addEventListener('click', fecharModal);
+if (btnFechar) btnFechar.addEventListener('click', fecharModal);
+if (btnCancelar) btnCancelar.addEventListener('click', fecharModal);
 
 // Fechar ao clicar fora
-modal.addEventListener('click', (e) => {
+if (modal) modal.addEventListener('click', (e) => {
   if (e.target === modal) {
     fecharModal();
   }
@@ -653,46 +653,66 @@ function inicializarStatsEditaveis() {
 // ============================================
 // MINI CRONOGRAMA (card alternável)
 // ============================================
-function inicializarMiniCronograma() {
-  const tabAtividades = document.getElementById('tab-atividades');
-  const tabCrono = document.getElementById('tab-crono-mini');
-  const cardAtividades = document.getElementById('card-atividades');
-  const cardCrono = document.getElementById('card-crono-mini');
+// Dia selecionado no cronograma (0=Seg..6=Dom)
+let _cronoDiaSelecionado = (new Date().getDay() + 6) % 7;
 
-  if (!tabAtividades || !tabCrono || !cardAtividades || !cardCrono) return;
-
-  tabAtividades.addEventListener('click', () => {
-    tabAtividades.classList.add('active');
-    tabCrono.classList.remove('active');
-    cardAtividades.style.display = '';
-    cardCrono.style.display = 'none';
-  });
-
-  tabCrono.addEventListener('click', () => {
-    tabCrono.classList.add('active');
-    tabAtividades.classList.remove('active');
-    cardCrono.style.display = '';
-    cardAtividades.style.display = 'none';
-    gerarMiniCronograma();
-  });
+function inicializarCronogramaPanel() {
+  _cronoDiaSelecionado = (new Date().getDay() + 6) % 7;
+  renderizarCronogramaDiasNav();
+  renderizarCronogramaDia(_cronoDiaSelecionado);
 }
 
-function gerarMiniCronograma() {
-  const container = document.getElementById('crono-mini-grid');
+function selecionarDiaCrono(diaIndex) {
+  _cronoDiaSelecionado = diaIndex;
+  renderizarCronogramaDiasNav();
+  renderizarCronogramaDia(diaIndex);
+}
+
+function renderizarCronogramaDiasNav() {
+  const nav = document.getElementById('cronograma-dias-nav');
+  if (!nav) return;
+
+  const letras = ['S','T','Q','Q','S','S','D'];
+  const nomes = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  const hoje = (new Date().getDay() + 6) % 7;
+  const diasSemana = obterDiasDaSemana();
+  const checks = carregarCronoCheck();
+
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const dateStr = formatarDataISO(diasSemana[i]);
+    const prog = calcularProgressoDia(dateStr, i);
+    const isCompleto = prog.total > 0 && prog.done === prog.total;
+
+    let cls = 'crono-dia-btn';
+    if (i === _cronoDiaSelecionado) cls += ' active';
+    if (i === hoje) cls += ' hoje';
+    if (isCompleto) cls += ' completo';
+
+    html += `<button class="${cls}" onclick="selecionarDiaCrono(${i})" title="${nomes[i]}">`;
+    html += `<span class="crono-dia-letra">${letras[i]}</span>`;
+    if (i === hoje) html += '<span class="crono-dia-dot"></span>';
+    if (isCompleto) html += '<span class="crono-dia-check"><i class="bi bi-check"></i></span>';
+    html += '</button>';
+  }
+  nav.innerHTML = html;
+}
+
+function renderizarCronogramaDia(diaIndex) {
+  const container = document.getElementById('cronograma-lista');
   if (!container) return;
 
-  const dias = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
   const tipoConfig = {
-    teoria:       { label: 'Teoria',    cls: 'tipo-teoria' },
-    questoes:     { label: 'Questões',  cls: 'tipo-questoes' },
-    'anki-t':     { label: 'Anki T',    cls: 'tipo-anki-t' },
-    'anki-r':     { label: 'Anki R',    cls: 'tipo-anki-r' },
-    descanso:     { label: 'Descanso',  cls: 'tipo-descanso' },
-    casa:         { label: 'Casa',      cls: 'tipo-casa' },
-    academia:     { label: 'Academia',  cls: 'tipo-academia' },
-    'cafe-manha': { label: 'Café',      cls: 'tipo-cafe-manha' },
-    almoco:       { label: 'Almoço',    cls: 'tipo-almoco' },
-    'cafe-tarde': { label: 'Lanche',    cls: 'tipo-cafe-tarde' }
+    teoria:       { label: 'Teoria',    cls: 'tipo-teoria',      icon: 'bi-book' },
+    questoes:     { label: 'Questões',  cls: 'tipo-questoes',    icon: 'bi-pencil' },
+    'anki-t':     { label: 'Anki T',    cls: 'tipo-anki-t',      icon: 'bi-stack' },
+    'anki-r':     { label: 'Anki R',    cls: 'tipo-anki-r',      icon: 'bi-arrow-repeat' },
+    descanso:     { label: 'Descanso',  cls: 'tipo-descanso',    icon: 'bi-cup-hot' },
+    casa:         { label: 'Casa',      cls: 'tipo-casa',        icon: 'bi-house' },
+    academia:     { label: 'Academia',  cls: 'tipo-academia',    icon: 'bi-activity' },
+    'cafe-manha': { label: 'Café',      cls: 'tipo-cafe-manha',  icon: 'bi-cup' },
+    almoco:       { label: 'Almoço',    cls: 'tipo-almoco',      icon: 'bi-egg-fried' },
+    'cafe-tarde': { label: 'Lanche',    cls: 'tipo-cafe-tarde',  icon: 'bi-cup-straw' }
   };
 
   let cronoData;
@@ -702,50 +722,56 @@ function gerarMiniCronograma() {
   } catch(e) { cronoData = null; }
 
   if (!cronoData || !cronoData.cells || Object.keys(cronoData.cells).length === 0) {
-    container.innerHTML = `
-      <div class="crono-mini-vazio">
-        <i class="bi bi-calendar-x"></i>
-        <p>Cronograma vazio</p>
-        <span>Preencha na aba Cronograma</span>
-      </div>`;
+    container.innerHTML = '<div class="crono-lista-vazio"><i class="bi bi-calendar-x"></i><p>Cronograma vazio</p><span>Preencha na aba Cronograma</span></div>';
     return;
   }
 
-  let html = '<table class="crono-mini-table"><thead><tr><th>Horário</th>';
-  dias.forEach(d => html += `<th>${d}</th>`);
-  html += '</tr></thead><tbody>';
+  const checks = carregarCronoCheck();
+  const diasSemana = obterDiasDaSemana();
+  const dateStr = formatarDataISO(diasSemana[diaIndex]);
 
-  cronoData.horarios.forEach((horario, ri) => {
-    // Verificar se a linha tem pelo menos uma célula preenchida
-    let temConteudo = false;
-    for (let di = 0; di < 7; di++) {
-      const c = cronoData.cells[`${di}-${horario}`];
-      if (c && ((Array.isArray(c) && c.length > 0) || c.tipo)) { temConteudo = true; break; }
-    }
-    if (!temConteudo) return;
+  let html = '';
+  let temItens = false;
 
-    html += `<tr><td class="crono-mini-hora">${horario}</td>`;
-    for (let di = 0; di < 7; di++) {
-      let items = cronoData.cells[`${di}-${horario}`];
-      // Suportar formato antigo (objeto) e novo (array)
-      if (items && !Array.isArray(items)) items = [items];
+  cronoData.horarios.forEach(horario => {
+    let items = cronoData.cells[`${diaIndex}-${horario}`];
+    if (!items) return;
+    if (!Array.isArray(items)) items = [items];
+    if (items.length === 0) return;
 
-      if (items && items.length > 0) {
-        html += `<td class="crono-mini-cell crono-mini-filled">`;
-        items.forEach(item => {
-          const cfg = tipoConfig[item.tipo] || { label: item.tipo, cls: '' };
-          html += `<span class="crono-mini-badge ${cfg.cls}">${cfg.label}</span>`;
-          if (item.materia) html += `<span class="crono-mini-materia">${item.materia}</span>`;
-        });
-        html += `</td>`;
-      } else {
-        html += `<td class="crono-mini-cell"></td>`;
+    items.forEach(item => {
+      if (!item || !item.tipo) return;
+      temItens = true;
+      const cfg = tipoConfig[item.tipo] || { label: item.tipo, cls: '', icon: 'bi-circle' };
+      const isEstudo = TIPOS_ESTUDO.includes(item.tipo);
+      const cellKey = `${diaIndex}-${horario}`;
+      const isChecked = checks[dateStr] && checks[dateStr][cellKey];
+
+      let cls = 'crono-item';
+      if (isChecked) cls += ' checked';
+      if (!isEstudo) cls += ' nao-estudo';
+
+      html += `<div class="${cls}"`;
+      if (isEstudo) html += ` onclick="toggleCronoCheck('${dateStr}','${cellKey}')"`;
+      html += '>';
+      html += `<div class="crono-item-hora">${horario}</div>`;
+      html += '<div class="crono-item-info">';
+      html += `<span class="crono-item-badge ${cfg.cls}"><i class="bi ${cfg.icon}"></i> ${cfg.label}</span>`;
+      if (item.materia) html += `<span class="crono-item-materia">${item.materia}</span>`;
+      html += '</div>';
+      if (isEstudo) {
+        html += '<div class="crono-item-check">';
+        html += isChecked ? '<i class="bi bi-check-circle-fill"></i>' : '<i class="bi bi-circle"></i>';
+        html += '</div>';
       }
-    }
-    html += '</tr>';
+      html += '</div>';
+    });
   });
 
-  html += '</tbody></table>';
+  if (!temItens) {
+    html = '<div class="crono-lista-vazio"><i class="bi bi-moon-stars"></i><p>Dia livre!</p><span>Nenhuma atividade programada</span></div>';
+  }
+
   container.innerHTML = html;
 }
 
@@ -787,6 +813,7 @@ function salvarTarefas() {
 
 // Carregar tarefas do localStorage
 function carregarTarefas() {
+  if (!listaTarefas) return;
   const dados = localStorage.getItem('lumed_tarefas');
   if (!dados) {
     verificarEstadoVazio();
@@ -863,7 +890,9 @@ document.addEventListener('DOMContentLoaded', () => {
   atualizarBannerQuestoes();
   atualizarBannerSimulados();
   inicializarStatsEditaveis();
-  inicializarMiniCronograma();
+  inicializarCronogramaPanel();
+  limparCronoCheckAntigo();
+  renderizarMinhaSemana(true);
   verificarPaginaInicial();
 });
 
@@ -1371,15 +1400,15 @@ function zerarTempoDia() {
 }
 
 function formatarHoras(segundos) {
-  const horas = segundos / 3600;
-  if (horas < 1) {
-    const minutos = Math.floor(segundos / 60);
-    if (minutos === 0) {
-      return `${segundos}s`;
-    }
-    return `${minutos}min`;
+  const h = Math.floor(segundos / 3600);
+  const m = Math.floor((segundos % 3600) / 60);
+  if (h === 0 && m === 0) {
+    return `${segundos}s`;
   }
-  return `${horas.toFixed(1)}h`;
+  if (h === 0) {
+    return `${m}min`;
+  }
+  return `${h}h${String(m).padStart(2, '0')}`;
 }
 
 function obterDataHoje() {
@@ -1412,6 +1441,223 @@ function atualizarExibicaoTempo() {
   if (displayHoje) {
     displayHoje.textContent = formatarHoras(tempoTotal);
   }
+
+  // Atualizar minha semana também
+  renderizarMinhaSemana();
+}
+
+// ============================================
+// MINHA SEMANA - Tracker Semanal
+// ============================================
+const CRONO_CHECK_KEY = 'lumed_crono_check';
+const TIPOS_ESTUDO = ['teoria', 'questoes', 'anki-t', 'anki-r'];
+
+// Helpers de data
+function obterSegundaSemana(data) {
+  const d = new Date(data);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  d.setDate(diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function obterDiasDaSemana() {
+  const segunda = obterSegundaSemana(new Date());
+  const dias = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(segunda);
+    d.setDate(d.getDate() + i);
+    dias.push(d);
+  }
+  return dias;
+}
+
+function formatarDataISO(data) {
+  return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+}
+
+// CRUD crono check
+function carregarCronoCheck() {
+  try {
+    return JSON.parse(localStorage.getItem(CRONO_CHECK_KEY)) || {};
+  } catch(e) { return {}; }
+}
+
+function salvarCronoCheck(dados) {
+  localStorage.setItem(CRONO_CHECK_KEY, JSON.stringify(dados));
+}
+
+function toggleCronoCheck(dateStr, cellKey) {
+  const dados = carregarCronoCheck();
+  if (!dados[dateStr]) dados[dateStr] = {};
+  dados[dateStr][cellKey] = !dados[dateStr][cellKey];
+  if (!dados[dateStr][cellKey]) delete dados[dateStr][cellKey];
+  if (Object.keys(dados[dateStr]).length === 0) delete dados[dateStr];
+  salvarCronoCheck(dados);
+  renderizarMinhaSemana(true);
+  renderizarCronogramaDiasNav();
+  renderizarCronogramaDia(_cronoDiaSelecionado);
+}
+
+// Obter itens de estudo do cronograma para um dia (diaIndex 0=Seg..6=Dom)
+function obterItensCronogramaDia(diaIndex) {
+  let cronoData;
+  try {
+    const raw = localStorage.getItem('cronogramaData');
+    cronoData = raw ? JSON.parse(raw) : null;
+  } catch(e) { return []; }
+  if (!cronoData || !cronoData.cells || !cronoData.horarios) return [];
+
+  const itens = [];
+  cronoData.horarios.forEach(horario => {
+    const key = `${diaIndex}-${horario}`;
+    let items = cronoData.cells[key];
+    if (!items) return;
+    if (!Array.isArray(items)) items = [items];
+    items.forEach(item => {
+      if (TIPOS_ESTUDO.includes(item.tipo)) {
+        itens.push({ cellKey: key, tipo: item.tipo, materia: item.materia || '' });
+      }
+    });
+  });
+  return itens;
+}
+
+// Calcular progresso de rotina para um dia
+function calcularProgressoDia(dateStr, diaIndex) {
+  const itens = obterItensCronogramaDia(diaIndex);
+  if (itens.length === 0) return { total: 0, done: 0, percent: 0 };
+
+  const checks = carregarCronoCheck();
+  const diaChecks = checks[dateStr] || {};
+  let done = 0;
+  itens.forEach(item => {
+    if (diaChecks[item.cellKey]) done++;
+  });
+  return { total: itens.length, done, percent: itens.length > 0 ? Math.round((done / itens.length) * 100) : 0 };
+}
+
+// Limpar dados de crono check > 4 semanas
+function limparCronoCheckAntigo() {
+  const dados = carregarCronoCheck();
+  const limite = new Date();
+  limite.setDate(limite.getDate() - 28);
+  const limiteStr = formatarDataISO(limite);
+  let changed = false;
+  for (const dateStr in dados) {
+    if (dateStr < limiteStr) {
+      delete dados[dateStr];
+      changed = true;
+    }
+  }
+  if (changed) salvarCronoCheck(dados);
+}
+
+// Renderizar Minha Semana
+let _ultimaRenderSemana = 0;
+function renderizarMinhaSemana(forcar) {
+  const agora = Date.now();
+  if (!forcar && agora - _ultimaRenderSemana < 30000) return;
+  _ultimaRenderSemana = agora;
+
+  const container = document.getElementById('minha-semana-grid');
+  if (!container) return;
+
+  const tempos = obterTemposEstudo();
+  const hoje = new Date();
+  const hojeStr = formatarDataISO(hoje);
+  const metaData = JSON.parse(localStorage.getItem('lumed_meta_horas') || '{}');
+  const META_SEGUNDOS = (metaData.horas || 5) * 3600;
+  const DIAS_LABEL = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+
+  // Meta display
+  const metaDisplay = document.getElementById('meta-diaria-display');
+  if (metaDisplay) metaDisplay.textContent = (metaData.horas || 5) + 'h';
+
+  const diasSemana = obterDiasDaSemana();
+
+  const R = 18;
+  const CIRC = 2 * Math.PI * R;
+
+  container.innerHTML = diasSemana.map((data, i) => {
+    const dateStr = formatarDataISO(data);
+    const ehHoje = dateStr === hojeStr;
+    const ehFuturo = data > hoje && !ehHoje;
+
+    // Tempo de estudo
+    let seg = tempos[dateStr] || 0;
+    if (ehHoje) {
+      try {
+        const estado = JSON.parse(localStorage.getItem('lumed_crono_estado') || '{}');
+        if (estado && estado.rodando && estado.inicio) {
+          seg += Math.floor((Date.now() - estado.inicio) / 1000);
+        }
+      } catch(e) {}
+    }
+
+    const pctTempo = Math.min(seg / META_SEGUNDOS, 1);
+    const offset = CIRC * (1 - pctTempo);
+    const metaOk = seg >= META_SEGUNDOS;
+
+    // Formatar valor de tempo
+    let valor;
+    const h = Math.floor(seg / 3600);
+    const m = Math.floor((seg % 3600) / 60);
+    if (h > 0) valor = `${h}h${String(m).padStart(2, '0')}`;
+    else if (m > 0) valor = `${m}m`;
+    else valor = '–';
+
+    // Progresso rotina (crono check)
+    const progresso = calcularProgressoDia(dateStr, i);
+    const rotinaCompleta = progresso.total > 0 && progresso.done === progresso.total;
+
+    // Status icon
+    let statusIcon = '';
+    if (ehFuturo) {
+      statusIcon = '<i class="bi bi-lock-fill semana-status-icon futuro"></i>';
+    } else if (rotinaCompleta && metaOk) {
+      statusIcon = '<i class="bi bi-check-circle-fill semana-status-icon completo"></i>';
+    } else if (progresso.done > 0 || seg > 0) {
+      statusIcon = '<i class="bi bi-circle-half semana-status-icon parcial"></i>';
+    }
+
+    // Card classes
+    let cardClass = 'semana-card';
+    if (ehHoje) cardClass += ' semana-card-hoje';
+    if (rotinaCompleta && metaOk && !ehFuturo) cardClass += ' semana-card-completo';
+    if (ehFuturo) cardClass += ' semana-card-futuro';
+
+    // Rotina bar
+    let rotinaHtml = '';
+    if (progresso.total > 0) {
+      rotinaHtml = `
+        <div class="semana-rotina">
+          <div class="semana-rotina-bar">
+            <div class="semana-rotina-fill" style="width: ${progresso.percent}%"></div>
+          </div>
+          <span class="semana-rotina-text">${progresso.done}/${progresso.total}</span>
+        </div>`;
+    } else if (!ehFuturo) {
+      rotinaHtml = `<div class="semana-rotina"><span class="semana-rotina-text sem-rotina">Sem rotina</span></div>`;
+    }
+
+    return `<div class="${cardClass}">
+      <div class="semana-card-top">
+        <span class="semana-card-dia">${DIAS_LABEL[i]}</span>
+        ${ehHoje ? '<span class="semana-badge-hoje">Hoje</span>' : ''}
+        ${statusIcon}
+      </div>
+      <div class="semana-card-circle">
+        <svg viewBox="0 0 44 44">
+          <circle class="circle-bg" cx="22" cy="22" r="${R}"/>
+          <circle class="circle-fill${metaOk ? ' meta-atingida' : ''}" cx="22" cy="22" r="${R}" stroke-dasharray="${CIRC}" stroke-dashoffset="${offset}"/>
+        </svg>
+        <span class="semana-card-valor${metaOk ? ' meta-atingida' : ''}">${valor}</span>
+      </div>
+      ${rotinaHtml}
+    </div>`;
+  }).join('');
 }
 
 // ============================================
@@ -2039,17 +2285,10 @@ function mostrarConfirmacao(titulo, mensagem, onConfirmar) {
   function atualizarTempoBanner() {
     const tempoEstudoElement = document.getElementById('tempo-hoje');
     if (tempoEstudoElement) {
-      const hrs = Math.floor(seconds / 3600);
-      const mins = Math.floor((seconds % 3600) / 60);
-
-      if (hrs > 0) {
-        tempoEstudoElement.textContent = `${hrs}h ${mins}m`;
-      } else if (mins > 0) {
-        tempoEstudoElement.textContent = `${mins}m`;
-      } else {
-        tempoEstudoElement.textContent = `${seconds}s`;
-      }
+      tempoEstudoElement.textContent = formatarHoras(seconds);
     }
+    // Atualizar minha semana
+    renderizarMinhaSemana();
   }
 
   // Iniciar/Pausar timer

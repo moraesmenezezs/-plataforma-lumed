@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Flashcards | Plataforma LuMED</title>
+  <meta name="description" content="Sistema de flashcards com repetição espaçada (SM-2) da Plataforma LuMED. Estude com eficiência para ENEM e vestibulares.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://plataformalumed.site/flashcards.html">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/flashcards.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR TOPO -->
+  <nav class="navbar-top" id="navbar-top">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
+        <span class="logo-text">LuMED</span>
+      </div>
+
+      <div class="navbar-menu" id="navbar-menu">
+        <a href="index.html" class="nav-item" id="nav-painel">
+          <i class="bi bi-grid-fill"></i>
+          <span>Painel</span>
+        </a>
+        <a href="index.html#planner" class="nav-item" id="nav-planner">
+          <i class="bi bi-calendar-week"></i>
+          <span>Cronograma</span>
+        </a>
+        <a href="conteudo.html" class="nav-item" id="nav-edital">
+          <i class="bi bi-journal-bookmark"></i>
+          <span>Edital</span>
+        </a>
+        <a href="flashcards.html" class="nav-item active" id="nav-flashcards">
+          <i class="bi bi-stack"></i>
+          <span>Flashcards</span>
+        </a>
+        <a href="projeto-kumon/index.html" class="nav-item" id="nav-kumon">
+          <i class="bi bi-calculator"></i>
+          <span>Kumon</span>
+        </a>
+        <a href="index.html#redacao" class="nav-item" id="nav-redacao">
+          <i class="bi bi-pencil-square"></i>
+          <span>Redação</span>
+        </a>
+      </div>
+
+      <div class="navbar-actions">
+        <span class="streak-fire" id="streak-fire" title="Dias na plataforma">
+          <i class="bi bi-fire"></i>
+          <span class="streak-fire-count" id="streak-fire-count">0</span>
+        </span>
+        <div class="profile" id="btn-perfil">
+          <span class="avatar">ML</span>
+          <span class="name">Maria Luisa</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-expanded" id="navbar-expanded">
+      <div class="navbar-expanded-content">
+        <a href="index.html" class="nav-expanded-item"><i class="bi bi-grid-fill"></i><span>Painel</span></a>
+        <a href="index.html#planner" class="nav-expanded-item"><i class="bi bi-calendar-week"></i><span>Cronograma</span></a>
+        <a href="conteudo.html" class="nav-expanded-item"><i class="bi bi-journal-bookmark"></i><span>Edital</span></a>
+        <a href="flashcards.html" class="nav-expanded-item active"><i class="bi bi-stack"></i><span>Flashcards</span></a>
+        <a href="projeto-kumon/index.html" class="nav-expanded-item"><i class="bi bi-calculator"></i><span>Kumon</span></a>
+        <a href="index.html#redacao" class="nav-expanded-item"><i class="bi bi-pencil-square"></i><span>Redação</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="fc-app">
+
+    <!-- ═══════════════════════════════ -->
+    <!-- VIEW: DECKS (padrão)           -->
+    <!-- ═══════════════════════════════ -->
+    <section class="fc-view" id="view-decks">
+      <div class="fc-container">
+        <!-- Header -->
+        <div class="fc-page-header">
+          <div class="fc-header-left">
+            <h1><i class="bi bi-stack"></i> Flashcards</h1>
+            <p class="fc-subtitle">Repetição espaçada para memorização eficiente</p>
+          </div>
+          <div class="fc-header-actions">
+            <button class="fc-btn fc-btn-ghost" id="btn-stats" title="Estatísticas">
+              <i class="bi bi-bar-chart-line"></i>
+              <span>Estatísticas</span>
+            </button>
+            <button class="fc-btn fc-btn-primary" id="btn-novo-deck">
+              <i class="bi bi-plus-lg"></i>
+              <span>Novo Deck</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Bar do Dia -->
+        <div class="fc-stats-bar" id="fc-stats-bar">
+          <div class="fc-stat-item">
+            <span class="fc-stat-icon novos"><i class="bi bi-star-fill"></i></span>
+            <div class="fc-stat-info">
+              <span class="fc-stat-value" id="stat-novos-dia">0</span>
+              <span class="fc-stat-label">Novos hoje</span>
+            </div>
+          </div>
+          <div class="fc-stat-item">
+            <span class="fc-stat-icon aprendendo"><i class="bi bi-arrow-repeat"></i></span>
+            <div class="fc-stat-info">
+              <span class="fc-stat-value" id="stat-aprendendo">0</span>
+              <span class="fc-stat-label">Aprendendo</span>
+            </div>
+          </div>
+          <div class="fc-stat-item">
+            <span class="fc-stat-icon revisao"><i class="bi bi-check2-circle"></i></span>
+            <div class="fc-stat-info">
+              <span class="fc-stat-value" id="stat-revisao-dia">0</span>
+              <span class="fc-stat-label">Para revisar</span>
+            </div>
+          </div>
+          <div class="fc-stat-item">
+            <span class="fc-stat-icon tempo"><i class="bi bi-clock"></i></span>
+            <div class="fc-stat-info">
+              <span class="fc-stat-value" id="stat-tempo-dia">0min</span>
+              <span class="fc-stat-label">Tempo hoje</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid de Decks -->
+        <div class="fc-decks-grid" id="fc-decks-grid">
+          <!-- Renderizado via JS -->
+        </div>
+
+        <!-- Estado vazio -->
+        <div class="fc-empty" id="fc-empty-decks" style="display:none;">
+          <div class="fc-empty-icon"><i class="bi bi-stack"></i></div>
+          <h3>Nenhum deck criado</h3>
+          <p>Crie seu primeiro deck para começar a estudar com flashcards</p>
+          <button class="fc-btn fc-btn-primary" id="btn-novo-deck-empty">
+            <i class="bi bi-plus-lg"></i> Criar meu primeiro deck
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- VIEW: DETALHE DO DECK          -->
+    <!-- ═══════════════════════════════ -->
+    <section class="fc-view" id="view-deck-detail" style="display:none;">
+      <div class="fc-container">
+        <!-- Header -->
+        <div class="fc-page-header">
+          <div class="fc-header-left">
+            <button class="fc-btn-back" id="btn-voltar-decks">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <div>
+              <h1 id="deck-detail-nome">Deck</h1>
+              <p class="fc-subtitle" id="deck-detail-desc"></p>
+            </div>
+          </div>
+          <div class="fc-header-actions">
+            <button class="fc-btn fc-btn-ghost" id="btn-editar-deck-detail" title="Editar deck">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="fc-btn fc-btn-ghost fc-btn-danger" id="btn-excluir-deck-detail" title="Excluir deck">
+              <i class="bi bi-trash"></i>
+            </button>
+            <button class="fc-btn fc-btn-primary" id="btn-novo-card">
+              <i class="bi bi-plus-lg"></i>
+              <span>Novo Card</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contadores do deck -->
+        <div class="fc-deck-counters" id="fc-deck-counters">
+          <div class="fc-counter novos">
+            <span class="fc-counter-value" id="deck-count-novos">0</span>
+            <span class="fc-counter-label">Novos</span>
+          </div>
+          <div class="fc-counter aprendendo">
+            <span class="fc-counter-value" id="deck-count-aprendendo">0</span>
+            <span class="fc-counter-label">Aprendendo</span>
+          </div>
+          <div class="fc-counter revisao">
+            <span class="fc-counter-value" id="deck-count-revisao">0</span>
+            <span class="fc-counter-label">Revisão</span>
+          </div>
+        </div>
+
+        <!-- Botão iniciar revisão -->
+        <div class="fc-review-start" id="fc-review-start">
+          <button class="fc-btn fc-btn-primary fc-btn-lg" id="btn-iniciar-revisao">
+            <i class="bi bi-play-fill"></i> Iniciar Revisão
+          </button>
+        </div>
+
+        <!-- Lista de cards -->
+        <div class="fc-cards-list" id="fc-cards-list">
+          <!-- Renderizado via JS -->
+        </div>
+
+        <!-- Estado vazio -->
+        <div class="fc-empty" id="fc-empty-cards" style="display:none;">
+          <div class="fc-empty-icon"><i class="bi bi-card-text"></i></div>
+          <h3>Nenhum card neste deck</h3>
+          <p>Adicione cards para começar a estudar</p>
+          <button class="fc-btn fc-btn-primary" id="btn-novo-card-empty">
+            <i class="bi bi-plus-lg"></i> Adicionar card
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- VIEW: REVISÃO                  -->
+    <!-- ═══════════════════════════════ -->
+    <section class="fc-view" id="view-review" style="display:none;">
+      <div class="fc-container fc-review-container">
+        <!-- Header de revisão -->
+        <div class="fc-review-header">
+          <button class="fc-btn-back" id="btn-sair-revisao">
+            <i class="bi bi-x-lg"></i>
+          </button>
+          <div class="fc-review-progress">
+            <div class="fc-progress-bar">
+              <div class="fc-progress-fill" id="review-progress-fill"></div>
+            </div>
+            <span class="fc-progress-text" id="review-progress-text">0/0</span>
+          </div>
+          <div class="fc-review-timer" id="review-timer">0:00</div>
+        </div>
+
+        <!-- Card de revisão -->
+        <div class="fc-review-card-wrapper">
+          <div class="fc-review-card" id="fc-review-card">
+            <div class="fc-card-inner" id="fc-card-inner">
+              <div class="fc-card-face fc-card-front" id="fc-card-front">
+                <div class="fc-card-badge" id="fc-card-badge">Frente</div>
+                <div class="fc-card-content" id="fc-card-front-content"></div>
+                <div class="fc-card-image" id="fc-card-front-image" style="display:none;"></div>
+              </div>
+              <div class="fc-card-face fc-card-back" id="fc-card-back">
+                <div class="fc-card-badge">Verso</div>
+                <div class="fc-card-content" id="fc-card-back-content"></div>
+                <div class="fc-card-image" id="fc-card-back-image" style="display:none;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botão revelar -->
+        <div class="fc-review-actions" id="fc-reveal-actions">
+          <button class="fc-btn fc-btn-reveal" id="btn-revelar">
+            <i class="bi bi-eye"></i> Mostrar Resposta
+            <span class="fc-shortcut">Espaço</span>
+          </button>
+        </div>
+
+        <!-- Botões de avaliação (ocultos até revelar) -->
+        <div class="fc-review-actions fc-rating-actions" id="fc-rating-actions" style="display:none;">
+          <button class="fc-btn-rating denovo" id="btn-denovo" data-quality="0">
+            <span class="fc-rating-label">De novo</span>
+            <span class="fc-rating-time" id="rating-time-0"></span>
+            <span class="fc-shortcut">1</span>
+          </button>
+          <button class="fc-btn-rating dificil" id="btn-dificil" data-quality="2">
+            <span class="fc-rating-label">Difícil</span>
+            <span class="fc-rating-time" id="rating-time-2"></span>
+            <span class="fc-shortcut">2</span>
+          </button>
+          <button class="fc-btn-rating bom" id="btn-bom" data-quality="4">
+            <span class="fc-rating-label">Bom</span>
+            <span class="fc-rating-time" id="rating-time-4"></span>
+            <span class="fc-shortcut">3</span>
+          </button>
+          <button class="fc-btn-rating facil" id="btn-facil" data-quality="5">
+            <span class="fc-rating-label">Fácil</span>
+            <span class="fc-rating-time" id="rating-time-5"></span>
+            <span class="fc-shortcut">4</span>
+          </button>
+        </div>
+
+        <!-- Revisão completa -->
+        <div class="fc-review-done" id="fc-review-done" style="display:none;">
+          <div class="fc-done-icon"><i class="bi bi-trophy"></i></div>
+          <h2>Revisão completa!</h2>
+          <div class="fc-done-stats" id="fc-done-stats"></div>
+          <button class="fc-btn fc-btn-primary" id="btn-voltar-deck">
+            <i class="bi bi-arrow-left"></i> Voltar ao Deck
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- VIEW: ESTATÍSTICAS             -->
+    <!-- ═══════════════════════════════ -->
+    <section class="fc-view" id="view-stats" style="display:none;">
+      <div class="fc-container">
+        <div class="fc-page-header">
+          <div class="fc-header-left">
+            <button class="fc-btn-back" id="btn-voltar-stats">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <h1><i class="bi bi-bar-chart-line"></i> Estatísticas</h1>
+          </div>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="fc-stats-cards" id="fc-stats-cards">
+          <div class="fc-stats-card">
+            <div class="fc-stats-card-icon"><i class="bi bi-stack"></i></div>
+            <div class="fc-stats-card-info">
+              <span class="fc-stats-card-value" id="stats-total-cards">0</span>
+              <span class="fc-stats-card-label">Total de cards</span>
+            </div>
+          </div>
+          <div class="fc-stats-card">
+            <div class="fc-stats-card-icon"><i class="bi bi-check2-all"></i></div>
+            <div class="fc-stats-card-info">
+              <span class="fc-stats-card-value" id="stats-revisados-hoje">0</span>
+              <span class="fc-stats-card-label">Revisados hoje</span>
+            </div>
+          </div>
+          <div class="fc-stats-card">
+            <div class="fc-stats-card-icon"><i class="bi bi-bullseye"></i></div>
+            <div class="fc-stats-card-info">
+              <span class="fc-stats-card-value" id="stats-taxa-acerto">0%</span>
+              <span class="fc-stats-card-label">Taxa de acerto hoje</span>
+            </div>
+          </div>
+          <div class="fc-stats-card">
+            <div class="fc-stats-card-icon"><i class="bi bi-clock-history"></i></div>
+            <div class="fc-stats-card-info">
+              <span class="fc-stats-card-value" id="stats-tempo-medio">0s</span>
+              <span class="fc-stats-card-label">Tempo médio/card</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico de Revisões (últimos 30 dias) -->
+        <div class="fc-chart-section">
+          <h3><i class="bi bi-graph-up"></i> Revisões (últimos 30 dias)</h3>
+          <div class="fc-chart" id="fc-chart-reviews">
+            <!-- Barras renderizadas via JS -->
+          </div>
+          <div class="fc-chart-legend">
+            <span class="fc-legend-item"><span class="fc-legend-dot acertos"></span> Acertos</span>
+            <span class="fc-legend-item"><span class="fc-legend-dot erros"></span> Erros</span>
+          </div>
+        </div>
+
+        <!-- Gráfico de Previsão (próximos 7 dias) -->
+        <div class="fc-chart-section">
+          <h3><i class="bi bi-calendar-event"></i> Previsão (próximos 7 dias)</h3>
+          <div class="fc-chart fc-chart-forecast" id="fc-chart-forecast">
+            <!-- Barras renderizadas via JS -->
+          </div>
+        </div>
+
+        <!-- Distribuição por fase -->
+        <div class="fc-chart-section">
+          <h3><i class="bi bi-pie-chart"></i> Distribuição dos Cards</h3>
+          <div class="fc-phases-bar" id="fc-phases-bar">
+            <!-- Renderizado via JS -->
+          </div>
+          <div class="fc-chart-legend">
+            <span class="fc-legend-item"><span class="fc-legend-dot new"></span> Novos</span>
+            <span class="fc-legend-item"><span class="fc-legend-dot learning"></span> Aprendendo</span>
+            <span class="fc-legend-item"><span class="fc-legend-dot review"></span> Revisão</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- MODAL: CRIAR/EDITAR DECK       -->
+  <!-- ═══════════════════════════════ -->
+  <div class="fc-modal-overlay" id="modal-deck" style="display:none;">
+    <div class="fc-modal">
+      <div class="fc-modal-header">
+        <h3 id="modal-deck-title">Novo Deck</h3>
+        <button class="fc-modal-close" id="modal-deck-close"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="fc-modal-body">
+        <div class="fc-form-group">
+          <label for="input-deck-nome">Nome do Deck</label>
+          <input type="text" id="input-deck-nome" placeholder="Ex: Biologia - Citologia" maxlength="60">
+        </div>
+        <div class="fc-form-group">
+          <label for="input-deck-desc">Descrição (opcional)</label>
+          <input type="text" id="input-deck-desc" placeholder="Ex: Organelas, membranas, metabolismo..." maxlength="120">
+        </div>
+        <div class="fc-form-group">
+          <label>Cor</label>
+          <div class="fc-color-picker" id="fc-color-picker">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+        <div class="fc-form-group">
+          <label>Ícone</label>
+          <div class="fc-icon-picker" id="fc-icon-picker">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+      </div>
+      <div class="fc-modal-footer">
+        <button class="fc-btn fc-btn-ghost" id="modal-deck-cancel">Cancelar</button>
+        <button class="fc-btn fc-btn-primary" id="modal-deck-save">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- MODAL: CRIAR/EDITAR CARD       -->
+  <!-- ═══════════════════════════════ -->
+  <div class="fc-modal-overlay" id="modal-card" style="display:none;">
+    <div class="fc-modal fc-modal-card">
+      <div class="fc-modal-header">
+        <h3 id="modal-card-title">Novo Card</h3>
+        <button class="fc-modal-close" id="modal-card-close"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="fc-modal-body">
+        <div class="fc-form-group">
+          <label>Tipo</label>
+          <div class="fc-tipo-tabs" id="fc-tipo-tabs">
+            <button class="fc-tipo-tab active" data-tipo="basico"><i class="bi bi-card-text"></i> Básico</button>
+            <button class="fc-tipo-tab" data-tipo="cloze"><i class="bi bi-braces"></i> Cloze</button>
+            <button class="fc-tipo-tab" data-tipo="imagem"><i class="bi bi-image"></i> Imagem</button>
+          </div>
+        </div>
+
+        <!-- Campos Básico -->
+        <div class="fc-card-fields" id="fields-basico">
+          <div class="fc-form-group">
+            <label for="input-card-frente">Frente</label>
+            <textarea id="input-card-frente" rows="3" placeholder="Pergunta ou conceito..."></textarea>
+          </div>
+          <div class="fc-form-group">
+            <label for="input-card-verso">Verso</label>
+            <textarea id="input-card-verso" rows="3" placeholder="Resposta ou explicação..."></textarea>
+          </div>
+        </div>
+
+        <!-- Campos Cloze -->
+        <div class="fc-card-fields" id="fields-cloze" style="display:none;">
+          <div class="fc-form-group">
+            <label for="input-card-cloze">Texto com lacuna</label>
+            <textarea id="input-card-cloze" rows="4" placeholder="A mitocôndria é responsável pela {{c1::respiração celular}}. Possui {{c2::dupla membrana::tipo de membrana}}."></textarea>
+            <span class="fc-form-hint">Use {{c1::resposta}} ou {{c1::resposta::dica}} para criar lacunas</span>
+          </div>
+        </div>
+
+        <!-- Campos Imagem -->
+        <div class="fc-card-fields" id="fields-imagem" style="display:none;">
+          <div class="fc-form-group">
+            <label for="input-card-img-frente">URL da imagem (frente)</label>
+            <input type="url" id="input-card-img-frente" placeholder="https://...">
+          </div>
+          <div class="fc-form-group">
+            <label for="input-card-frente-img">Texto (frente, opcional)</label>
+            <textarea id="input-card-frente-img" rows="2" placeholder="Pergunta sobre a imagem..."></textarea>
+          </div>
+          <div class="fc-form-group">
+            <label for="input-card-verso-img">Resposta</label>
+            <textarea id="input-card-verso-img" rows="2" placeholder="Resposta..."></textarea>
+          </div>
+        </div>
+
+        <div class="fc-form-group">
+          <label for="input-card-tags">Tags (separadas por vírgula)</label>
+          <input type="text" id="input-card-tags" placeholder="Ex: biologia, citologia, organelas">
+        </div>
+      </div>
+      <div class="fc-modal-footer">
+        <button class="fc-btn fc-btn-ghost" id="modal-card-cancel">Cancelar</button>
+        <button class="fc-btn fc-btn-primary" id="modal-card-save">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!-- MODAL: CONFIRMAÇÃO              -->
+  <!-- ═══════════════════════════════ -->
+  <div class="fc-modal-overlay" id="modal-confirm" style="display:none;">
+    <div class="fc-modal fc-modal-confirm">
+      <div class="fc-modal-body" style="text-align:center; padding: 2rem;">
+        <div class="fc-confirm-icon"><i class="bi bi-exclamation-triangle"></i></div>
+        <h3 id="confirm-title">Confirmar exclusão</h3>
+        <p id="confirm-msg">Tem certeza? Esta ação não pode ser desfeita.</p>
+      </div>
+      <div class="fc-modal-footer">
+        <button class="fc-btn fc-btn-ghost" id="confirm-cancel">Cancelar</button>
+        <button class="fc-btn fc-btn-danger" id="confirm-ok">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="lumed-footer">
+    <span class="lumed-footer-text">
+      <i class="bi bi-mortarboard-fill"></i>
+      Plataforma LuMED
+    </span>
+  </footer>
+
+  <!-- Supabase Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/sync.js"></script>
+
+  <!-- Flashcards -->
+  <script src="js/mini-timer.js"></script>
+  <script src="js/flashcards-data.js"></script>
+  <script src="js/flashcards.js"></script>
+
+  <script>
+    // Foguinho - dias na plataforma
+    (function(){
+      const dias = JSON.parse(localStorage.getItem('lumed_logins') || '[]');
+      const fire = document.getElementById('streak-fire');
+      const count = document.getElementById('streak-fire-count');
+      if (fire && count) {
+        count.textContent = dias.length;
+        fire.title = dias.length + ' dia' + (dias.length !== 1 ? 's' : '') + ' na plataforma';
+      }
+    })();
+
+  </script>
+
+</body>
+</html>

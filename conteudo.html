@@ -47,13 +47,13 @@
           <i class="bi bi-calendar-week"></i>
           <span>Cronograma</span>
         </a>
-        <a href="index.html#timer" class="nav-item" id="nav-timer">
-          <i class="bi bi-stopwatch"></i>
-          <span>Timer</span>
-        </a>
         <a href="conteudo.html" class="nav-item active" id="nav-edital">
           <i class="bi bi-journal-bookmark"></i>
           <span>Edital</span>
+        </a>
+        <a href="flashcards.html" class="nav-item" id="nav-flashcards">
+          <i class="bi bi-stack"></i>
+          <span>Flashcards</span>
         </a>
         <a href="projeto-kumon/index.html" class="nav-item" id="nav-kumon">
           <i class="bi bi-calculator"></i>
@@ -81,8 +81,8 @@
       <div class="navbar-expanded-content">
         <a href="index.html" class="nav-expanded-item"><i class="bi bi-grid-fill"></i><span>Painel</span></a>
         <a href="index.html#planner" class="nav-expanded-item"><i class="bi bi-calendar-week"></i><span>Cronograma</span></a>
-        <a href="index.html#timer" class="nav-expanded-item"><i class="bi bi-stopwatch"></i><span>Timer</span></a>
         <a href="conteudo.html" class="nav-expanded-item active"><i class="bi bi-journal-bookmark"></i><span>Edital</span></a>
+        <a href="flashcards.html" class="nav-expanded-item"><i class="bi bi-stack"></i><span>Flashcards</span></a>
         <a href="projeto-kumon/index.html" class="nav-expanded-item"><i class="bi bi-calculator"></i><span>Kumon</span></a>
         <a href="index.html#redacao" class="nav-expanded-item"><i class="bi bi-pencil-square"></i><span>Redação</span></a>
       </div>
@@ -91,15 +91,6 @@
 
   <!-- SIDEBAR UNIFICADA -->
   <aside class="sidebar-painel" id="sidebar-painel">
-    <!-- Header com Busca -->
-    <div class="sidebar-header">
-      <div class="sidebar-titulo">Buscar</div>
-      <div class="sidebar-busca">
-        <i class="bi bi-search"></i>
-        <input type="text" id="sidebar-busca-input" placeholder="Buscar tópicos...">
-      </div>
-    </div>
-
     <!-- Filtros -->
     <div class="sidebar-filtros">
       <div class="sidebar-filtros-titulo">Filtrar por</div>
@@ -204,15 +195,6 @@
 
         <!-- BARRA DE FERRAMENTAS -->
         <div class="toolbar-conteudo">
-          <!-- Busca -->
-          <div class="busca-container">
-            <i class="bi bi-search"></i>
-            <input type="text" id="busca-topicos" placeholder="Buscar tópicos..." class="busca-input">
-            <button class="busca-limpar" id="busca-limpar" title="Limpar busca">
-              <i class="bi bi-x"></i>
-            </button>
-          </div>
-
           <!-- Filtros -->
           <div class="filtros-container">
             <button class="filtro-btn active" data-filtro="todos">
@@ -289,6 +271,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/sync.js"></script>
+  <script src="js/mini-timer.js"></script>
 
   <script src="js/conteudo-data.js"></script>
   <script src="js/conteudo.js"></script>
