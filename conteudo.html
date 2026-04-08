@@ -28,24 +28,20 @@
 
 <body>
 
-  <!-- NAVBAR TOPO -->
+  <!-- SIDEBAR LATERAL -->
   <nav class="navbar-top" id="navbar-top">
+    <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
+      <i class="bi bi-chevron-left"></i>
+    </button>
     <div class="navbar-container">
-      <!-- Logo -->
       <div class="navbar-logo">
         <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
         <span class="logo-text">LuMED</span>
       </div>
-
-      <!-- Menu Principal -->
       <div class="navbar-menu" id="navbar-menu">
         <a href="index.html" class="nav-item" id="nav-painel">
           <i class="bi bi-grid-fill"></i>
           <span>Painel</span>
-        </a>
-        <a href="index.html#planner" class="nav-item" id="nav-planner">
-          <i class="bi bi-calendar-week"></i>
-          <span>Cronograma</span>
         </a>
         <a href="conteudo.html" class="nav-item active" id="nav-edital">
           <i class="bi bi-journal-bookmark"></i>
@@ -64,8 +60,6 @@
           <span>Redação</span>
         </a>
       </div>
-
-      <!-- Ações direita -->
       <div class="navbar-actions">
         <span class="streak-fire" id="streak-fire" title="Dias na plataforma">
           <i class="bi bi-fire"></i>
@@ -77,17 +71,8 @@
         </div>
       </div>
     </div>
-    <div class="navbar-expanded" id="navbar-expanded">
-      <div class="navbar-expanded-content">
-        <a href="index.html" class="nav-expanded-item"><i class="bi bi-grid-fill"></i><span>Painel</span></a>
-        <a href="index.html#planner" class="nav-expanded-item"><i class="bi bi-calendar-week"></i><span>Cronograma</span></a>
-        <a href="conteudo.html" class="nav-expanded-item active"><i class="bi bi-journal-bookmark"></i><span>Edital</span></a>
-        <a href="flashcards.html" class="nav-expanded-item"><i class="bi bi-stack"></i><span>Flashcards</span></a>
-        <a href="projeto-kumon/index.html" class="nav-expanded-item"><i class="bi bi-calculator"></i><span>Kumon</span></a>
-        <a href="index.html#redacao" class="nav-expanded-item"><i class="bi bi-pencil-square"></i><span>Redação</span></a>
-      </div>
-    </div>
   </nav>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- SIDEBAR UNIFICADA -->
   <aside class="sidebar-painel" id="sidebar-painel">
@@ -177,20 +162,27 @@
           </div>
         </header>
 
-        <!-- ABAS DOS VESTIBULARES -->
+        <!-- ABAS DOS VESTIBULARES (multi-seleção) -->
         <div class="vestibular-tabs">
           <button class="tab-btn active" data-tab="psi">
             <span class="tab-icon psi">PSI</span>
             PSI 2026
+            <i class="bi bi-check-lg tab-check"></i>
           </button>
           <button class="tab-btn" data-tab="macro">
             <span class="tab-icon uea">UEA</span>
             MACRO 2026
+            <i class="bi bi-check-lg tab-check"></i>
           </button>
           <button class="tab-btn" data-tab="enem">
             <span class="tab-icon enem">ENEM</span>
             ENEM 2026
+            <i class="bi bi-check-lg tab-check"></i>
           </button>
+        </div>
+        <div class="tabs-hint" id="tabs-hint">
+          <i class="bi bi-info-circle"></i>
+          Selecione mais de um edital para fundir os conteúdos por matéria
         </div>
 
         <!-- BARRA DE FERRAMENTAS -->
@@ -237,6 +229,9 @@
         <!-- CONTEÚDO ENEM -->
         <div class="tab-content" id="tab-enem"></div>
 
+        <!-- CONTEÚDO UNIFICADO (quando 2+ editais selecionados) -->
+        <div class="tab-content" id="tab-unificado"></div>
+
       </div>
     </main>
 
@@ -270,6 +265,7 @@
   <!-- Supabase Auth -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/sidebar.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/mini-timer.js"></script>
 

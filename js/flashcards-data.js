@@ -82,8 +82,13 @@
     'bi-people', 'bi-translate', 'bi-heart-pulse'
   ];
 
-  function criarDeck(nome, descricao, cor, icone) {
+  function criarDeck(nome, descricao, cor, icone, parentId) {
     var data = carregarFlashcards();
+    // Validar parent
+    if (parentId) {
+      if (!data.decks[parentId]) return null;
+      if (data.decks[parentId].parentId) return null; // max 1 nivel
+    }
     var id = 'deck_' + gerarId();
     data.decks[id] = {
       id: id,
@@ -91,6 +96,7 @@
       descricao: descricao || '',
       cor: cor || CORES_DECK[Object.keys(data.decks).length % CORES_DECK.length],
       icone: icone || 'bi-book',
+      parentId: parentId || null,
       criadoEm: agora(),
       atualizadoEm: agora()
     };
@@ -101,6 +107,19 @@
   function editarDeck(deckId, campos) {
     var data = carregarFlashcards();
     if (!data.decks[deckId]) return null;
+    // Validar parentId se estiver sendo alterado
+    if ('parentId' in campos) {
+      var newParent = campos.parentId;
+      if (newParent) {
+        if (newParent === deckId) return null;
+        if (!data.decks[newParent]) return null;
+        if (data.decks[newParent].parentId) return null;
+        // Deck com filhos nao pode virar filho
+        for (var did in data.decks) {
+          if (data.decks[did].parentId === deckId) return null;
+        }
+      }
+    }
     for (var k in campos) {
       if (k !== 'id' && k !== 'criadoEm') {
         data.decks[deckId][k] = campos[k];
@@ -114,16 +133,29 @@
   function excluirDeck(deckId) {
     var data = carregarFlashcards();
     if (!data.decks[deckId]) return false;
-    delete data.decks[deckId];
-    // Excluir cards do deck
-    for (var cid in data.cards) {
-      if (data.cards[cid].deckId === deckId) {
-        delete data.cards[cid];
+    // Coletar IDs para excluir (deck + filhos)
+    var idsExcluir = [deckId];
+    for (var did in data.decks) {
+      if (data.decks[did].parentId === deckId) {
+        idsExcluir.push(did);
       }
     }
-    // Remover logs do deck
+    // Excluir decks e seus cards
+    for (var i = 0; i < idsExcluir.length; i++) {
+      var delId = idsExcluir[i];
+      delete data.decks[delId];
+      for (var cid in data.cards) {
+        if (data.cards[cid].deckId === delId) {
+          delete data.cards[cid];
+        }
+      }
+    }
+    // Remover logs
     data.reviewLog = data.reviewLog.filter(function(r) {
-      return r.deckId !== deckId;
+      for (var j = 0; j < idsExcluir.length; j++) {
+        if (r.deckId === idsExcluir[j]) return false;
+      }
+      return true;
     });
     salvarFlashcards(data);
     return true;
@@ -605,6 +637,219 @@
   }
 
   // ══════════════════════════════════════
+  // Hierarquia: Pastas / Sub-decks
+  // ══════════════════════════════════════
+
+  function listarDecksRaiz() {
+    var data = carregarFlashcards();
+    var lista = [];
+    for (var id in data.decks) {
+      if (!data.decks[id].parentId) lista.push(data.decks[id]);
+    }
+    lista.sort(function(a, b) { return a.criadoEm - b.criadoEm; });
+    return lista;
+  }
+
+  function listarSubdecks(parentId) {
+    var data = carregarFlashcards();
+    var lista = [];
+    for (var id in data.decks) {
+      if (data.decks[id].parentId === parentId) lista.push(data.decks[id]);
+    }
+    lista.sort(function(a, b) { return a.criadoEm - b.criadoEm; });
+    return lista;
+  }
+
+  function temSubdecks(deckId) {
+    var data = carregarFlashcards();
+    for (var id in data.decks) {
+      if (data.decks[id].parentId === deckId) return true;
+    }
+    return false;
+  }
+
+  // IDs do deck + seus filhos
+  function _coletarIds(data, parentId) {
+    var ids = [parentId];
+    for (var id in data.decks) {
+      if (data.decks[id].parentId === parentId) ids.push(id);
+    }
+    return ids;
+  }
+
+  function contarCardsDevidosAgregado(parentId) {
+    var data = carregarFlashcards();
+    var ids = _coletarIds(data, parentId);
+    var config = data.config;
+    var now = agora();
+    var hj = hoje();
+    var stats = data.dailyStats[hj] || { novos: 0 };
+    var novosHoje = stats.novos || 0;
+    var contagem = { novos: 0, aprendendo: 0, revisao: 0 };
+
+    for (var cid in data.cards) {
+      var card = data.cards[cid];
+      var pertence = false;
+      for (var j = 0; j < ids.length; j++) {
+        if (card.deckId === ids[j]) { pertence = true; break; }
+      }
+      if (!pertence) continue;
+
+      if (card.fase === 'new') {
+        if (novosHoje < config.novosCardsPorDia) contagem.novos++;
+      } else if (card.fase === 'learning' || card.fase === 'relearning') {
+        contagem.aprendendo++;
+      } else if (card.fase === 'review' && card.proximaRevisao <= now) {
+        contagem.revisao++;
+      }
+    }
+    return contagem;
+  }
+
+  function construirFilaAgregada(parentId) {
+    var data = carregarFlashcards();
+    var ids = _coletarIds(data, parentId);
+    var config = data.config;
+    var now = agora();
+    var hj = hoje();
+    var stats = data.dailyStats[hj] || { novos: 0 };
+    var novosHoje = stats.novos || 0;
+
+    var learning = [], review = [], novos = [];
+
+    for (var cid in data.cards) {
+      var card = data.cards[cid];
+      var pertence = false;
+      for (var j = 0; j < ids.length; j++) {
+        if (card.deckId === ids[j]) { pertence = true; break; }
+      }
+      if (!pertence) continue;
+
+      if (card.fase === 'learning' || card.fase === 'relearning') {
+        if (card.proximaRevisao <= now) learning.push(card);
+      } else if (card.fase === 'review') {
+        if (card.proximaRevisao <= now) review.push(card);
+      } else if (card.fase === 'new') {
+        if (novosHoje < config.novosCardsPorDia) novos.push(card);
+      }
+    }
+
+    learning.sort(function(a, b) { return a.proximaRevisao - b.proximaRevisao; });
+    review.sort(function(a, b) { return a.proximaRevisao - b.proximaRevisao; });
+    novos.sort(function(a, b) { return a.criadoEm - b.criadoEm; });
+
+    var limiteNovos = config.novosCardsPorDia - novosHoje;
+    if (limiteNovos < 0) limiteNovos = 0;
+    novos = novos.slice(0, limiteNovos);
+
+    return learning.concat(review).concat(novos);
+  }
+
+  function contarTotalCardsAgregado(parentId) {
+    var data = carregarFlashcards();
+    var ids = _coletarIds(data, parentId);
+    var count = 0;
+    for (var cid in data.cards) {
+      for (var j = 0; j < ids.length; j++) {
+        if (data.cards[cid].deckId === ids[j]) { count++; break; }
+      }
+    }
+    return count;
+  }
+
+  function listarPossiveisPais(excludeDeckId) {
+    var data = carregarFlashcards();
+    var lista = [];
+    for (var id in data.decks) {
+      var d = data.decks[id];
+      if (!d.parentId && id !== excludeDeckId) lista.push(d);
+    }
+    lista.sort(function(a, b) { return a.criadoEm - b.criadoEm; });
+    return lista;
+  }
+
+  // ══════════════════════════════════════
+  // Tags + Revisão Personalizada
+  // ══════════════════════════════════════
+
+  function listarTodasTags() {
+    var data = carregarFlashcards();
+    var tagsMap = {};
+    for (var cid in data.cards) {
+      var tags = data.cards[cid].tags || [];
+      for (var i = 0; i < tags.length; i++) {
+        var lower = tags[i].toLowerCase();
+        if (!tagsMap[lower]) tagsMap[lower] = tags[i];
+      }
+    }
+    var lista = [];
+    for (var key in tagsMap) lista.push(tagsMap[key]);
+    lista.sort();
+    return lista;
+  }
+
+  function construirFilaCustom(deckIds, tags) {
+    var data = carregarFlashcards();
+    var config = data.config;
+    var now = agora();
+    var hj = hoje();
+    var stats = data.dailyStats[hj] || { novos: 0 };
+    var novosHoje = stats.novos || 0;
+
+    // Expandir deckIds para incluir sub-decks
+    var allDeckIds = {};
+    for (var d = 0; d < deckIds.length; d++) {
+      var ids = _coletarIds(data, deckIds[d]);
+      for (var j = 0; j < ids.length; j++) allDeckIds[ids[j]] = true;
+    }
+
+    // Normalizar tags para lowercase
+    var tagsLower = [];
+    for (var t = 0; t < tags.length; t++) tagsLower.push(tags[t].toLowerCase());
+
+    var seen = {};
+    var learning = [], review = [], novos = [];
+
+    for (var cid in data.cards) {
+      var card = data.cards[cid];
+
+      // Verificar se o card pertence por deck OU por tag
+      var deckMatch = deckIds.length > 0 && allDeckIds[card.deckId];
+      var tagMatch = false;
+      if (tagsLower.length > 0 && card.tags) {
+        for (var i = 0; i < card.tags.length; i++) {
+          for (var k = 0; k < tagsLower.length; k++) {
+            if (card.tags[i].toLowerCase() === tagsLower[k]) { tagMatch = true; break; }
+          }
+          if (tagMatch) break;
+        }
+      }
+
+      if (!deckMatch && !tagMatch) continue;
+      if (seen[cid]) continue;
+      seen[cid] = true;
+
+      if (card.fase === 'learning' || card.fase === 'relearning') {
+        if (card.proximaRevisao <= now) learning.push(card);
+      } else if (card.fase === 'review') {
+        if (card.proximaRevisao <= now) review.push(card);
+      } else if (card.fase === 'new') {
+        if (novosHoje < config.novosCardsPorDia) novos.push(card);
+      }
+    }
+
+    learning.sort(function(a, b) { return a.proximaRevisao - b.proximaRevisao; });
+    review.sort(function(a, b) { return a.proximaRevisao - b.proximaRevisao; });
+    novos.sort(function(a, b) { return a.criadoEm - b.criadoEm; });
+
+    var limiteNovos = config.novosCardsPorDia - novosHoje;
+    if (limiteNovos < 0) limiteNovos = 0;
+    novos = novos.slice(0, limiteNovos);
+
+    return learning.concat(review).concat(novos);
+  }
+
+  // ══════════════════════════════════════
   // API Pública
   // ══════════════════════════════════════
 
@@ -619,6 +864,15 @@
     excluirDeck: excluirDeck,
     obterDeck: obterDeck,
     listarDecks: listarDecks,
+    listarDecksRaiz: listarDecksRaiz,
+    listarSubdecks: listarSubdecks,
+    temSubdecks: temSubdecks,
+    contarCardsDevidosAgregado: contarCardsDevidosAgregado,
+    construirFilaAgregada: construirFilaAgregada,
+    contarTotalCardsAgregado: contarTotalCardsAgregado,
+    listarPossiveisPais: listarPossiveisPais,
+    listarTodasTags: listarTodasTags,
+    construirFilaCustom: construirFilaCustom,
     CORES_DECK: CORES_DECK,
     ICONES_DECK: ICONES_DECK,
 

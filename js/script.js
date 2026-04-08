@@ -1692,11 +1692,11 @@ function calcularDiasRestantes(dataAlvo, ajustarDomingo = false) {
 }
 
 function formatarSemanasEDias(totalDias) {
-  const semanas = Math.floor(totalDias / 7);
-  const dias = totalDias % 7;
-  if (semanas === 0) return `${dias} dia${dias !== 1 ? 's' : ''}`;
-  if (dias === 0) return `${semanas} semana${semanas !== 1 ? 's' : ''}`;
-  return `${semanas} semana${semanas !== 1 ? 's' : ''} e ${dias} dia${dias !== 1 ? 's' : ''}`;
+  const meses = Math.floor(totalDias / 30);
+  const dias = totalDias % 30;
+  if (meses === 0) return `${dias} dia${dias !== 1 ? 's' : ''}`;
+  if (dias === 0) return `${meses} ${meses !== 1 ? 'meses' : 'mês'}`;
+  return `${meses} ${meses !== 1 ? 'meses' : 'mês'} e ${dias} dia${dias !== 1 ? 's' : ''}`;
 }
 
 function atualizarContadorENEM() {

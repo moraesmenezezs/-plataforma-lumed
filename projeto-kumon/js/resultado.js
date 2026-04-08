@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Renderizar resultado
   renderizarResultado(resultado, progressao);
 
+  // Forçar sync imediato para a nuvem (não esperar debounce de 2s)
+  if (window.lumedSync && window.lumedSync.salvar) {
+    window.lumedSync.salvar();
+  }
+
   // Limpar sessão
   sessionStorage.removeItem('kumon_resultado');
   sessionStorage.removeItem('kumon_nivel_treino');

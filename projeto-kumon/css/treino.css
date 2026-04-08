@@ -562,11 +562,49 @@
 }
 
 /* =========================
-   5. TECLADO NUMÉRICO (MOBILE)
+   5. TECLADO NUMÉRICO
    ========================= */
 
+.btn-ordem-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px auto 0;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 2px solid #bae6fd;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0369a1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-ordem-toggle:hover {
+  background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+  border-color: #7dd3fc;
+}
+
+.btn-ordem-toggle.invertido {
+  background: linear-gradient(135deg, #fdf4ff, #fae8ff);
+  border-color: #e9d5ff;
+  color: #7c3aed;
+}
+
+.btn-ordem-toggle.invertido:hover {
+  background: linear-gradient(135deg, #fae8ff, #e9d5ff);
+  border-color: #c4b5fd;
+}
+
+.btn-ordem-toggle i {
+  font-size: 16px;
+}
+
 .teclado-numerico {
-  display: none;
+  display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   max-width: 300px;
@@ -607,10 +645,6 @@
 }
 
 @media (max-width: 768px) {
-  .teclado-numerico {
-    display: grid;
-  }
-
   .resposta-input {
     width: 100%;
     max-width: 200px;

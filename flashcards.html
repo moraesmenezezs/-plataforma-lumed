@@ -19,22 +19,20 @@
 
 <body>
 
-  <!-- NAVBAR TOPO -->
+  <!-- SIDEBAR LATERAL -->
   <nav class="navbar-top" id="navbar-top">
+    <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
+      <i class="bi bi-chevron-left"></i>
+    </button>
     <div class="navbar-container">
       <div class="navbar-logo">
         <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
         <span class="logo-text">LuMED</span>
       </div>
-
       <div class="navbar-menu" id="navbar-menu">
         <a href="index.html" class="nav-item" id="nav-painel">
           <i class="bi bi-grid-fill"></i>
           <span>Painel</span>
-        </a>
-        <a href="index.html#planner" class="nav-item" id="nav-planner">
-          <i class="bi bi-calendar-week"></i>
-          <span>Cronograma</span>
         </a>
         <a href="conteudo.html" class="nav-item" id="nav-edital">
           <i class="bi bi-journal-bookmark"></i>
@@ -53,7 +51,6 @@
           <span>Redação</span>
         </a>
       </div>
-
       <div class="navbar-actions">
         <span class="streak-fire" id="streak-fire" title="Dias na plataforma">
           <i class="bi bi-fire"></i>
@@ -65,18 +62,8 @@
         </div>
       </div>
     </div>
-
-    <div class="navbar-expanded" id="navbar-expanded">
-      <div class="navbar-expanded-content">
-        <a href="index.html" class="nav-expanded-item"><i class="bi bi-grid-fill"></i><span>Painel</span></a>
-        <a href="index.html#planner" class="nav-expanded-item"><i class="bi bi-calendar-week"></i><span>Cronograma</span></a>
-        <a href="conteudo.html" class="nav-expanded-item"><i class="bi bi-journal-bookmark"></i><span>Edital</span></a>
-        <a href="flashcards.html" class="nav-expanded-item active"><i class="bi bi-stack"></i><span>Flashcards</span></a>
-        <a href="projeto-kumon/index.html" class="nav-expanded-item"><i class="bi bi-calculator"></i><span>Kumon</span></a>
-        <a href="index.html#redacao" class="nav-expanded-item"><i class="bi bi-pencil-square"></i><span>Redação</span></a>
-      </div>
-    </div>
   </nav>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- LAYOUT PRINCIPAL -->
   <div class="fc-app">
@@ -96,6 +83,10 @@
             <button class="fc-btn fc-btn-ghost" id="btn-stats" title="Estatísticas">
               <i class="bi bi-bar-chart-line"></i>
               <span>Estatísticas</span>
+            </button>
+            <button class="fc-btn fc-btn-ghost" id="btn-custom-review" title="Revisão Personalizada">
+              <i class="bi bi-sliders"></i>
+              <span>Personalizada</span>
             </button>
             <button class="fc-btn fc-btn-primary" id="btn-novo-deck">
               <i class="bi bi-plus-lg"></i>
@@ -148,6 +139,86 @@
           <p>Crie seu primeiro deck para começar a estudar com flashcards</p>
           <button class="fc-btn fc-btn-primary" id="btn-novo-deck-empty">
             <i class="bi bi-plus-lg"></i> Criar meu primeiro deck
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- VIEW: SUB-DECKS (dentro de pasta) -->
+    <!-- ═══════════════════════════════ -->
+    <section class="fc-view" id="view-subdecks" style="display:none;">
+      <div class="fc-container">
+        <!-- Breadcrumb -->
+        <div class="fc-breadcrumb" id="fc-breadcrumb">
+          <a href="#" class="fc-breadcrumb-link" id="breadcrumb-home">
+            <i class="bi bi-stack"></i> Flashcards
+          </a>
+          <i class="bi bi-chevron-right fc-breadcrumb-sep"></i>
+          <span class="fc-breadcrumb-current" id="breadcrumb-parent-nome"></span>
+        </div>
+
+        <!-- Header -->
+        <div class="fc-page-header">
+          <div class="fc-header-left">
+            <button class="fc-btn-back" id="btn-voltar-raiz">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <div>
+              <h1 id="subdeck-parent-nome">Pasta</h1>
+              <p class="fc-subtitle" id="subdeck-parent-desc"></p>
+            </div>
+          </div>
+          <div class="fc-header-actions">
+            <button class="fc-btn fc-btn-ghost" id="btn-editar-pasta" title="Editar pasta">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="fc-btn fc-btn-ghost fc-btn-danger" id="btn-excluir-pasta" title="Excluir pasta">
+              <i class="bi bi-trash"></i>
+            </button>
+            <button class="fc-btn fc-btn-primary" id="btn-novo-subdeck">
+              <i class="bi bi-plus-lg"></i>
+              <span>Novo Sub-deck</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contadores agregados -->
+        <div class="fc-deck-counters" id="fc-subdeck-counters">
+          <div class="fc-counter novos">
+            <span class="fc-counter-value" id="subdeck-count-novos">0</span>
+            <span class="fc-counter-label">Novos</span>
+          </div>
+          <div class="fc-counter aprendendo">
+            <span class="fc-counter-value" id="subdeck-count-aprendendo">0</span>
+            <span class="fc-counter-label">Aprendendo</span>
+          </div>
+          <div class="fc-counter revisao">
+            <span class="fc-counter-value" id="subdeck-count-revisao">0</span>
+            <span class="fc-counter-label">Revisão</span>
+          </div>
+        </div>
+
+        <!-- Botão Revisar Tudo -->
+        <div class="fc-review-start" id="subdeck-review-all" style="display:none;">
+          <button class="fc-btn fc-btn-primary fc-btn-lg" id="btn-revisar-tudo">
+            <i class="bi bi-play-fill"></i> Revisar Tudo
+            <span class="fc-review-all-count" id="subdeck-review-count">0</span>
+          </button>
+        </div>
+
+        <!-- Grid de Sub-decks -->
+        <div class="fc-decks-grid" id="fc-subdecks-grid">
+          <!-- Renderizado via JS -->
+        </div>
+
+        <!-- Estado vazio -->
+        <div class="fc-empty" id="fc-empty-subdecks" style="display:none;">
+          <div class="fc-empty-icon"><i class="bi bi-folder-plus"></i></div>
+          <h3>Nenhum sub-deck</h3>
+          <p>Crie sub-decks para organizar seus flashcards</p>
+          <button class="fc-btn fc-btn-primary" id="btn-novo-subdeck-empty">
+            <i class="bi bi-plus-lg"></i> Criar sub-deck
           </button>
         </div>
       </div>
@@ -385,6 +456,58 @@
       </div>
     </section>
 
+    <!-- ═══════════════════════════════ -->
+    <!-- VIEW: REVISÃO PERSONALIZADA    -->
+    <!-- ═══════════════════════════════ -->
+    <section class="fc-view" id="view-custom-review" style="display:none;">
+      <div class="fc-container">
+        <div class="fc-page-header">
+          <div class="fc-header-left">
+            <button class="fc-btn-back" id="btn-voltar-custom">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <div>
+              <h1><i class="bi bi-sliders"></i> Revisão Personalizada</h1>
+              <p class="fc-subtitle">Selecione decks e/ou tags para revisar juntos</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selecao de Decks -->
+        <div class="fc-custom-section">
+          <h3><i class="bi bi-stack"></i> Decks</h3>
+          <p class="fc-form-hint" style="margin-bottom:0.75rem;">Selecione os decks que deseja incluir na revisão</p>
+          <div class="fc-custom-decks-list" id="fc-custom-decks-list">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <!-- Pesquisa por Tags -->
+        <div class="fc-custom-section">
+          <h3><i class="bi bi-tags"></i> Tags</h3>
+          <div class="fc-form-group" style="margin-bottom:0.75rem;">
+            <input type="text" id="input-custom-tags" placeholder="Digite uma tag e pressione Enter...">
+          </div>
+          <div class="fc-custom-tags-selected" id="fc-custom-tags-selected">
+            <!-- Tag chips selecionadas -->
+          </div>
+          <div class="fc-custom-tags-suggestions" id="fc-custom-tags-suggestions">
+            <!-- Sugestoes de tags -->
+          </div>
+        </div>
+
+        <!-- Preview + Botao Iniciar -->
+        <div class="fc-custom-preview" id="fc-custom-preview">
+          <div class="fc-custom-count">
+            <span id="fc-custom-card-count">0</span> cards disponíveis para revisão
+          </div>
+          <button class="fc-btn fc-btn-primary fc-btn-lg" id="btn-iniciar-custom" disabled>
+            <i class="bi bi-play-fill"></i> Iniciar Revisão
+          </button>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <!-- ═══════════════════════════════ -->
@@ -416,6 +539,13 @@
           <div class="fc-icon-picker" id="fc-icon-picker">
             <!-- Renderizado via JS -->
           </div>
+        </div>
+        <div class="fc-form-group">
+          <label for="select-deck-parent">Pasta (opcional)</label>
+          <select id="select-deck-parent" class="fc-select">
+            <option value="">Nenhuma (deck raiz)</option>
+          </select>
+          <span class="fc-form-hint">Escolha uma pasta para organizar este deck</span>
         </div>
       </div>
       <div class="fc-modal-footer">
@@ -468,9 +598,38 @@
         <!-- Campos Imagem -->
         <div class="fc-card-fields" id="fields-imagem" style="display:none;">
           <div class="fc-form-group">
-            <label for="input-card-img-frente">URL da imagem (frente)</label>
-            <input type="url" id="input-card-img-frente" placeholder="https://...">
+            <label>Origem da imagem</label>
+            <div class="fc-img-source-tabs" id="fc-img-source-tabs">
+              <button class="fc-img-source-tab active" data-source="upload" type="button"><i class="bi bi-upload"></i> Enviar arquivo</button>
+              <button class="fc-img-source-tab" data-source="url" type="button"><i class="bi bi-link-45deg"></i> Colar URL</button>
+            </div>
           </div>
+
+          <!-- Upload de arquivo -->
+          <div class="fc-img-source-fields" id="fields-img-upload">
+            <div class="fc-form-group">
+              <div class="fc-file-drop" id="fc-file-drop">
+                <input type="file" id="input-card-file" accept="image/*" class="fc-file-input">
+                <div class="fc-file-drop-content" id="fc-file-drop-content">
+                  <i class="bi bi-cloud-arrow-up"></i>
+                  <span>Clique ou arraste uma imagem</span>
+                  <span class="fc-form-hint">JPG, PNG, WebP (máx. 500KB)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- URL externa -->
+          <div class="fc-img-source-fields" id="fields-img-url" style="display:none;">
+            <div class="fc-form-group">
+              <label for="input-card-img-frente">URL da imagem</label>
+              <input type="url" id="input-card-img-frente" placeholder="https://exemplo.com/imagem.jpg">
+              <span class="fc-form-hint">Cole o link direto (terminando em .jpg, .png, .webp)</span>
+            </div>
+          </div>
+
+          <div class="fc-img-preview" id="fc-img-preview" style="display:none;"></div>
+
           <div class="fc-form-group">
             <label for="input-card-frente-img">Texto (frente, opcional)</label>
             <textarea id="input-card-frente-img" rows="2" placeholder="Pergunta sobre a imagem..."></textarea>
@@ -521,11 +680,13 @@
   <!-- Supabase Auth -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/sidebar.js"></script>
   <script src="js/sync.js"></script>
 
   <!-- Flashcards -->
   <script src="js/mini-timer.js"></script>
   <script src="js/flashcards-data.js"></script>
+  <script src="js/flashcards-seed.js"></script>
   <script src="js/flashcards.js"></script>
 
   <script>

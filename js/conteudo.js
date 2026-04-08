@@ -412,7 +412,7 @@ function atualizarProgressoGeral() {
   if (statConcluidos) statConcluidos.textContent = feitos;
   if (statTotal) statTotal.textContent = total;
 
-  // Atualizar contadores de cada matéria
+  // Atualizar contadores de cada matéria (na vista ativa)
   activeTab.querySelectorAll('.materia-section').forEach(section => {
     const sectionCheckboxes = section.querySelectorAll('.topico-checkbox input[type="checkbox"]');
     const sectionChecked = section.querySelectorAll('.topico-checkbox input[type="checkbox"]:checked');
@@ -427,18 +427,69 @@ function atualizarProgressoGeral() {
 // TROCAR ABAS DE VESTIBULARES
 // ============================================
 function inicializarAbas() {
+  // Restaurar seleção salva
+  const salvas = JSON.parse(localStorage.getItem('lumed_editais_selecionados') || 'null');
+  if (salvas && salvas.length > 0) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const tabId = btn.getAttribute('data-tab');
+      if (salvas.indexOf(tabId) !== -1) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-      btn.classList.add('active');
       const tabId = btn.getAttribute('data-tab');
-      document.getElementById('tab-' + tabId).classList.add('active');
 
-      atualizarProgressoGeral();
+      // Toggle: liga/desliga a aba clicada
+      btn.classList.toggle('active');
+
+      // Garantir que pelo menos 1 aba fique ativa
+      const ativas = document.querySelectorAll('.tab-btn.active');
+      if (ativas.length === 0) {
+        btn.classList.add('active');
+      }
+
+      // Salvar seleção no localStorage
+      const selecionadas = Array.from(document.querySelectorAll('.tab-btn.active')).map(b => b.getAttribute('data-tab'));
+      localStorage.setItem('lumed_editais_selecionados', JSON.stringify(selecionadas));
+
+      atualizarVistaEditais();
     });
   });
+}
+
+function atualizarVistaEditais() {
+  const ativas = document.querySelectorAll('.tab-btn.active');
+  const selectedTabs = Array.from(ativas).map(b => b.getAttribute('data-tab'));
+
+  // Esconder/mostrar dica de multi-seleção
+  const hint = document.getElementById('tabs-hint');
+  if (hint) {
+    hint.classList.toggle('hidden', selectedTabs.length > 1);
+  }
+
+  // Esconder todos os tab-contents
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+  if (selectedTabs.length === 1) {
+    // Uma aba: mostrar conteúdo individual
+    document.getElementById('tab-' + selectedTabs[0]).classList.add('active');
+  } else {
+    // Múltiplas abas: gerar vista unificada fundindo matérias
+    const tabUnificado = document.getElementById('tab-unificado');
+    tabUnificado.innerHTML = gerarVistaUnificada(selectedTabs);
+    tabUnificado.classList.add('active');
+
+    // Re-inicializar níveis e carregar progresso da vista unificada
+    inicializarNiveis();
+    carregarProgresso();
+  }
+
+  atualizarProgressoGeral();
 }
 
 
@@ -798,6 +849,7 @@ function inicializarNavbar() {
 document.addEventListener('DOMContentLoaded', () => {
   inicializarNavbar();
   inicializarAbas();
+  atualizarVistaEditais();
   inicializarNiveis();
   inicializarFiltros();
   inicializarModoFoco();

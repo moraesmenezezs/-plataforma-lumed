@@ -60,24 +60,21 @@
 
 <body>
 
-  <!-- NAVBAR TOPO -->
+  <!-- SIDEBAR LATERAL -->
   <nav class="navbar-top" id="navbar-top">
+    <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
+      <i class="bi bi-chevron-left"></i>
+    </button>
     <div class="navbar-container">
-      <!-- Logo -->
       <div class="navbar-logo">
         <span class="logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
         <span class="logo-text">LuMED</span>
       </div>
 
-      <!-- Menu Principal -->
       <div class="navbar-menu" id="navbar-menu">
         <div class="nav-item active" id="nav-painel">
           <i class="bi bi-grid-fill"></i>
           <span>Painel</span>
-        </div>
-        <div class="nav-item" id="nav-planner">
-          <i class="bi bi-calendar-week"></i>
-          <span>Cronograma</span>
         </div>
         <a href="conteudo.html" class="nav-item" id="nav-edital">
           <i class="bi bi-journal-bookmark"></i>
@@ -97,7 +94,6 @@
         </div>
       </div>
 
-      <!-- Ações direita -->
       <div class="navbar-actions">
         <span class="streak-fire" id="streak-fire" title="Dias na plataforma">
           <i class="bi bi-fire"></i>
@@ -109,37 +105,8 @@
         </div>
       </div>
     </div>
-
-    <!-- Menu Expandido (mobile) -->
-    <div class="navbar-expanded" id="navbar-expanded">
-      <div class="navbar-expanded-content">
-        <div class="nav-expanded-item active" data-section="painel">
-          <i class="bi bi-grid-fill"></i>
-          <span>Painel</span>
-        </div>
-        <div class="nav-expanded-item" data-section="planner">
-          <i class="bi bi-calendar-week"></i>
-          <span>Cronograma</span>
-        </div>
-        <a href="conteudo.html" class="nav-expanded-item">
-          <i class="bi bi-journal-bookmark"></i>
-          <span>Edital</span>
-        </a>
-        <a href="flashcards.html" class="nav-expanded-item">
-          <i class="bi bi-stack"></i>
-          <span>Flashcards</span>
-        </a>
-        <a href="projeto-kumon/index.html" class="nav-expanded-item">
-          <i class="bi bi-calculator"></i>
-          <span>Kumon</span>
-        </a>
-        <div class="nav-expanded-item" data-section="redacao">
-          <i class="bi bi-pencil-square"></i>
-          <span>Redação</span>
-        </div>
-      </div>
-    </div>
   </nav>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- LAYOUT PRINCIPAL -->
   <div class="app-layout layout-top-nav">
@@ -175,57 +142,35 @@
 
           <div class="welcome-right">
             <div class="welcome-stats">
-              <div class="stat-item">
-                <span class="stat-value stat-editable" id="stat-questoes" title="Clique para editar">0</span>
-                <span class="stat-label">Questões resolvidas</span>
-              </div>
-              <div class="stat-item">
+              <div class="stat-item" style="position:relative;min-width:120px;padding:12px 16px;">
+                <!-- pessoa sentada atrás da mesa -->
+                <svg width="36" height="36" viewBox="0 0 100 100" fill="none" style="position:absolute;top:6px;left:8px;opacity:0.25;">
+                  <rect x="5" y="52" width="50" height="3" rx="1.5" fill="white"/>
+                  <rect x="8" y="55" width="2.5" height="20" rx="1" fill="white"/>
+                  <rect x="50" y="55" width="2.5" height="20" rx="1" fill="white"/>
+                  <rect x="12" y="44" width="14" height="8" rx="2" fill="white"/>
+                  <circle cx="55" cy="20" r="7" fill="white"/>
+                  <path d="M49 30c1-1 4-2 6-2s5 1 6 2l2 14H47l2-14z" fill="white"/>
+                  <path d="M47 36l-12 10" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M49 48h12" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M49 48v14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M61 48l2 14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M49 62h-4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M63 62h4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <rect x="58" y="42" width="2.5" height="33" rx="1" fill="white"/>
+                  <rect x="70" y="55" width="2.5" height="20" rx="1" fill="white"/>
+                  <rect x="58" y="55" width="15" height="2.5" rx="1" fill="white"/>
+                </svg>
                 <span class="stat-value" id="tempo-hoje">0s</span>
                 <span class="stat-label">Tempo de estudo</span>
               </div>
-              <div class="stat-item">
-                <span class="stat-value stat-editable" id="stat-simulados" title="Clique para editar">0</span>
-                <span class="stat-label">Simulados feitos</span>
-              </div>
             </div>
           </div>
         </section>
 
-        <!-- MINHA SEMANA - Tracker Semanal -->
-        <section class="minha-semana-section" id="minha-semana">
-          <div class="minha-semana-header">
-            <h2><i class="bi bi-calendar-check"></i> Minha Semana</h2>
-            <div class="minha-semana-meta">
-              <span class="semana-meta-label">Meta diária:</span>
-              <span class="semana-meta-valor" id="meta-diaria-display">5h</span>
-            </div>
-          </div>
-          <div class="minha-semana-grid" id="minha-semana-grid">
-            <!-- 7 cards renderizados por JS -->
-          </div>
-        </section>
 
         <!-- SEÇÃO ATIVIDADES + RADAR -->
         <div class="atividades-radar-row">
-          <!-- CRONOGRAMA SEMANAL -->
-          <div class="cronograma-panel card">
-            <div class="cronograma-panel-header">
-              <h3><i class="bi bi-calendar3"></i> Cronograma</h3>
-            </div>
-            <div class="cronograma-dias-nav" id="cronograma-dias-nav">
-              <!-- 7 botões de dia renderizados por JS -->
-            </div>
-            <div class="cronograma-lista-scroll">
-              <div class="cronograma-lista" id="cronograma-lista">
-                <div class="crono-lista-vazio">
-                  <i class="bi bi-calendar-x"></i>
-                  <p>Cronograma vazio</p>
-                  <span>Preencha na aba Cronograma</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- RADAR DOS VESTIBULARES -->
           <div class="card radar-inline">
             <div class="section-header">
@@ -267,93 +212,6 @@
       </div>
     </main>
 
-    <!-- ========================= -->
-    <!-- SEÇÃO PLANNER             -->
-    <!-- ========================= -->
-    <section class="planner-section" id="planner-section" style="display: none;">
-      <div class="planner-container">
-        <!-- Header -->
-        <div class="planner-header">
-          <h1><i class="bi bi-calendar-week"></i> Cronograma Semanal</h1>
-          <div class="planner-header-actions">
-            <button class="btn-add-horario" id="btn-add-horario" title="Adicionar horário">
-              <i class="bi bi-plus-lg"></i>
-            </button>
-            <button class="btn-lixeira-mini" id="btn-limpar-grade" title="Limpar tudo">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Grade -->
-        <div class="planner-grid-wrapper">
-          <div class="planner-grid" id="planner-grid">
-            <div class="grid-header">
-              <div class="grid-time-header">Horário</div>
-              <div class="grid-day-header">Seg</div>
-              <div class="grid-day-header">Ter</div>
-              <div class="grid-day-header">Qua</div>
-              <div class="grid-day-header">Qui</div>
-              <div class="grid-day-header">Sex</div>
-              <div class="grid-day-header">Sáb</div>
-              <div class="grid-day-header">Dom</div>
-            </div>
-            <div class="grid-body" id="grid-body"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal editar célula -->
-      <div class="crono-modal-overlay" id="crono-modal" style="display:none;">
-        <div class="crono-modal">
-          <div class="crono-modal-header">
-            <h3 id="crono-modal-title">Editar bloco</h3>
-            <button class="crono-modal-close" id="crono-modal-close"><i class="bi bi-x-lg"></i></button>
-          </div>
-          <div class="crono-modal-body">
-            <label>Tipo</label>
-            <div class="crono-tipos" id="crono-tipos">
-              <button data-tipo="teoria" class="crono-tipo-btn tipo-teoria"><i class="bi bi-book"></i> Teoria</button>
-              <button data-tipo="questoes" class="crono-tipo-btn tipo-questoes"><i class="bi bi-pencil"></i> Questões</button>
-              <button data-tipo="anki-t" class="crono-tipo-btn tipo-anki-t"><i class="bi bi-arrow-repeat"></i> Anki T</button>
-              <button data-tipo="anki-r" class="crono-tipo-btn tipo-anki-r"><i class="bi bi-arrow-repeat"></i> Anki R</button>
-              <button data-tipo="descanso" class="crono-tipo-btn tipo-descanso"><i class="bi bi-cup-hot"></i> Descanso</button>
-              <button data-tipo="casa" class="crono-tipo-btn tipo-casa"><i class="bi bi-house"></i> Casa</button>
-              <button data-tipo="academia" class="crono-tipo-btn tipo-academia"><i class="bi bi-heart-pulse"></i> Academia</button>
-              <button data-tipo="cafe-manha" class="crono-tipo-btn tipo-cafe-manha"><i class="bi bi-sunrise"></i> Café da manhã</button>
-              <button data-tipo="almoco" class="crono-tipo-btn tipo-almoco"><i class="bi bi-egg-fried"></i> Almoço</button>
-              <button data-tipo="cafe-tarde" class="crono-tipo-btn tipo-cafe-tarde"><i class="bi bi-cup-straw"></i> Café da tarde</button>
-            </div>
-            <label>Matéria</label>
-            <input type="text" id="crono-materia" placeholder="Ex: Matemática" autocomplete="off">
-            <label>Tópico</label>
-            <input type="text" id="crono-topico" placeholder="Ex: Frações" autocomplete="off">
-          </div>
-          <div class="crono-modal-footer">
-            <button class="crono-btn-limpar" id="crono-btn-limpar">Limpar</button>
-            <button class="crono-btn-salvar" id="crono-btn-salvar">Salvar</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal adicionar horário -->
-      <div class="crono-modal-overlay" id="crono-modal-hora" style="display:none;">
-        <div class="crono-modal">
-          <div class="crono-modal-header">
-            <h3>Novo horário</h3>
-            <button class="crono-modal-close" id="crono-modal-hora-close"><i class="bi bi-x-lg"></i></button>
-          </div>
-          <div class="crono-modal-body">
-            <label>Horário</label>
-            <input type="text" id="crono-novo-horario" placeholder="Ex: 16:00" autocomplete="off">
-          </div>
-          <div class="crono-modal-footer">
-            <button class="crono-btn-limpar" id="crono-hora-cancelar">Cancelar</button>
-            <button class="crono-btn-salvar" id="crono-hora-salvar">Adicionar</button>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- ========================= -->
     <!-- SEÇÃO TIMER               -->
@@ -575,6 +433,7 @@
   <!-- Supabase Auth -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/sidebar.js"></script>
   <script src="js/sync.js"></script>
   <script src="js/mini-timer.js"></script>
 

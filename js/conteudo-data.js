@@ -760,7 +760,17 @@ const ENEM_DATA = [
 // ============================================
 // GERADOR DE HTML
 // ============================================
+// Info dos editais para badges
+const EDITAL_INFO = {
+  psi:   { label: 'PSI', cor: '#db2777' },
+  macro: { label: 'UEA', cor: '#059669' },
+  enem:  { label: 'ENEM', cor: '#2563eb' }
+};
+
 function gerarTopicoHTML(topico) {
+  const fonteBadge = topico._fonte
+    ? `<span class="topico-fonte" style="background:${EDITAL_INFO[topico._fonte].cor}">${EDITAL_INFO[topico._fonte].label}</span>`
+    : '';
   return `
     <div class="topico-card" data-topico-id="${topico.id}">
       <div class="topico-left">
@@ -770,7 +780,7 @@ function gerarTopicoHTML(topico) {
         </label>
         <div class="topico-info">
           <div class="topico-header-card">
-            <div class="topico-nome">${topico.nome}</div>
+            <div class="topico-nome">${fonteBadge}${topico.nome}</div>
             <button class="btn-favorito" onclick="toggleFavorito(this)" title="Adicionar aos favoritos">
               <i class="bi bi-star"></i>
             </button>
@@ -895,6 +905,117 @@ ${niveisHTML}
 
 function gerarTabConteudo(materias) {
   return materias.map(m => gerarMateriaHTML(m)).join('\n');
+}
+
+// ============================================
+// VISTA UNIFICADA - Merge de editais por matéria
+// ============================================
+const EDITAL_DATA_MAP = {
+  psi: PSI_DATA,
+  macro: MACRO_DATA,
+  enem: ENEM_DATA
+};
+
+// Mapeamento de cada tópico ENEM → matéria canônica
+// Permite distribuir os tópicos do ENEM (organizados por área)
+// nas matérias individuais para a vista unificada
+const ENEM_TOPIC_SUBJECT = {
+  // Linguagens → Língua Portuguesa e Literatura / Arte / Língua Inglesa
+  'en-ling-niv-1': 'Língua Portuguesa e Literatura', 'en-ling-niv-2': 'Língua Portuguesa e Literatura', 'en-ling-niv-3': 'Língua Portuguesa e Literatura',
+  'en-ling-b1-1': 'Língua Portuguesa e Literatura', 'en-ling-b1-2': 'Língua Portuguesa e Literatura', 'en-ling-b1-3': 'Língua Portuguesa e Literatura',
+  'en-ling-b2-1': 'Língua Portuguesa e Literatura', 'en-ling-b2-2': 'Língua Portuguesa e Literatura', 'en-ling-b2-3': 'Língua Inglesa',
+  'en-ling-c-1': 'Língua Portuguesa e Literatura', 'en-ling-c-2': 'Língua Portuguesa e Literatura', 'en-ling-c-3': 'Arte',
+  'en-ling-a-1': 'Língua Portuguesa e Literatura', 'en-ling-a-2': 'Língua Portuguesa e Literatura', 'en-ling-a-3': 'Língua Portuguesa e Literatura',
+
+  // Matemática → tudo vai para Matemática
+  'en-mat-niv-1': 'Matemática', 'en-mat-niv-2': 'Matemática', 'en-mat-niv-3': 'Matemática',
+  'en-mat-b1-1': 'Matemática', 'en-mat-b1-2': 'Matemática', 'en-mat-b1-3': 'Matemática',
+  'en-mat-b2-1': 'Matemática', 'en-mat-b2-2': 'Matemática', 'en-mat-b2-3': 'Matemática',
+  'en-mat-c-1': 'Matemática', 'en-mat-c-2': 'Matemática', 'en-mat-c-3': 'Matemática',
+  'en-mat-a-1': 'Matemática', 'en-mat-a-2': 'Matemática', 'en-mat-a-3': 'Matemática',
+
+  // Ciências da Natureza → Física / Biologia / Química
+  'en-nat-niv-1': 'Física', 'en-nat-niv-2': 'Biologia', 'en-nat-niv-3': 'Química',
+  'en-nat-b1-1': 'Física', 'en-nat-b1-2': 'Biologia', 'en-nat-b1-3': 'Química', 'en-nat-b1-4': 'Biologia',
+  'en-nat-b2-1': 'Física', 'en-nat-b2-2': 'Biologia', 'en-nat-b2-3': 'Química', 'en-nat-b2-4': 'Biologia',
+  'en-nat-c-1': 'Física', 'en-nat-c-2': 'Física', 'en-nat-c-3': 'Química', 'en-nat-c-4': 'Biologia',
+  'en-nat-a-1': 'Biologia', 'en-nat-a-2': 'Física', 'en-nat-a-3': 'Biologia',
+
+  // Ciências Humanas → História / Geografia / Filosofia / Sociologia
+  'en-hum-niv-1': 'História', 'en-hum-niv-2': 'Geografia', 'en-hum-niv-3': 'Sociologia',
+  'en-hum-b1-1': 'História', 'en-hum-b1-2': 'Filosofia', 'en-hum-b1-3': 'História', 'en-hum-b1-4': 'Filosofia',
+  'en-hum-b2-1': 'Geografia', 'en-hum-b2-2': 'Geografia', 'en-hum-b2-3': 'Sociologia', 'en-hum-b2-4': 'Geografia',
+  'en-hum-c-1': 'História', 'en-hum-c-2': 'Geografia', 'en-hum-c-3': 'Geografia', 'en-hum-c-4': 'Sociologia',
+  'en-hum-a-1': 'Sociologia', 'en-hum-a-2': 'Geografia', 'en-hum-a-3': 'Geografia'
+};
+
+// Config visual de matérias para a vista unificada (fallback quando a matéria
+// só aparece via ENEM e não tem dados de ícone/cor de PSI ou Macro)
+const SUBJECT_VISUAL = {
+  'Biologia':   { icone: 'bi-tree',            cor: '#ec4899, #db2777' },
+  'Matemática':  { icone: 'bi-calculator-fill', cor: '#3b82f6, #2563eb' },
+  'Física':      { icone: 'bi-lightning',       cor: '#f59e0b, #d97706' },
+  'Química':     { icone: 'bi-droplet-fill',    cor: '#06b6d4, #0891b2' },
+  'Língua Portuguesa e Literatura': { icone: 'bi-book', cor: '#6366f1, #4f46e5' },
+  'História':    { icone: 'bi-clock-history',   cor: '#ef4444, #dc2626' },
+  'Geografia':   { icone: 'bi-globe',           cor: '#10b981, #059669' },
+  'Arte':        { icone: 'bi-palette',         cor: '#a855f7, #9333ea' },
+  'Língua Inglesa': { icone: 'bi-translate',     cor: '#14b8a6, #0d9488' },
+  'Filosofia':   { icone: 'bi-lightbulb',       cor: '#a855f7, #9333ea' },
+  'Sociologia':  { icone: 'bi-people',          cor: '#f97316, #ea580c' }
+};
+
+function gerarVistaUnificada(selectedTabs) {
+  const mergedMap = new Map();
+  const ordemMaterias = [];
+
+  function ensureSubject(nome, icone, cor) {
+    if (!mergedMap.has(nome)) {
+      const visual = SUBJECT_VISUAL[nome] || { icone: 'bi-journal', cor: '#6b7280, #4b5563' };
+      mergedMap.set(nome, {
+        id: 'merged-' + nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g, '-'),
+        nome: nome,
+        icone: icone || visual.icone,
+        cor: cor || visual.cor,
+        niveis: {}
+      });
+      ordemMaterias.push(nome);
+    }
+    return mergedMap.get(nome);
+  }
+
+  selectedTabs.forEach(tabId => {
+    const data = EDITAL_DATA_MAP[tabId];
+    if (!data) return;
+
+    if (tabId === 'enem') {
+      // ENEM: distribuir tópicos nas matérias canônicas
+      data.forEach(materia => {
+        Object.keys(materia.niveis).forEach(nivelKey => {
+          materia.niveis[nivelKey].forEach(topico => {
+            const targetSubject = ENEM_TOPIC_SUBJECT[topico.id] || materia.nome;
+            const merged = ensureSubject(targetSubject, null, null);
+            if (!merged.niveis[nivelKey]) merged.niveis[nivelKey] = [];
+            merged.niveis[nivelKey].push({ ...topico, _fonte: 'enem' });
+          });
+        });
+      });
+    } else {
+      // PSI / Macro: merge por nome da matéria (já coincidem)
+      data.forEach(materia => {
+        const merged = ensureSubject(materia.nome, materia.icone, materia.cor);
+        Object.keys(materia.niveis).forEach(nivelKey => {
+          if (!merged.niveis[nivelKey]) merged.niveis[nivelKey] = [];
+          materia.niveis[nivelKey].forEach(topico => {
+            merged.niveis[nivelKey].push({ ...topico, _fonte: tabId });
+          });
+        });
+      });
+    }
+  });
+
+  const mergedData = ordemMaterias.map(nome => mergedMap.get(nome));
+  return gerarTabConteudo(mergedData);
 }
 
 // ============================================

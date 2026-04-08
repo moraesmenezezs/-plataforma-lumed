@@ -227,6 +227,14 @@
       }
     }
 
+    // Páginas Kumon de treino/resultado definem _skipSyncLoad
+    // para evitar que dados da nuvem sobrescrevam resultados recém-salvos
+    if (window._skipSyncLoad) {
+      _loaded = true;
+      console.log('[Sync] _skipSyncLoad ativo — apenas salvando, sem carregar da nuvem');
+      return;
+    }
+
     const changed = await carregarDaNuvem(userId);
     _loaded = true;
 

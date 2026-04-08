@@ -80,13 +80,13 @@
             class="resposta-input"
             placeholder="?"
             autocomplete="off"
-            inputmode="text"
+            inputmode="none"
           >
           <!-- Input fração (numerador/denominador) -->
           <div class="fracao-input" id="fracao-input" style="display:none;">
-            <input type="text" id="fracao-numerador" class="fracao-campo" placeholder="?" autocomplete="off" inputmode="numeric">
+            <input type="text" id="fracao-numerador" class="fracao-campo" placeholder="?" autocomplete="off" inputmode="none">
             <div class="fracao-barra"></div>
-            <input type="text" id="fracao-denominador" class="fracao-campo" placeholder="?" autocomplete="off" inputmode="numeric">
+            <input type="text" id="fracao-denominador" class="fracao-campo" placeholder="?" autocomplete="off" inputmode="none">
           </div>
           <button class="btn-confirmar">
             <i class="bi bi-check-lg"></i>
@@ -115,7 +115,13 @@
         </ul>
       </div>
 
-      <!-- Teclado Numérico (Mobile) -->
+      <!-- Toggle ordem de digitação -->
+      <button class="btn-ordem-toggle" id="btn-ordem-toggle" title="Alternar ordem de digitação">
+        <i class="bi bi-arrow-left-right"></i>
+        <span id="ordem-label">Direita → Esquerda</span>
+      </button>
+
+      <!-- Teclado Numérico -->
       <div class="teclado-numerico">
         <button class="tecla" data-valor="1">1</button>
         <button class="tecla" data-valor="2">2</button>
@@ -156,6 +162,9 @@
   <!-- Supabase + Sync -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/supabase-config.js"></script>
+
+  <!-- Impedir que sync.js sobrescreva dados durante o treino -->
+  <script>window._skipSyncLoad = true;</script>
 
   <!-- Scripts -->
   <script src="js/storage.js"></script>

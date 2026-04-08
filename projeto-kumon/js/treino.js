@@ -458,41 +458,152 @@ function configurarEventos() {
     btnSair.addEventListener('click', sairTreino);
   }
 
-  // Enter no input normal
+  // Referências dos inputs
   const inputEl = document.getElementById('resposta-input');
+  const numEl = document.getElementById('fracao-numerador');
+  const denEl = document.getElementById('fracao-denominador');
+
+  // Estado da ordem de digitação (salvo no localStorage)
+  let ordemInvertida = localStorage.getItem('kumon_ordem_invertida') !== 'false';
+
+  // Botão toggle de ordem
+  const btnOrdem = document.getElementById('btn-ordem-toggle');
+  const ordemLabel = document.getElementById('ordem-label');
+
+  function atualizarBotaoOrdem() {
+    if (ordemInvertida) {
+      btnOrdem.classList.add('invertido');
+      ordemLabel.textContent = 'Direita \u2192 Esquerda';
+    } else {
+      btnOrdem.classList.remove('invertido');
+      ordemLabel.textContent = 'Esquerda \u2192 Direita';
+    }
+  }
+
+  if (btnOrdem) {
+    atualizarBotaoOrdem();
+    btnOrdem.addEventListener('click', () => {
+      ordemInvertida = !ordemInvertida;
+      localStorage.setItem('kumon_ordem_invertida', ordemInvertida);
+      atualizarBotaoOrdem();
+    });
+  }
+
+  // Helper: inserir dígito conforme a ordem escolhida
+  function inserirDigito(campo, valor) {
+    if (valor === '-') {
+      if (campo.value.startsWith('-')) {
+        campo.value = campo.value.slice(1);
+      } else {
+        campo.value = '-' + campo.value;
+      }
+    } else if (valor === '.') {
+      if (!campo.value.includes('.')) {
+        campo.value = campo.value + valor;
+      }
+    } else if (ordemInvertida) {
+      // Ordem invertida: inserir à esquerda (unidade → dezena → centena)
+      if (campo.value.startsWith('-')) {
+        campo.value = '-' + valor + campo.value.slice(1);
+      } else {
+        campo.value = valor + campo.value;
+      }
+    } else {
+      // Ordem normal: inserir à direita
+      campo.value = campo.value + valor;
+    }
+  }
+
+  // Helper: apagar último dígito inserido
+  function apagarUltimo(campo) {
+    if (ordemInvertida) {
+      // Invertido: último digitado está à esquerda
+      if (campo.value.startsWith('-') && campo.value.length > 1) {
+        campo.value = '-' + campo.value.slice(2);
+      } else if (campo.value.length > 0) {
+        campo.value = campo.value.slice(1);
+      }
+    } else {
+      // Normal: último digitado está à direita
+      if (campo.value.length > 0) {
+        campo.value = campo.value.slice(0, -1);
+      }
+    }
+    if (campo.value === '-') campo.value = '';
+  }
+
+  // Interceptar teclado físico no input normal
   if (inputEl) {
-    inputEl.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !inputEl.disabled) {
+    inputEl.addEventListener('keydown', (e) => {
+      if (inputEl.disabled) return;
+      if (e.key === 'Enter') {
+        e.preventDefault();
         verificarResposta();
+        return;
+      }
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        apagarUltimo(inputEl);
+        return;
+      }
+      if (/^[0-9.\-]$/.test(e.key)) {
+        e.preventDefault();
+        inserirDigito(inputEl, e.key);
       }
     });
   }
 
-  // Enter nos inputs de fração
-  const numEl = document.getElementById('fracao-numerador');
-  const denEl = document.getElementById('fracao-denominador');
-
+  // Interceptar teclado físico nos inputs de fração
   if (numEl) {
-    numEl.addEventListener('keypress', (e) => {
+    numEl.addEventListener('keydown', (e) => {
+      if (numEl.disabled) return;
       if (e.key === 'Enter') {
+        e.preventDefault();
         if (numEl.value.trim() && !denEl.value.trim()) {
-          denEl.focus(); // Tab para denominador
-        } else if (!numEl.disabled) {
+          denEl.focus();
+        } else {
           verificarResposta();
         }
+        return;
+      }
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        apagarUltimo(numEl);
+        return;
+      }
+      if (e.key === '/') {
+        e.preventDefault();
+        denEl.focus();
+        return;
+      }
+      if (/^[0-9.\-]$/.test(e.key)) {
+        e.preventDefault();
+        inserirDigito(numEl, e.key);
       }
     });
   }
 
   if (denEl) {
-    denEl.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !denEl.disabled) {
+    denEl.addEventListener('keydown', (e) => {
+      if (denEl.disabled) return;
+      if (e.key === 'Enter') {
+        e.preventDefault();
         verificarResposta();
+        return;
+      }
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        apagarUltimo(denEl);
+        return;
+      }
+      if (/^[0-9.\-]$/.test(e.key)) {
+        e.preventDefault();
+        inserirDigito(denEl, e.key);
       }
     });
   }
 
-  // Teclado numérico (mobile)
+  // Teclado numérico virtual
   document.querySelectorAll('.tecla').forEach(tecla => {
     tecla.addEventListener('click', () => {
       const valor = tecla.dataset.valor;
@@ -504,23 +615,22 @@ function configurarEventos() {
           numEl.focus();
         } else {
           inputEl.value = '';
+          inputEl.focus();
         }
       } else if (valor === 'submit') {
         verificarResposta();
       } else if (valor === '/' && questaoEhFracao()) {
-        // Na fração, "/" pula para denominador
         denEl.focus();
       } else {
-        // Digitar no campo ativo
         if (questaoEhFracao()) {
           const ativo = document.activeElement;
           if (ativo === denEl) {
-            denEl.value += valor;
+            inserirDigito(denEl, valor);
           } else {
-            numEl.value += valor;
+            inserirDigito(numEl, valor);
           }
         } else {
-          inputEl.value += valor;
+          inserirDigito(inputEl, valor);
         }
       }
     });
